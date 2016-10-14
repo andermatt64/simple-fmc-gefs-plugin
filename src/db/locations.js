@@ -1,13 +1,3 @@
-// ==UserScript==
-// @name simple-fmc-gefs-plugin
-// @namespace andermatt64-gefs-plugins
-// @version 0.0.1
-// @description Simple FMC GEFS Plugin
-// @author andermatt64
-// @match http://*.gefs-online.com/gefs.php
-// @grant none
-// ==/UserScript==
-
 /*
  * Contains a dictionary of airports, fixes, and navaids coordinates
  */
@@ -132775,30 +132765,3 @@ LOCATION_DB = {
         }
     }
 };
-;/*
- * Initial entry point
- */
-
-(function () {
-  'use strict';
-
-  var initTimer = setInterval(function () {
-    if (!window.gefs || !gefs.init) {
-      return;
-    }
-
-    clearInterval(initTimer);
-
-    if (gefs.canvas) {
-      // TODO: call our initialization code
-    } else {
-      var gefsInit = gefs.init;
-
-      gefs.init = function () {
-        gefsInit();
-
-        // TODO: call our initialization code
-      };
-    }
-  }, 16);
-})();

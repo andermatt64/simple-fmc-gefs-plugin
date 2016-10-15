@@ -1,12 +1,12 @@
 module.exports = function(grunt) {
   var BANNER = '// ==UserScript==\n' +
-               '// @name <%= pkg.name %>\n' +
-               '// @namespace andermatt64-gefs-plugins\n' +
-               '// @version <%= pkg.version %>\n' +
+               '// @name        <%= pkg.name %>\n' +
+               '// @namespace   andermatt64-gefs-plugins\n' +
+               '// @version     <%= pkg.version %>\n' +
                '// @description <%= pkg.description %>\n' +
-               '// @author andermatt64\n' +
-               '// @match http://*.gefs-online.com/gefs.php\n' +
-               '// @grant none\n' +
+               '// @author      andermatt64\n' +
+               '// @match       http://*.gefs-online.com/gefs.php\n' +
+               '// @grant       none\n' +
                '// ==/UserScript==\n\n';
 
   grunt.initConfig({

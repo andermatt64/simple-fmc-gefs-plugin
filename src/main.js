@@ -5,6 +5,11 @@
 (function () {
   'use strict';
 
+  var fmcInit = function () {
+    SimpleFMC.init();
+    UI.init();
+  };
+
   var initTimer = setInterval(function () {
     if (!window.gefs || !gefs.init) {
       return;
@@ -13,14 +18,13 @@
     clearInterval(initTimer);
 
     if (gefs.canvas) {
-      // TODO: call our initialization code
+      fmcInit();
     } else {
       var gefsInit = gefs.init;
 
       gefs.init = function () {
         gefsInit();
-
-        // TODO: call our initialization code
+        fmcInit();
       };
     }
   }, 16);

@@ -4,6 +4,6 @@
 
 var SimpleFMC = {
   init: function () {
-
+    console.log('SimpleFMC loaded');
   }
 };

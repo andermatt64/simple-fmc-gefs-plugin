@@ -14,10 +14,10 @@ module.exports = function(grunt) {
     concat: {
       options: {
         banner: BANNER,
-        separator: ';'
+        separator: '\n'
       },
       dist: {
-        src: ['src/**/*.js'],
+        src: ['src/*.js'],
         dest: 'dist/<%= pkg.name %>.js'
       }
     },

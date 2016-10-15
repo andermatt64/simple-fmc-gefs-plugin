@@ -6,6 +6,12 @@ var UI = {
   // Height of the FMC div
   FmcHeight: '300px',
 
+  infoContainer: null,
+  statusContainer: null,
+  apsContainer: null,
+  routeContainer: null,
+  logContainer: null,
+
   init: function () {
     $('.gefs-map-list')
       .css('border-bottom', this.FmcHeight + ' solid transparent');
@@ -21,12 +27,13 @@ var UI = {
     var makeButton = function (name, isBottomButton) {
       var btn = $('<button></button>');
       btn
-        .val(name)
+        .text(name)
         .css('width', '100%')
         .css('font-family', 'Lucida Console, Monaco, monospace')
         .css('font-weight', 'bold')
         .css('font-size', '8pt')
         .css('text-align', 'left')
+        .css('transition-duration', '0.4s')
         .css('border-top', '1px solid #000')
         .css('border-left', '1px solid #000');
 
@@ -55,16 +62,64 @@ var UI = {
       .css('margin-right', '0px')
       .css('padding-right', '0px');
 
+    this.infoContainer = $('<div></div>');
+    this.infoContainer
+      .css('padding', '5px');
+
+    this.statusContainer = $('<div></div>');
+    this.statusContainer
+      .css('padding', '5px');
+
+    this.apsContainer = $('<div></div>');
+    this.apsContainer
+      .css('padding', '5px');
+
+    this.routeContainer = $('<div></div>');
+    this.routeContainer
+      .css('padding', '5px');
+
+    this.logContainer = $('<div></div>');
+    this.logContainer
+      .css('padding', '5px');
+
     var infoButton = makeButton('INFO');
-    var statusButton = makeButton('STATUS');
+    infoButton.click(function () {
+      containerPanel.empty();
+      containerPanel.append(UI.infoContainer);
+    });
+
+    var statusButton = makeButton('STAT');
+    statusButton.click(function () {
+      containerPanel.empty();
+      containerPanel.append(UI.statusContainer);
+    });
+
     var apsButton = makeButton('APS');
-    var routeButton = makeButton('ROUTE');
+    apsButton.click(function () {
+      containerPanel.empty();
+      containerPanel.append(UI.apsContainer);
+    });
+
+    var routeButton = makeButton('RTE');
+    routeButton.click(function () {
+      containerPanel.empty();
+      containerPanel.append(UI.routeContainer);
+    });
+
+    var logButton = makeButton('LOG', true);
+    logButton.click(function () {
+      containerPanel.empty();
+      containerPanel.append(UI.logContainer);
+    });
+
+    containerPanel.append(this.infoContainer);
 
     buttonPanel
       .append(infoButton)
       .append(statusButton)
       .append(apsButton)
-      .append(routeButton);
+      .append(routeButton)
+      .append(logButton);
 
     fmcPanel
       .append(buttonPanel)

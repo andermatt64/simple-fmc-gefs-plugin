@@ -4,7 +4,12 @@
 
 var RouteManager = {
     _list: null,
+
+    // Routes list
     _routesList: [],
+
+    // Current active waypoint
+    _currentWaypoint: null,
 
     init: function (content) {
         RouteManager._list = $('<div></div>');

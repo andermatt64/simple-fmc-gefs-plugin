@@ -14,12 +14,12 @@ var UI = {
 
   init: function () {
     $('.gefs-map-list')
-      .css('border-bottom', this.FmcHeight + ' solid transparent');
+      .css('border-bottom', UI.FmcHeight + ' solid transparent');
 
     var fmcPanel = $('.gefs-autopilot');
     fmcPanel
       .empty()
-      .css('height', this.FmcHeight)
+      .css('height', UI.FmcHeight)
       .css('font-family', 'Lucida Console, Monaco, monospace')
       .css('font-size', '9pt')
       .css('padding', '0 0 0 0');
@@ -62,24 +62,24 @@ var UI = {
       .css('margin-right', '0px')
       .css('padding-right', '0px');
 
-    this.infoContainer = $('<div></div>');
-    this.infoContainer
+    UI.infoContainer = $('<div></div>');
+    UI.infoContainer
       .css('padding', '5px');
 
-    this.statusContainer = $('<div></div>');
-    this.statusContainer
+    UI.statusContainer = $('<div></div>');
+    UI.statusContainer
       .css('padding', '5px');
 
-    this.apsContainer = $('<div></div>');
-    this.apsContainer
+    UI.apsContainer = $('<div></div>');
+    UI.apsContainer
       .css('padding', '5px');
 
-    this.routeContainer = $('<div></div>');
-    this.routeContainer
+    UI.routeContainer = $('<div></div>');
+    UI.routeContainer
       .css('padding', '5px');
 
-    this.logContainer = $('<div></div>');
-    this.logContainer
+    UI.logContainer = $('<div></div>');
+    UI.logContainer
       .css('padding', '5px');
 
     var infoButton = makeButton('INFO');
@@ -112,7 +112,7 @@ var UI = {
       containerPanel.append(UI.logContainer);
     });
 
-    containerPanel.append(this.infoContainer);
+    containerPanel.append(UI.infoContainer);
 
     buttonPanel
       .append(infoButton)

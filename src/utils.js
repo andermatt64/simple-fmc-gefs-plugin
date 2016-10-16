@@ -8,9 +8,10 @@ var Utils = {
   },
 
   toDegrees: function (radians) {
-    return ((radians * (180 / Math.PI)) + 360) % 360;
+    return radians * (180 / Math.PI);
   },
 
+  // Adopted from http://www.movable-type.co.uk/scripts/latlong.html
   getGreatCircleBearing: function (x, y) {
     var latx = Utils.toRadians(x.lat);
     var lonx = Utils.toRadians(x.lon);
@@ -21,7 +22,7 @@ var Utils = {
     var a = Math.cos(latx) * Math.sin(laty) -
             Math.sin(latx) * Math.cos(laty) * Math.cos(lony - lonx);
     var hdg = Math.atan2(b, a);
-    return Utils.toDegrees(hdg);
+    return (Utils.toDegrees(hdg) + 360) % 360;
   },
 
   // Adopted from http://www.movable-type.co.uk/scripts/latlong.html

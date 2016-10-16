@@ -19,7 +19,11 @@ var APS = {
   //   holdp -> holding pattern
   mode: 'hold',
 
-  init: function () {
+  content: null,
+
+  init: function (content) {
+    APS.content = content;
+
     
   }
 };
@@ -32,19 +36,90 @@ var APS = {
 
 var SimpleFMC = {
   timerID: null,
+  updateFnList: [],
 
   init: function () {
-      this.timerID = setInterval(SimpleFMC.backgroundUpdate, 1000);
+    Log.init(UI.logContainer);
+    Status.init(UI.statusContainer);
+    APS.init(UI.apsContainer);
+    Route.init(UI.routeContainer);
+    Info.init(UI.infoContainer);
+
+    SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, 1000);
+  },
+
+  registerUpdate: function (updateFn) {
+    SimpleFMC.updateFnList.push(updateFn);
   },
 
   backgroundUpdate: function () {
-
+    for (var i = 0; i < SimpleFMC.updateFnList.length; i++) {
+      SimpleFMC.updateFnList[i]();
+    }
   },
 
   fini: function () {
-    if (this.timerID !== null) {
-      clearInterval(this.timerID);
+    if (SimpleFMC.timerID !== null) {
+      clearInterval(SimpleFMC.timerID);
     }
+  }
+};
+
+/*
+ * Implements the info panel
+ */
+
+var Info = {
+  content: null,
+
+  init: function (content) {
+    Info.content = null;
+
+  }
+};
+
+/*
+ * Implements the FMC log
+ */
+
+var Log = {
+  content: null,
+
+  init: function (content) {
+    Log.content = content;
+    Log.content
+      .css('overflow-y', 'scroll')
+      .css('overflow-x', 'auto')
+      .css('line-height', '1.3')
+      .css('height', '290px');
+  },
+
+  info: function (msg) {
+    Log._write(Log._entry('#9be651', msg));
+  },
+
+  warning: function (msg) {
+    Log._write(Log._entry('#ffc300', msg));
+  },
+
+  error: function (msg) {
+    Log._write(Log._entry('#d14537', msg));
+  },
+
+  clear: function () {
+    Log.content.empty();
+  },
+
+  _entry: function (color, msg) {
+    var entry = $('<div></div>');
+    entry
+      .css('color', color)
+      .text(msg);
+    return entry;
+  },
+
+  _write: function (entry) {
+    Log.content.prepend(entry);
   }
 };
 
@@ -56,8 +131,8 @@ var SimpleFMC = {
   'use strict';
 
   var fmcInit = function () {
-    SimpleFMC.init();
     UI.init();
+    SimpleFMC.init();
   };
 
   var initTimer = setInterval(function () {
@@ -81,11 +156,118 @@ var SimpleFMC = {
 })();
 
 /*
+ * Implements the route panel
+ */
+
+var Route = {
+  content: null,
+
+  init: function (content) {
+    Route.content = content;
+  }
+};
+
+/*
  * Implements the status panel
  */
 
-var Status = {
+ var makeStatusPanel = function () {
+   var panel = $('<div></div>');
+   panel
+     .css('width', '25%')
+     .css('height', '100px')
+     .css('float', 'left');
+   return panel;
+ };
 
+var Throttle = {
+  _panel: null,
+  _fill: null,
+  _label: null,
+  _meter: null,
+
+  init: function (content) {
+    Throttle._panel = makeStatusPanel();
+
+    Throttle._meter = $('<div></div>');
+    Throttle._meter
+      .css('margin-top', '5px')
+      .css('margin-bottom', '5px')
+      .css('margin-left', '5px')
+      .css('border', '1px solid #0f0')
+      .css('width', '10px')
+      .css('height', '80px')
+      .css('background', '#0f0')
+      .css('float', 'left');
+
+    Throttle._fill = $('<div></div>');
+    Throttle._fill
+      .css('background', '#000')
+      .css('height', '100%');
+
+    var caption = $('<div></div>');
+    caption
+      .css('padding-top', '5px')
+      .css('padding-left', '5px')
+      .css('color', '#0f0')
+      .css('float', 'left');
+
+    Throttle._label = $('<span></span>');
+
+    caption
+      .text('THROT')
+      .append($('<br>'))
+      .append(Throttle._label);
+    Throttle._meter
+      .append(Throttle._fill);
+    Throttle._panel
+      .append(Throttle._meter)
+      .append(caption);
+
+    content.append(Throttle._panel);
+  },
+
+  update: function (value) {
+    var percent = parseInt(value * 100);
+    Throttle._fill
+      .css('height', (100 - Math.abs(percent)).toString() + '%');
+
+    if (percent < 0) {
+      percent = -percent;
+      Throttle._meter
+        .css('background', '#ff8400');
+      Throttle._label
+        .css('color', '#ff8400');
+    } else {
+      Throttle._meter
+        .css('background', '#0f0');
+      Throttle._label
+        .css('color', '#0f0');
+    }
+    var val = percent.toString();
+    if (val.length === 1) {
+      val = '00' + val;
+    } else if (val.length === 2) {
+      val = '0' + val;
+    }
+
+    Throttle._label
+      .text(val + '/100');
+  },
+};
+
+var Status = {
+  content: null,
+
+  init: function (content) {
+    Status.content = content;
+
+    Throttle.init(content);
+
+    SimpleFMC.registerUpdate(function () {
+      Throttle.update(gefs.aircraft.animationValue.throttle);
+    });
+  }
 };
 
 /*
@@ -104,12 +286,12 @@ var UI = {
 
   init: function () {
     $('.gefs-map-list')
-      .css('border-bottom', this.FmcHeight + ' solid transparent');
+      .css('border-bottom', UI.FmcHeight + ' solid transparent');
 
     var fmcPanel = $('.gefs-autopilot');
     fmcPanel
       .empty()
-      .css('height', this.FmcHeight)
+      .css('height', UI.FmcHeight)
       .css('font-family', 'Lucida Console, Monaco, monospace')
       .css('font-size', '9pt')
       .css('padding', '0 0 0 0');
@@ -152,24 +334,24 @@ var UI = {
       .css('margin-right', '0px')
       .css('padding-right', '0px');
 
-    this.infoContainer = $('<div></div>');
-    this.infoContainer
+    UI.infoContainer = $('<div></div>');
+    UI.infoContainer
       .css('padding', '5px');
 
-    this.statusContainer = $('<div></div>');
-    this.statusContainer
+    UI.statusContainer = $('<div></div>');
+    UI.statusContainer
       .css('padding', '5px');
 
-    this.apsContainer = $('<div></div>');
-    this.apsContainer
+    UI.apsContainer = $('<div></div>');
+    UI.apsContainer
       .css('padding', '5px');
 
-    this.routeContainer = $('<div></div>');
-    this.routeContainer
+    UI.routeContainer = $('<div></div>');
+    UI.routeContainer
       .css('padding', '5px');
 
-    this.logContainer = $('<div></div>');
-    this.logContainer
+    UI.logContainer = $('<div></div>');
+    UI.logContainer
       .css('padding', '5px');
 
     var infoButton = makeButton('INFO');
@@ -202,7 +384,7 @@ var UI = {
       containerPanel.append(UI.logContainer);
     });
 
-    containerPanel.append(this.infoContainer);
+    containerPanel.append(UI.infoContainer);
 
     buttonPanel
       .append(infoButton)
@@ -227,9 +409,10 @@ var Utils = {
   },
 
   toDegrees: function (radians) {
-    return ((radians * (180 / Math.PI)) + 360) % 360;
+    return radians * (180 / Math.PI);
   },
 
+  // Adopted from http://www.movable-type.co.uk/scripts/latlong.html
   getGreatCircleBearing: function (x, y) {
     var latx = Utils.toRadians(x.lat);
     var lonx = Utils.toRadians(x.lon);
@@ -240,7 +423,7 @@ var Utils = {
     var a = Math.cos(latx) * Math.sin(laty) -
             Math.sin(latx) * Math.cos(laty) * Math.cos(lony - lonx);
     var hdg = Math.atan2(b, a);
-    return Utils.toDegrees(hdg);
+    return (Utils.toDegrees(hdg) + 360) % 360;
   },
 
   // Adopted from http://www.movable-type.co.uk/scripts/latlong.html

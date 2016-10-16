@@ -9,7 +9,11 @@ var APS = {
   //   holdp -> holding pattern
   mode: 'hold',
 
-  init: function () {
+  content: null,
+
+  init: function (content) {
+    APS.content = content;
+
     
   }
 };

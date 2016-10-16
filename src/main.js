@@ -6,8 +6,8 @@
   'use strict';
 
   var fmcInit = function () {
-    SimpleFMC.init();
     UI.init();
+    SimpleFMC.init();
   };
 
   var initTimer = setInterval(function () {

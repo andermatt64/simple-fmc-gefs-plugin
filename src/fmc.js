@@ -6,18 +6,31 @@
 
 var SimpleFMC = {
   timerID: null,
+  updateFnList: [],
 
   init: function () {
-      this.timerID = setInterval(SimpleFMC.backgroundUpdate, 1000);
+    Log.init(UI.logContainer);
+    Status.init(UI.statusContainer);
+    APS.init(UI.apsContainer);
+    Route.init(UI.routeContainer);
+    Info.init(UI.infoContainer);
+
+    SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, 1000);
+  },
+
+  registerUpdate: function (updateFn) {
+    SimpleFMC.updateFnList.push(updateFn);
   },
 
   backgroundUpdate: function () {
-
+    for (var i = 0; i < SimpleFMC.updateFnList.length; i++) {
+      SimpleFMC.updateFnList[i]();
+    }
   },
 
   fini: function () {
-    if (this.timerID !== null) {
-      clearInterval(this.timerID);
+    if (SimpleFMC.timerID !== null) {
+      clearInterval(SimpleFMC.timerID);
     }
   }
 };

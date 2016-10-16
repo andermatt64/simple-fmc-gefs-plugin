@@ -11,12 +11,121 @@
    return panel;
  };
 
-// TODO: Make a panel for next waypoint
-//       (fill showing distance covered,
-//        time til waypoint,
-//        waypoint name)
+var NextWaypoint = {
+  _panel: null,
+  _fill: null,
+  _time: null,
+  _target: null,
 
-// TODO: Make a panel for AP status/mode
+  init: function (content) {
+    NextWaypoint._panel = makeStatusPanel();
+
+    var meter = $('<div></div>');
+    meter
+      .css('margin-top', '5px')
+      .css('margin-bottom', '5px')
+      .css('margin-left', '5px')
+      .css('border', '1px solid #0f0')
+      .css('width', '10px')
+      .css('height', '80px')
+      .css('background', '#0f0')
+      .css('float', 'left');
+
+      NextWaypoint._fill = $('<div></div>');
+      NextWaypoint._fill
+        .css('background', '#000')
+        .css('height', '100%');
+
+      var caption = $('<div></div>');
+      caption
+        .css('padding-top', '5px')
+        .css('padding-left', '5px')
+        .css('color', '#0f0')
+        .css('float', 'left');
+
+    NextWaypoint._time = $('<span></span>');
+    NextWaypoint._target = $('<span></span>');
+
+    caption
+      .text('NEXT WPT')
+      .append($('<br>'))
+      .append(NextWaypoint._target)
+      .append($('<br>'))
+      .append('ETA')
+      .append($('<br>'))
+      .append(NextWaypoint._time);
+    meter
+      .append(NextWaypoint._fill);
+    NextWaypoint._panel
+      .append(meter)
+      .append(caption);
+
+    content.append(NextWaypoint._panel);
+  },
+
+  update: function () {
+    // TODO:
+    // NextWaypoint._fill
+   //    .css('height', (100 - Math.abs(percent)).toString() + '%');
+  }
+};
+
+var ElevatorTrim = {
+  _panel: null,
+  _fill: null,
+  _trim: null,
+
+  init: function (content) {
+    ElevatorTrim._panel = makeStatusPanel();
+
+    var meter = $('<div></div>');
+    meter
+      .css('margin-top', '5px')
+      .css('margin-bottom', '5px')
+      .css('margin-left', '5px')
+      .css('border', '1px solid #0f0')
+      .css('width', '10px')
+      .css('height', '80px')
+      .css('background', '#0f0')
+      .css('float', 'left');
+
+      ElevatorTrim._fill = $('<div></div>');
+      ElevatorTrim._fill
+        .css('background', '#000')
+        .css('height', '100%');
+
+      var caption = $('<div></div>');
+      caption
+        .css('padding-top', '5px')
+        .css('padding-left', '5px')
+        .css('color', '#0f0')
+        .css('float', 'left');
+
+      ElevatorTrim._trim = $('<span></span>');
+
+      caption
+        .text('ELVTRIM')
+        .append($('<br>'))
+        .append(ElevatorTrim._trim);
+      meter
+        .append(ElevatorTrim._fill);
+      ElevatorTrim._panel
+        .append(meter)
+        .append(caption);
+
+      content.append(ElevatorTrim._panel);
+  },
+
+  update: function (trim) {
+    var percent = parseInt((trim + 0.5) * 100);
+    ElevatorTrim._fill
+      .css('height', (100 - Math.abs(percent)).toString() + '%');
+
+    ElevatorTrim._trim
+      .text((parseInt(trim * 1000) / 1000).toString());
+  }
+};
+
 var APStatus = {
     _panel: null,
     _label: null,
@@ -27,20 +136,42 @@ var APStatus = {
 
       var container = $('<div></div>');
       container
+        .css('margin-left', '5px')
         .css('margin-top', '5px');
 
       APStatus._label = $('<span></span>');
       APStatus._mode = $('<span></span>');
 
-      // TODO:
+      container
+        .text('AP STAT')
+        .append($('<br>'))
+        .append(APStatus._label)
+        .append($('<br>'))
+        .append('AP MODE')
+        .append($('<br>'))
+        .append(APStatus._mode);
+      APStatus._panel
+        .append(container);
+
+      content.append(APStatus._panel);
     },
 
     update: function (status, mode) {
-      // TODO:
+      if (status) {
+        APStatus._label
+          .text('ON')
+          .css('color', '#339966');
+      } else {
+        APStatus._label
+          .text('OFF')
+          .css('color', '#ff3300');
+      }
+
+      APStatus._mode
+        .text(mode);
     }
 };
 
-// TODO: Make a panel for airbrakes and brake status
 var Brakes = {
   _panel: null,
   _airbrake: null,
@@ -51,16 +182,50 @@ var Brakes = {
 
     var container = $('<div></div>');
     container
+      .css('margin-left', '5px')
       .css('margin-top', '5px');
 
     Brakes._airbrake = $('<span></span>');
     Brakes._brake = $('<span></span>');
 
-    // TODO:
+    container
+      .text('SPOILER')
+      .append($('<br>'))
+      .append(Brakes._airbrake)
+      .append($('<br>'))
+      .append('BRAKES')
+      .append($('<br>'))
+      .append(Brakes._brake);
+    Brakes._panel
+      .append(container);
+
+    content.append(Brakes._panel);
   },
 
-  update: function (airbrake, brake) {
-    // TODO:
+  update: function (airbrake, brakes) {
+    if (airbrake === 0) {
+      Brakes._airbrake
+        .text('DISARM')
+        .css('color', '#339966');
+    } else if (airbrake === 1) {
+      Brakes._airbrake
+        .text('ARM')
+        .css('color', '#ff3300');
+    } else {
+      Brakes._airbrake
+        .text('CHNG')
+        .css('color', '#ff9933');
+    }
+
+    if (brakes === 0) {
+      Brakes._brake
+        .text('OFF')
+        .css('color', '#339966');
+    } else {
+      Brakes._brake
+        .text('ON')
+        .css('color', '#ff3300');
+    }
   }
 };
 
@@ -74,6 +239,7 @@ var AltitudeAndClimbRate = {
 
     var container = $('<div></div>');
     container
+      .css('margin-left', '5px')
       .css('margin-top', '5px');
 
     AltitudeAndClimbRate._altitudeLabel = $('<span></span>');
@@ -114,6 +280,7 @@ var HeadingAndSpeed = {
 
     var container = $('<div></div>');
     container
+      .css('margin-left', '5px')
       .css('margin-top', '5px');
 
     HeadingAndSpeed._headingLabel = $('<span></span>');
@@ -178,8 +345,6 @@ var FlapsAndGear = {
 
     FlapsAndGear._flapLabel = $('<span></span>');
     FlapsAndGear._gearLabel = $('<span></span>');
-    FlapsAndGear._gearLabel
-      .css('font-weight', 'bold');
 
     caption
       .text('FLAPS')
@@ -329,7 +494,11 @@ var Status = {
     Throttle.init(content);
     HeadingAndSpeed.init(content);
     AltitudeAndClimbRate.init(content);
+    NextWaypoint.init(content);
     FlapsAndGear.init(content);
+    ElevatorTrim.init(content);
+    Brakes.init(content);
+    APStatus.init(content);
 
     SimpleFMC.registerUpdate(function () {
       Throttle.update(gefs.aircraft.animationValue.throttle,
@@ -338,8 +507,14 @@ var Status = {
                              gefs.aircraft.animationValue.kias);
       AltitudeAndClimbRate.update(gefs.aircraft.animationValue.altitude,
                                   gefs.aircraft.animationValue.climbrate);
+      // TODO: NextWaypoint
       FlapsAndGear.update(gefs.aircraft.animationValue.flapsValue,
                           gefs.aircraft.animationValue.gearPosition);
+      ElevatorTrim.update(gefs.aircraft.animationValue.trim);
+      Brakes.update(gefs.aircraft.animationValue.airbrakesPosition,
+                    gefs.aircraft.animationValue.brakes);
+      APStatus.update(controls.autopilot.on,
+                      APS.mode);
     });
   }
 };

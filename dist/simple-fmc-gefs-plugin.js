@@ -14,17 +14,17 @@
 
 var APS = {
   // Valid modes:
-  //   hold  -> holding on a specific altitude/heading/speed
-  //   route -> follows a established route
-  //   holdp -> holding pattern
-  mode: 'hold',
+  //   HOLD  -> holding on a specific altitude/heading/speed
+  //   ROUTE -> follows a established route
+  //   HLDPT -> holding pattern
+  mode: 'HOLD',
 
   content: null,
 
   init: function (content) {
     APS.content = content;
 
-    
+
   }
 };
 
@@ -263,7 +263,59 @@ var Route = {
    return panel;
  };
 
-// TODO: Make a panel for
+// TODO: Make a panel for next waypoint
+//       (fill showing distance covered,
+//        time til waypoint,
+//        waypoint name)
+
+// TODO: Make a panel for AP status/mode
+var APStatus = {
+    _panel: null,
+    _label: null,
+    _mode: null,
+
+    init: function (content) {
+      APStatus._panel = makeStatusPanel();
+
+      var container = $('<div></div>');
+      container
+        .css('margin-top', '5px');
+
+      APStatus._label = $('<span></span>');
+      APStatus._mode = $('<span></span>');
+
+      // TODO:
+    },
+
+    update: function (status, mode) {
+      // TODO:
+    }
+};
+
+// TODO: Make a panel for airbrakes and brake status
+var Brakes = {
+  _panel: null,
+  _airbrake: null,
+  _brake: null,
+
+  init: function (content) {
+    Brakes._panel = makeStatusPanel();
+
+    var container = $('<div></div>');
+    container
+      .css('margin-top', '5px');
+
+    Brakes._airbrake = $('<span></span>');
+    Brakes._brake = $('<span></span>');
+
+    // TODO:
+  },
+
+  update: function (airbrake, brake) {
+    // TODO:
+  }
+};
+
 var AltitudeAndClimbRate = {
   _panel: null,
   _altitudeLabel: null,

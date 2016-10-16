@@ -16,6 +16,8 @@ var SimpleFMC = {
     Info.init(UI.infoContainer);
 
     SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, 1000);
+
+    Log.info('SimpleFMC initialized and ready to go.');
   },
 
   registerUpdate: function (updateFn) {

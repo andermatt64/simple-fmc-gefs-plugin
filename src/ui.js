@@ -22,6 +22,7 @@ var UI = {
       .css('height', UI.FmcHeight)
       .css('font-family', 'Lucida Console, Monaco, monospace')
       .css('font-size', '9pt')
+      .css('background', '#555555')
       .css('padding', '0 0 0 0');
 
     var makeButton = function (name, isBottomButton) {

@@ -171,25 +171,9 @@ var Log = {
   },
 
   uptime: function () {
-    var timeDeltaSeconds = parseInt((Date.now() - Log.startTime) / 1000);
-    var hours = parseInt(timeDeltaSeconds / 3600).toString();
-    if (hours.length === 1) {
-      hours = '0' + hours;
-    }
-
-    var mins = parseInt((timeDeltaSeconds % 3600) / 60).toString();
-    if (mins.length === 1) {
-      mins = '0' + mins;
-    }
-
-    var secs = parseInt((timeDeltaSeconds % 3600) % 60).toString();
-    if (secs.length === 1) {
-      secs = '0' + secs;
-    }
-
-    return hours + ':' + mins + ':' + secs;
+    return Utils.getTimeStamp(Date.now() - Log.startTime);
   },
-  
+
   _entry: function (color, msg) {
     var entry = $('<div></div>');
 
@@ -325,9 +309,9 @@ var NextWaypoint = {
   },
 
   update: function () {
-    // TODO:
+    // TODO: calculate eta
     // NextWaypoint._fill
-   //    .css('height', (100 - Math.abs(percent)).toString() + '%');
+    //    .css('height', (100 - Math.abs(percent)).toString() + '%');
   }
 };
 
@@ -954,5 +938,25 @@ var Utils = {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     var d = R * c;
     return d / 1000;
+  },
+
+  getTimeStamp: function (ms) {
+    var timeDeltaSeconds = parseInt(ms / 1000);
+    var hours = parseInt(timeDeltaSeconds / 3600).toString();
+    if (hours.length === 1) {
+      hours = '0' + hours;
+    }
+
+    var mins = parseInt((timeDeltaSeconds % 3600) / 60).toString();
+    if (mins.length === 1) {
+      mins = '0' + mins;
+    }
+
+    var secs = parseInt((timeDeltaSeconds % 3600) % 60).toString();
+    if (secs.length === 1) {
+      secs = '0' + secs;
+    }
+
+    return hours + ':' + mins + ':' + secs;
   }
 };

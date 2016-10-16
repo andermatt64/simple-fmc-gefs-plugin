@@ -64,9 +64,9 @@ var NextWaypoint = {
   },
 
   update: function () {
-    // TODO:
+    // TODO: calculate eta
     // NextWaypoint._fill
-   //    .css('height', (100 - Math.abs(percent)).toString() + '%');
+    //    .css('height', (100 - Math.abs(percent)).toString() + '%');
   }
 };
 

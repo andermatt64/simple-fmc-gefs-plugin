@@ -33,25 +33,9 @@ var Log = {
   },
 
   uptime: function () {
-    var timeDeltaSeconds = parseInt((Date.now() - Log.startTime) / 1000);
-    var hours = parseInt(timeDeltaSeconds / 3600).toString();
-    if (hours.length === 1) {
-      hours = '0' + hours;
-    }
-
-    var mins = parseInt((timeDeltaSeconds % 3600) / 60).toString();
-    if (mins.length === 1) {
-      mins = '0' + mins;
-    }
-
-    var secs = parseInt((timeDeltaSeconds % 3600) % 60).toString();
-    if (secs.length === 1) {
-      secs = '0' + secs;
-    }
-
-    return hours + ':' + mins + ':' + secs;
+    return Utils.getTimeStamp(Date.now() - Log.startTime);
   },
-  
+
   _entry: function (color, msg) {
     var entry = $('<div></div>');
 

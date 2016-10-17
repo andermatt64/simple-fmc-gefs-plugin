@@ -363,6 +363,8 @@ var APS = {
     if (controls.autopilot.on &&
         (APS.mode === 'RTE' || APS.mode == 'HPT')) {
       // TODO: only work for RTE and HPT
+
+      // TODO: after RTE completes, switch mode to HPT
     }
   }
 };

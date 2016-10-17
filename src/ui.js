@@ -12,6 +12,10 @@ var UI = {
   routeContainer: null,
   logContainer: null,
 
+  _state: {
+    active: null
+  },
+
   init: function () {
     $('.gefs-map-list')
       .css('border-bottom', UI.FmcHeight + ' solid transparent');
@@ -69,52 +73,87 @@ var UI = {
 
     UI.statusContainer = $('<div></div>');
     UI.statusContainer
+      .css('display', 'none')
       .css('padding', '5px');
 
     UI.apsContainer = $('<div></div>');
     UI.apsContainer
+      .css('display', 'none')
       .css('padding', '5px');
 
     UI.routeContainer = $('<div></div>');
     UI.routeContainer
+      .css('display', 'none')
       .css('padding', '5px');
 
     UI.logContainer = $('<div></div>');
     UI.logContainer
+      .css('display', 'none')
       .css('padding', '5px');
 
-    // FIXME: This unbinds mouse events! Do something else!
+    UI._state.active = UI.infoContainer;
+
     var infoButton = makeButton('INFO');
-    infoButton.click(function () {
-      containerPanel.empty();
-      containerPanel.append(UI.infoContainer);
-    });
-
     var statusButton = makeButton('STAT');
-    statusButton.click(function () {
-      containerPanel.empty();
-      containerPanel.append(UI.statusContainer);
-    });
-
     var apsButton = makeButton('APS');
-    apsButton.click(function () {
-      containerPanel.empty();
-      containerPanel.append(UI.apsContainer);
-    });
-
     var routeButton = makeButton('RTE');
-    routeButton.click(function () {
-      containerPanel.empty();
-      containerPanel.append(UI.routeContainer);
+    var logButton = makeButton('LOG', true);
+
+    infoButton.click(function () {
+      if (UI._state.active !== UI.infoContainer) {
+        UI._state.active.fadeOut(function () {
+          UI.infoContainer.fadeIn(function () {
+            UI._state.active = UI.infoContainer;
+          });
+        });
+      }
     });
 
-    var logButton = makeButton('LOG', true);
+    statusButton.click(function () {
+      if (UI._state.active !== UI.statusContainer) {
+        UI._state.active.fadeOut(function () {
+          UI.statusContainer.fadeIn(function () {
+            UI._state.active = UI.statusContainer;
+          });
+        });
+      }
+    });
+
+    apsButton.click(function () {
+      if (UI._state.active !== UI.apsContainer) {
+        UI._state.active.fadeOut(function () {
+          UI.apsContainer.fadeIn(function () {
+            UI._state.active = UI.apsContainer;
+          });
+        });
+      }
+    });
+
+    routeButton.click(function () {
+      if (UI._state.active !== UI.routeContainer) {
+        UI._state.active.fadeOut(function () {
+          UI.routeContainer.fadeIn(function () {
+            UI._state.active = UI.routeContainer;
+          });
+        });
+      }
+    });
+
     logButton.click(function () {
-      containerPanel.empty();
-      containerPanel.append(UI.logContainer);
+      if (UI._state.active !== UI.logContainer) {
+        UI._state.active.fadeOut(function () {
+          UI.logContainer.fadeIn(function () {
+            UI._state.active = UI.logContainer;
+          });
+        });
+      }
     });
 
     containerPanel.append(UI.infoContainer);
+    containerPanel.append(UI.statusContainer);
+    containerPanel.append(UI.apsContainer);
+    containerPanel.append(UI.routeContainer);
+    containerPanel.append(UI.logContainer);
 
     buttonPanel
       .append(infoButton)

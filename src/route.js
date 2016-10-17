@@ -203,7 +203,7 @@ var Route = {
       .css('text-align', 'center')
       .click(function () {
         Route._dialog
-          .slideUp(function () {
+          .fadeOut(function () {
             RouteManager._list
               .css('display', 'block');
             Route._details

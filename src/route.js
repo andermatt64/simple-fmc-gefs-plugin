@@ -127,7 +127,7 @@ var Route = {
       .css('border', '1px solid #0f0')
       .css('color', '#0f0')
       .click(function () {
-        // TODO:
+        // TODO: activated PATH -> APS.mode = 'RTE'
       });
     var deactBtn = $('<button></button>');
     deactBtn

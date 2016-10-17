@@ -83,6 +83,7 @@ var UI = {
     UI.logContainer
       .css('padding', '5px');
 
+    // FIXME: This unbinds mouse events! Do something else!
     var infoButton = makeButton('INFO');
     infoButton.click(function () {
       containerPanel.empty();

@@ -64,9 +64,17 @@ var NextWaypoint = {
   },
 
   update: function () {
-    // TODO: calculate eta
-    // NextWaypoint._fill
-    //    .css('height', (100 - Math.abs(percent)).toString() + '%');
+    var waypt = RouteManager._currentWaypoint;
+    if (waypt !== null) {
+      var percent = parseInt((RouteManager._distanceTilWaypoint / RouteManager._totalDist) * 100);
+      NextWaypoint._fill
+        .css('height', (100 - Math.abs(percent)).toString() + '%');
+
+      NextWaypoint._target
+        .text(waypt.id);
+      NextWaypoint._time
+        .text(Utils.getTimeStamp(RouteManager._eta * 1000));
+    }
   }
 };
 

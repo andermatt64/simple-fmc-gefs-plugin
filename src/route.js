@@ -9,7 +9,13 @@ var RouteManager = {
     _routesList: [],
 
     // Current active waypoint
+    // {id, lat, lon}
     _currentWaypoint: null,
+    _waypointIndex: 0,
+
+    _distanceTilWaypoint: 0,
+    _eta: 0,
+    _totalDist: 0,
 
     init: function (content) {
         RouteManager._list = $('<div></div>');
@@ -21,11 +27,63 @@ var RouteManager = {
           .css('overflow-y', 'scroll');
     },
 
-    load: function () {
+    _lookupId: function (id) {
+      var target = id.toUpperCase();
+      var key = LOCATION_DB.fixes[target];
+      if (key !== undefined) {
+        return key;
+      }
 
+      key = LOCATION_DB.airports[target];
+      if (key !== undefined) {
+        return key;
+      }
+
+      key = LOCATION_DB.navaids[target];
+      if (key !== undefined) {
+        return key;
+      }
+
+      return null;
     },
 
-    _add: function () {
+    _parseDirective: function (directive) {
+      var status = {
+        ok: false,
+        msg: '',
+        data: null
+      };
+      var findFirstDelim = function (data) {
+
+      };
+
+      // Parse waypoint ID
+
+      return status;
+    },
+
+    load: function (lst) {
+      var status = {
+        ok: false,
+        msg: ''
+      };
+
+      console.log(lst);
+      for (var i = 0; i < lst.length; i++) {
+        var ret = RouteManager._parseDirective(lst[i]);
+        if (!ret.ok) {
+          status.msg = ret.msg;
+          return status;
+        }
+
+        // TODO: add to list
+        RouteManager._add(ret.data);
+      }
+
+      return status;
+    },
+
+    _add: function (entry) {
       var item = $('<div></div>');
       item
         .css('margin-top', '1px')
@@ -128,6 +186,8 @@ var Route = {
       .css('color', '#0f0')
       .click(function () {
         // TODO: activated PATH -> APS.mode = 'RTE'
+        // TODO: setup current waypoint
+        APS.rteBtn.click();
       });
     var deactBtn = $('<button></button>');
     deactBtn
@@ -141,6 +201,7 @@ var Route = {
       .css('color', '#0f0')
       .click(function () {
         // TODO:
+        RouteManager._currentWaypoint = null;
       });
 
     controls
@@ -177,7 +238,10 @@ var Route = {
       .css('border', '1px solid #0f0')
       .css('margin', '0px')
       .css('font-family', 'Lucida Console, Monaco, monospace')
-      .css('font-size', '8pt');
+      .css('font-size', '8pt')
+      .keyup(function(evt) {
+            evt.stopImmediatePropagation();
+      });
 
     Route._submitRoute = $('<button></button>');
     Route._submitRoute
@@ -189,7 +253,50 @@ var Route = {
       .css('width', '50%')
       .css('text-align', 'center')
       .click(function () {
-        // TODO: Do stuff
+        var raw = Route._routeEntry.val();
+        if (raw.length === 0) {
+          Route._status
+            .text('ERROR: Empty entry box!');
+          return;
+        }
+
+        var rawList = raw.split(' ');
+        if (rawList.length === 0) {
+          Route._status
+            .text('ERROR: Entry is not valid');
+          return;
+        }
+
+        var points = [];
+        for (var i = 0; i < rawList.length; i++) {
+          if (rawList[i].length > 0) {
+            points.push(rawList[i]);
+          }
+        }
+
+        if (points.length === 0) {
+          Route._status
+            .text('ERROR: Invalid list format!');
+          return;
+        }
+
+        var status = RouteManager.load(points);
+        if (!status.ok) {
+          Route._status
+            .text('ERROR: ' + status.msg);
+          return;
+        }
+
+        // On success, hide the dialog
+        Route._routeEntry.text('');
+        Route._status.text('');
+        Route._dialog
+          .fadeOut(function () {
+            RouteManager._list
+              .css('display', 'block');
+            Route._details
+              .css('display', 'block');
+          });
       });
 
     var cancelBtn = $('<button></button>');

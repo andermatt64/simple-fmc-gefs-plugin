@@ -12,6 +12,10 @@ var APS = {
   content: null,
 
   apBtn: null,
+  hdgBtn: null,
+  rteBtn: null,
+  hptBtn: null,
+
   hdrLabel: null,
   altLabel: null,
   iasLabel: null,
@@ -21,6 +25,7 @@ var APS = {
   etaLabel: null,
 
   _holdPatternTicks: 0,
+  _lastDistance: null,
 
   init: function (content) {
     APS.content = content;
@@ -97,22 +102,22 @@ var APS = {
         }
       });
 
-    var hdgBtn = makeModeBtn();
-    var rteBtn = makeModeBtn();
-    var hptBtn = makeModeBtn();
+    APS.hdgBtn = makeModeBtn();
+    APS.rteBtn = makeModeBtn();
+    APS.hptBtn = makeModeBtn();
 
-    hdgBtn
+    APS.hdgBtn
       .text('HDG')
       .css('color', '#0f0')
       .css('border', '1px solid #0f0')
       .click(function () {
-        hdgBtn
+        APS.hdgBtn
           .css('color', '#0f0')
           .css('border', '1px solid #0f0');
-        rteBtn
+        APS.rteBtn
           .css('color', '#f00')
           .css('border', '1px solid #f00');
-        hptBtn
+        APS.hptBtn
           .css('color', '#f00')
           .css('border', '1px solid #f00');
 
@@ -122,16 +127,16 @@ var APS = {
           .prop('disabled', false);
       });
 
-    rteBtn
+    APS.rteBtn
       .text('ROUTE')
       .click(function () {
-        rteBtn
+        APS.rteBtn
           .css('color', '#0f0')
           .css('border', '1px solid #0f0');
-        hdgBtn
+        APS.hdgBtn
           .css('color', '#f00')
           .css('border', '1px solid #f00');
-        hptBtn
+        APS.hptBtn
           .css('color', '#f00')
           .css('border', '1px solid #f00');
 
@@ -141,16 +146,16 @@ var APS = {
           .prop('disabled', true);
       });
 
-    hptBtn
+    APS.hptBtn
       .text('HLDPAT')
       .click(function () {
-        hptBtn
+        APS.hptBtn
           .css('color', '#0f0')
           .css('border', '1px solid #0f0');
-        rteBtn
+        APS.rteBtn
           .css('color', '#f00')
           .css('border', '1px solid #f00');
-        hdgBtn
+        APS.hdgBtn
           .css('color', '#f00')
           .css('border', '1px solid #f00');
 
@@ -159,12 +164,21 @@ var APS = {
           .prop('disabled', true);
 
         controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
+        APS._holdPatternCoord = {
+          lat: gefs.aircraft.llaLocation[0],
+          lon: gefs.aircraft.llaLocation[1]
+        };
         APS._holdPatternTicks = 0;
       });
 
     var hdgBox = makeThirdsCell(true);
     APS.hdgLabel = makeInput(3);
     APS.hdgLabel
+      .click(function (event) {
+        if (event.keyCode === 13) {
+          APS.hdgLabel.blur();
+        }
+      })
       .blur(function () {
         if (controls.autopilot.on && APS.mode === 'HDG') {
           var newHdg = parseInt(APS.hdgLabel.val());
@@ -185,6 +199,11 @@ var APS = {
     var altBox = makeThirdsCell(true);
     APS.altLabel = makeInput(5);
     APS.altLabel
+      .click(function (event) {
+        if (event.keyCode === 13) {
+          APS.altLabel.blur();
+        }
+      })
       .blur(function () {
         if (controls.autopilot.on) {
           var newAlt = parseInt(APS.altLabel.val());
@@ -205,6 +224,11 @@ var APS = {
     var iasBox = makeThirdsCell(true);
     APS.iasLabel = makeInput(3);
     APS.iasLabel
+      .click(function (event) {
+        if (event.keyCode === 13) {
+          APS.iasLabel.blur();
+        }
+      })
       .blur(function () {
         if (controls.autopilot.on) {
           var newIas = parseInt(APS.iasLabel.val());
@@ -245,9 +269,9 @@ var APS = {
 
     APS.content
       .append(makeModeCell(APS.apBtn))
-      .append(makeModeCell(hdgBtn))
-      .append(makeModeCell(rteBtn))
-      .append(makeModeCell(hptBtn))
+      .append(makeModeCell(APS.hdgBtn))
+      .append(makeModeCell(APS.rteBtn))
+      .append(makeModeCell(APS.hptBtn))
       .append(makeHR())
       .append(hdgBox)
       .append(altBox)
@@ -307,6 +331,10 @@ var APS = {
       // TODO: make sure altLabel and iasLabel are set!
     } else if (APS.mode === 'HPT') {
       controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
+      APS._holdPatternCoord = {
+        lat: gefs.aircraft.llaLocation[0],
+        lon: gefs.aircraft.llaLocation[1]
+      };
       APS._holdPatternTicks = 0;
     }
 
@@ -393,21 +421,73 @@ var APS = {
   update: function () {
     if (controls.autopilot.on) {
       if (APS.mode === 'RTE') {
-          // TODO: after RTE completes, switch mode to HPT
+          if (RouteManager._currentWaypoint === null) {
+            // If the current waypoint is null, switch to holding pattern
+            APS.hptBtn.click();
+          } else {
+            var loc = {
+              lat: gefs.aircraft.llaLocation[0],
+              lon: gefs.aircraft.llaLocation[1]
+            };
+            RouteManager._distanceTilWaypoint = Utils.getGreatCircleDistance(loc, RouteManager._currentWaypoint);
+            var bearing = parseInt(Utils.getGreatCircleBearing(loc, RouteManager._currentWaypoint));
+            controls.autopilot.setHeading(bearing);
+
+            if (Math.abs(RouteManager._distanceTilWaypoint) < 1) {
+              // We count a radius of 1km as hitting the waypoint
+              RouteManager.nextWaypoint();
+              var waypt = RouteManager._currentWaypoint;
+              RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
+              if (waypt !== null) {
+                if (waypt.altitude !== null) {
+                  controls.autopilot.setAltitude(waypt.altitude);
+                }
+
+                if (waypt.ias !== null) {
+                  controls.autopilot.setKias(waypt.ias);
+                }
+              }
+            } else {
+              // Calculate ETA
+              var deltaDist = Math.abs(APS._lastDistance - RouteManager._distanceTilWaypoint);
+              RouteManager._eta = parseInt((1 / deltaDist) * RouteManager._distanceTilWaypoint);
+              APS._lastDistance = RouteManager._distanceTilWaypoint;
+            }
+
+            APS.nextLabel
+              .text(RouteManager._currentWaypoint.id);
+            APS.distLabel
+              .text(RouteManager._distanceTilWaypoint + 'KM');
+            APS.etaLabel
+              .text(Utils.getTimeStamp(RouteManager._eta * 1000));
+          }
       } else if (APS.mode === 'HPT') {
         var hdg = parseInt(gefs.aircraft.animationValue.heading360);
-        if (hdg >= controls.autopilot.heading - 5 &&
-            hdg <= controls.autopilot.heading + 5) {
-          if (APS._holdPatternTicks > 20) {
-            // After 21 ticks, switch heading 180deg
+        if (hdg >= controls.autopilot.heading - 3 &&
+            hdg <= controls.autopilot.heading + 3) {
+          if (APS._holdPatternTicks > 2) {
+            // After 2kms, switch heading 180deg
             controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
+            APS._holdPatternCoord = {
+              lat: gefs.aircraft.llaLocation[0],
+              lon: gefs.aircraft.llaLocation[1]
+            };
             APS._holdPatternTicks = 0;
           } else {
             // Count ticks
-            APS._holdPatternTicks += 1;
+            var currentLoc = {
+              lat: gefs.aircraft.llaLocation[0],
+              lon: gefs.aircraft.llaLocation[1]
+            };
+            APS._holdPatternTicks = Utils.getGreatCircleDistance(APS._holdPatternCoord,
+                                                                 currentLoc);
           }
         } else {
           // In the middle of a turn
+          APS._holdPatternCoord = {
+            lat: gefs.aircraft.llaLocation[0],
+            lon: gefs.aircraft.llaLocation[1]
+          };
           APS._holdPatternTicks = 0;
         }
       }

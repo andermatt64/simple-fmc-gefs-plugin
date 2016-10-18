@@ -720,7 +720,7 @@ var RouteManager = {
     _routesList: [],
 
     // Current active waypoint
-    // {id, lat, lon}
+    // {id, lat, lon, altitude, ias}
     _currentWaypoint: null,
     _waypointIndex: 0,
 
@@ -758,17 +758,62 @@ var RouteManager = {
       return null;
     },
 
-    _parseDirective: function (directive) {
+    _parseDirective: function (data) {
       var status = {
         ok: false,
         msg: '',
         data: null
       };
-      var findFirstDelim = function (data) {
 
+      var altDelim = data.indexOf('@');
+      var iasDelim = data.indexOf(':');
+
+      var obj = {
+        id: null,
+        altitude: null,
+        ias: null,
+        lat: null,
+        lon: null
       };
 
-      // Parse waypoint ID
+      if (altDelim === -1 && iasDelim === -1) {
+        obj.id = data;
+      } else if (altDelim === -1) {
+        obj.id = data.slice(0, iasDelim);
+        obj.ias = parseInt(data.slice(iasDelim + 1));
+      } else if (iasDelim === -1) {
+        obj.id = data.slice(0, altDelim);
+        obj.altitude = parseInt(data.slice(altDelim + 1));
+      } else {
+        if (altDelim > iasDelim) {
+          obj.id = data.slice(0, iasDelim);
+        } else {
+          obj.id = data.slice(0, altDelim);
+        }
+
+        obj.altitude = parseInt(data.slice(altDelim + 1));
+        obj.ias = parseInt(data.slice(iasDelim + 1));
+      }
+
+      var key = RouteManager._lookupId(obj.id);
+      if (key === null) {
+        status.msg = 'Invalid waypoint: ' + obj.id;
+        return status;
+      }
+
+      if (isNaN(obj.altitude)) {
+        status.msg = 'Invalid altitude for waypoint: ' + obj.id;
+        return status;
+      } else if (isNaN(obj.ias)) {
+        status.msg = 'Invalid IAS for waypoint: ' + obj.id;
+        return status;
+      }
+
+      obj.lat = key.lat;
+      obj.lon = key.lon;
+
+      status.ok = true;
+      status.data = obj;
 
       return status;
     },
@@ -787,7 +832,6 @@ var RouteManager = {
           return status;
         }
 
-        // TODO: add to list
         RouteManager._add(ret.data);
       }
 
@@ -795,6 +839,10 @@ var RouteManager = {
     },
 
     _add: function (entry) {
+      // TODO: entry is a
+      // {
+      //   id, lat, lon, altitude, ias
+      // }
       var item = $('<div></div>');
       item
         .css('margin-top', '1px')
@@ -804,7 +852,7 @@ var RouteManager = {
         .css('width', 'calc(100% - 5px)')
         .css('height', '40px');
 
-
+      console.log(entry);
     },
 
     _clear: function () {

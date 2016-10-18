@@ -825,7 +825,6 @@ var RouteManager = {
         msg: ''
       };
 
-      console.log(lst);
       for (var i = 0; i < lst.length; i++) {
         var ret = RouteManager._parseDirective(lst[i]);
         if (!ret.ok) {

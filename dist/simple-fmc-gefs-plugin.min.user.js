@@ -4,7 +4,7 @@
 // @version     0.0.1
 // @description Simple FMC GEFS Plugin
 // @author      andermatt64
-// @require     
+// @require     https://raw.githubusercontent.com/andermatt64/simple-fmc-gefs-plugin/master/dist/simple-fmc-gefs-plugin-locations.min.js
 // @match       http://*.gefs-online.com/gefs.php
 // @grant       none
 // ==/UserScript==

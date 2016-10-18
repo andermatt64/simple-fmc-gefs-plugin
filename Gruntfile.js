@@ -5,7 +5,7 @@ module.exports = function(grunt) {
                '// @version     <%= pkg.version %>\n' +
                '// @description <%= pkg.description %>\n' +
                '// @author      andermatt64\n' +
-               '// @require     \n' +
+               '// @require     https://raw.githubusercontent.com/andermatt64/simple-fmc-gefs-plugin/master/dist/simple-fmc-gefs-plugin-locations.min.js\n' +
                '// @match       http://*.gefs-online.com/gefs.php\n' +
                '// @grant       none\n' +
                '// ==/UserScript==\n\n';

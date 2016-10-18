@@ -852,6 +852,11 @@ var RouteManager = {
         .css('width', 'calc(100% - 5px)')
         .css('height', '40px');
 
+      item
+        .append(entry.id);
+      RouteManager._list
+        .append(item);
+
       console.log(entry);
     },
 

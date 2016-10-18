@@ -26,6 +26,8 @@ var RouteManager = {
           .css('float', 'left')
           .css('padding', '2px')
           .css('overflow-y', 'scroll');
+
+        content.append(RouteManager._list);
     },
 
     _lookupId: function (id) {

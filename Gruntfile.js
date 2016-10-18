@@ -5,6 +5,7 @@ module.exports = function(grunt) {
                '// @version     <%= pkg.version %>\n' +
                '// @description <%= pkg.description %>\n' +
                '// @author      andermatt64\n' +
+               '// @require     \n' +
                '// @match       http://*.gefs-online.com/gefs.php\n' +
                '// @grant       none\n' +
                '// ==/UserScript==\n\n';
@@ -17,7 +18,7 @@ module.exports = function(grunt) {
         separator: '\n'
       },
       dist: {
-        src: ['src/**/*.js'],
+        src: ['src/*.js'],
         dest: 'dist/<%= pkg.name %>.user.js'
       }
     },
@@ -27,7 +28,8 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'dist/<%= pkg.name %>.min.user.js': ['<%= concat.dist.dest %>']
+          'dist/<%= pkg.name %>.min.user.js': ['<%= concat.dist.dest %>'],
+          'dist/<%= pkg.name %>-locations.min.js': ['src/db/locations.js']
         }
       }
     },

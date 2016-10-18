@@ -832,6 +832,7 @@ var RouteManager = {
           return status;
         }
 
+        // TODO: only add once everything parses!
         RouteManager._add(ret.data);
       }
 
@@ -853,7 +854,9 @@ var RouteManager = {
         .css('height', '40px');
 
       item
-        .append(entry.id);
+        .append($('<span></span>')
+                  .text(entry.id)
+                  .css('color', '#0f0'));
       RouteManager._list
         .append(item);
 

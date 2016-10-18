@@ -189,7 +189,7 @@ var Route = {
       .css('width', '50%')
       .css('text-align', 'center')
       .click(function () {
-        // TODO:
+        // TODO: Do stuff
       });
 
     var cancelBtn = $('<button></button>');
@@ -210,8 +210,6 @@ var Route = {
               .css('display', 'block');
           });
       });
-
-    // TODO: setup click handler for submitRoute
 
     Route._dialog
       .append(msg)

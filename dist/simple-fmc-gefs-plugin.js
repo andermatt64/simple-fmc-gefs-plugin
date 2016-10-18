@@ -30,6 +30,8 @@ var APS = {
   distLabel: null,
   etaLabel: null,
 
+  _holdPatternTicks: 0,
+
   init: function (content) {
     APS.content = content;
 
@@ -125,6 +127,9 @@ var APS = {
           .css('border', '1px solid #f00');
 
         // TODO
+        APS.mode = 'HDG';
+        APS.hdgLabel
+          .prop('disabled', false);
       });
 
     rteBtn
@@ -141,6 +146,9 @@ var APS = {
           .css('border', '1px solid #f00');
 
         // TODO
+        APS.mode = 'RTE';
+        APS.hdgLabel
+          .prop('disabled', true);
       });
 
     hptBtn
@@ -156,7 +164,12 @@ var APS = {
           .css('color', '#f00')
           .css('border', '1px solid #f00');
 
-        // TODO
+        APS.mode = 'HPT';
+        APS.hdgLabel
+          .prop('disabled', true);
+
+        controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
+        APS._holdPatternTicks = 0;
       });
 
     var hdgBox = makeThirdsCell(true);
@@ -287,6 +300,15 @@ var APS = {
         controls.autopilot.setHeading(newHdg % 360);
       } else {
         newHdg = parseInt(gefs.aircraft.animationValue.heading360);
+        var rollAngle = gefs.aircraft.animationValue.aroll;
+        if (Math.abs(rollAngle) >= 1) {
+          // Smoother transition into autopilot
+          if (rollAngle > 0) {
+            newHdg -= 8;
+          } else {
+            newHdg += 8;
+          }
+        }
         controls.autopilot.setHeading(newHdg);
         APS.hdgLabel
           .val(newHdg);
@@ -294,7 +316,8 @@ var APS = {
     } else if (APS.mode === 'RTE') {
       // TODO: make sure altLabel and iasLabel are set!
     } else if (APS.mode === 'HPT') {
-      // TODO
+      controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
+      APS._holdPatternTicks = 0;
     }
 
     var newIas = parseInt(APS.iasLabel.val());
@@ -312,6 +335,14 @@ var APS = {
       controls.autopilot.setAltitude(newAlt);
     } else {
       newAlt = parseInt(gefs.aircraft.animationValue.altitude);
+      var climbRate = gefs.aircraft.animationValue.climbrate;
+      if (Math.abs(climbRate) >= 100) {
+        if (climbRate > 0) {
+          newAlt += 500;
+        } else {
+          newAlt -= 500;
+        }
+      }
       controls.autopilot.setAltitude(newAlt);
       APS.altLabel
         .val(newAlt);
@@ -370,11 +401,26 @@ var APS = {
   },
 
   update: function () {
-    if (controls.autopilot.on &&
-        (APS.mode === 'RTE' || APS.mode == 'HPT')) {
-      // TODO: only work for RTE and HPT
-
-      // TODO: after RTE completes, switch mode to HPT
+    if (controls.autopilot.on) {
+      if (APS.mode === 'RTE') {
+          // TODO: after RTE completes, switch mode to HPT
+      } else if (APS.mode === 'HPT') {
+        var hdg = parseInt(gefs.aircraft.animationValue.heading360);
+        if (hdg >= controls.autopilot.heading - 5 &&
+            hdg <= controls.autopilot.heading + 5) {
+          if (APS._holdPatternTicks > 20) {
+            // After 21 ticks, switch heading 180deg
+            controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
+            APS._holdPatternTicks = 0;
+          } else {
+            // Count ticks
+            APS._holdPatternTicks += 1;
+          }
+        } else {
+          // In the middle of a turn
+          APS._holdPatternTicks = 0;
+        }
+      }
     }
   }
 };
@@ -773,7 +819,7 @@ var Route = {
       .css('width', '50%')
       .css('text-align', 'center')
       .click(function () {
-        // TODO:
+        // TODO: Do stuff
       });
 
     var cancelBtn = $('<button></button>');
@@ -794,8 +840,6 @@ var Route = {
               .css('display', 'block');
           });
       });
-
-    // TODO: setup click handler for submitRoute
 
     Route._dialog
       .append(msg)

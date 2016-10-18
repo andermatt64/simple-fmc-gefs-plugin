@@ -7,6 +7,7 @@ var RouteManager = {
 
     // Routes list
     _routesList: [],
+    _uiList: [],
 
     // Current active waypoint
     // {id, lat, lon, altitude, ias}
@@ -145,19 +146,26 @@ var RouteManager = {
     },
 
     _clear: function () {
-
-    },
-
-    getCurrentWaypoint: function () {
-
+      // TODO: Clears the entire route manager
+      RouteManager._currentWaypoint = null;
+      RouteManager._waypointIndex = 0;
+      RouteManager._distanceTilWaypoint = 0;
+      RouteManager._eta = 0;
+      RouteManager._totalDist = 0;
+      RouteManager._list.empty();
+      RouteManager._routesList = [];
+      RouteManager._uiList = [];
     },
 
     nextWaypoint: function () {
-
+      // TODO: increment to the next waypoint
+      //       waypoints passed set to different color
+      //       set current a different color
     },
 
-    resetWaypoint: function () {
-
+    reset: function () {
+      // TODO: resets the whole route manager
+      RouteManager._clear();
     }
 };
 
@@ -233,13 +241,14 @@ var Route = {
       .css('border', '1px solid #0f0')
       .css('color', '#0f0')
       .click(function () {
-        // TODO: activated PATH -> APS.mode = 'RTE'
-        // TODO: setup current waypoint
+        // TODO: setup current waypoint by setting currentWaypoint
+        //       and updating a bunch of values...
+        //       Shoud check to see if there is
         APS.rteBtn.click();
       });
-    var deactBtn = $('<button></button>');
-    deactBtn
-      .text('DEACT')
+    var resetBtn = $('<button></button>');
+    resetBtn
+      .text('RESET')
       .css('padding', '0px')
       .css('margin', '0px')
       .css('height', '100%')
@@ -248,14 +257,14 @@ var Route = {
       .css('border', '1px solid #0f0')
       .css('color', '#0f0')
       .click(function () {
-        // TODO:
-        RouteManager._currentWaypoint = null;
+        // TODO: clears the route manager
+        RouteManager.reset();
       });
 
     controls
       .append(loadBtn)
       .append(actBtn)
-      .append(deactBtn);
+      .append(resetBtn);
     Route._details
       .append(Route._info)
       .append(controls);

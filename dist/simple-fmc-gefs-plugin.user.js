@@ -1295,6 +1295,7 @@ var ElevatorTrim = {
   _panel: null,
   _fill: null,
   _trim: null,
+  _mach: null,
 
   init: function (content) {
     ElevatorTrim._panel = makeStatusPanel();
@@ -1323,11 +1324,16 @@ var ElevatorTrim = {
         .css('float', 'left');
 
       ElevatorTrim._trim = $('<span></span>');
+      ElevatorTrim._mach = $('<span></span>');
 
       caption
         .text('ELVTRIM')
         .append($('<br>'))
-        .append(ElevatorTrim._trim);
+        .append(ElevatorTrim._trim)
+        .append($('<br>'))
+        .append('MACH')
+        .append($('<br>'))
+        .append(ElevatorTrim._mach);
       meter
         .append(ElevatorTrim._fill);
       ElevatorTrim._panel
@@ -1337,13 +1343,17 @@ var ElevatorTrim = {
       content.append(ElevatorTrim._panel);
   },
 
-  update: function (trim) {
+  update: function (trim, mach) {
     var percent = parseInt((trim + 0.5) * 100);
     ElevatorTrim._fill
       .css('height', (100 - Math.abs(percent)).toString() + '%');
 
     ElevatorTrim._trim
       .text((parseInt(trim * 1000) / 1000).toString());
+
+    mach = parseInt(mach * 1000) / 1000;
+    ElevatorTrim._mach
+      .text(mach.toString());
   }
 };
 
@@ -1731,7 +1741,8 @@ var Status = {
       NextWaypoint.update();
       FlapsAndGear.update(gefs.aircraft.animationValue.flapsValue,
                           gefs.aircraft.animationValue.gearPosition);
-      ElevatorTrim.update(gefs.aircraft.animationValue.trim);
+      ElevatorTrim.update(gefs.aircraft.animationValue.trim,
+                          gefs.aircraft.animationValue.mach);
       Brakes.update(gefs.aircraft.animationValue.airbrakesPosition,
                     gefs.aircraft.animationValue.brakes);
       APStatus.update(controls.autopilot.on,

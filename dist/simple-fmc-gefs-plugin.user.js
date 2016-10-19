@@ -1037,8 +1037,16 @@ var Route = {
         // TODO: setup current waypoint by setting currentWaypoint
         //       and updating a bunch of values...
         RouteManager.nextWaypoint();
-        Log.info('Current waypoint: ' + RouteManager._currentWaypoint.id);
-        APS.rteBtn.click();
+        var loc = {
+          lat: gefs.aircraft.llaLocation[0],
+          lon: gefs.aircraft.llaLocation[1]
+        };
+        var waypt = RouteManager._currentWaypoint;
+        if (waypt !== null) {
+          Log.info('Current waypoint: ' + RouteManager._currentWaypoint.id);
+          RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
+          APS.rteBtn.click();
+        }
       });
     var resetBtn = $('<button></button>');
     resetBtn

@@ -888,7 +888,7 @@ var RouteManager = {
 
       var overview = $('<div></div>');
       overview
-        .text('ADDED ' + Route._routesList.length + ' WAYPOINTS')
+        .text('ADDED ' + RouteManager._routesList.length + ' WAYPOINTS')
         .append($('<br>'))
         .append('TOTAL DISTANCE:' + (parseInt(totalDist * 100) / 100) + 'KM');
       Route._info
@@ -1068,7 +1068,7 @@ var Route = {
           if (waypt.ias !== null) {
             controls.autopilot.setKias(waypt.ias);
           }
-          
+
           APS.rteBtn.click();
         }
       });

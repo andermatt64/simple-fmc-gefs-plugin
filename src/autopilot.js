@@ -442,7 +442,6 @@ var APS = {
   update: function () {
     if (controls.autopilot.on) {
       if (APS.mode === 'RTE') {
-          console.log(RouteManager._currentWaypoint);
           if (RouteManager._currentWaypoint === null) {
             // If the current waypoint is null, switch to holding pattern
             APS.hptBtn.click();
@@ -453,7 +452,9 @@ var APS = {
             };
             RouteManager._distanceTilWaypoint = Utils.getGreatCircleDistance(loc, RouteManager._currentWaypoint);
             var bearing = parseInt(Utils.getGreatCircleBearing(loc, RouteManager._currentWaypoint));
-            controls.autopilot.setHeading(bearing);
+            if (bearing !== controls.autopilot.heading) {
+              controls.autopilot.setHeading(bearing);
+            }
 
             if (Math.abs(RouteManager._distanceTilWaypoint) < 1) {
               // We count a radius of 1km as hitting the waypoint

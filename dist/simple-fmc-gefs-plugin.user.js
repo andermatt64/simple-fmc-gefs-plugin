@@ -1014,7 +1014,8 @@ var Route = {
     Route._info = $('<div></div>');
     Route._info
       .css('width', '100%')
-      .css('height', '90%');
+      .css('height', '90%')
+      .text('PRESS LOAD TO DEFINE A ROUTE TO FOLLOW');
 
     var controls = $('<div></div>');
     controls

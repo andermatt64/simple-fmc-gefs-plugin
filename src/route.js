@@ -150,7 +150,7 @@ var RouteManager = {
       overview
         .text('TOTAL DISTANCE:')
         .append($('<br>'))
-        .append(totalDist + 'KM');
+        .append((parseInt(totalDist * 100) / 100) + 'KM');
       Route._info
         .append(overview);
 

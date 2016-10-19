@@ -480,7 +480,7 @@ var APS = {
             APS.nextLabel
               .text(RouteManager._currentWaypoint.id);
             APS.distLabel
-              .text(RouteManager._distanceTilWaypoint + 'KM');
+              .text((parseInt(RouteManager._distanceTilWaypoint * 100) / 100) + 'KM');
             APS.etaLabel
               .text(Utils.getTimeStamp(RouteManager._eta * 1000));
           }

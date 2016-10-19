@@ -491,7 +491,7 @@ var APS = {
             APS.nextLabel
               .text(RouteManager._currentWaypoint.id);
             APS.distLabel
-              .text(RouteManager._distanceTilWaypoint + 'KM');
+              .text((parseInt(RouteManager._distanceTilWaypoint * 100) / 100) + 'KM');
             APS.etaLabel
               .text(Utils.getTimeStamp(RouteManager._eta * 1000));
           }
@@ -890,7 +890,7 @@ var RouteManager = {
       overview
         .text('TOTAL DISTANCE:')
         .append($('<br>'))
-        .append(totalDist + 'KM');
+        .append((parseInt(totalDist * 100) / 100) + 'KM');
       Route._info
         .append(overview);
 
@@ -1695,7 +1695,7 @@ var Status = {
                              gefs.aircraft.animationValue.kias);
       AltitudeAndClimbRate.update(gefs.aircraft.animationValue.altitude,
                                   gefs.aircraft.animationValue.climbrate);
-      // TODO: NextWaypoint
+      NextWaypoint.update();
       FlapsAndGear.update(gefs.aircraft.animationValue.flapsValue,
                           gefs.aircraft.animationValue.gearPosition);
       ElevatorTrim.update(gefs.aircraft.animationValue.trim);

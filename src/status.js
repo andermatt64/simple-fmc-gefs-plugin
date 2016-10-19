@@ -515,7 +515,7 @@ var Status = {
                              gefs.aircraft.animationValue.kias);
       AltitudeAndClimbRate.update(gefs.aircraft.animationValue.altitude,
                                   gefs.aircraft.animationValue.climbrate);
-      // TODO: NextWaypoint
+      NextWaypoint.update();
       FlapsAndGear.update(gefs.aircraft.animationValue.flapsValue,
                           gefs.aircraft.animationValue.gearPosition);
       ElevatorTrim.update(gefs.aircraft.animationValue.trim);

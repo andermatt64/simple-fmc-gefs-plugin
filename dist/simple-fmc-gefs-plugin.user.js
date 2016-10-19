@@ -744,7 +744,7 @@ var RouteManager = {
     _currentWaypoint: null,
 
     // Index pointing to the current waypoint in _routesList/_uiList
-    _waypointIndex: 0,
+    _waypointIndex: -1,
 
     // Set by external clients
     // FIXME: Starting to get a bit messy here...
@@ -928,8 +928,10 @@ var RouteManager = {
     },
 
     nextWaypoint: function () {
-      RouteManager._uiList[RouteManager._currentWaypoint]
-        .css('background', '#333');
+      if (RouteManager._currentWaypoint >= 0) {
+        RouteManager._uiList[RouteManager._currentWaypoint]
+          .css('background', '#333');
+      }
 
       var next = RouteManager._routesList[RouteManager._waypointIndex + 1];
       if (next === undefined) {

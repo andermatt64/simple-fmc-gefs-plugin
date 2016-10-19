@@ -926,7 +926,7 @@ var RouteManager = {
 
     _clear: function () {
       RouteManager._currentWaypoint = null;
-      RouteManager._waypointIndex = 0;
+      RouteManager._waypointIndex = -1;
 
       RouteManager._distanceTilWaypoint = 0;
       RouteManager._eta = 0;
@@ -938,6 +938,7 @@ var RouteManager = {
     },
 
     nextWaypoint: function () {
+      console.log(RouteManager);
       if (RouteManager._waypointIndex >= 0) {
         RouteManager._uiList[RouteManager._waypointIndex]
           .css('background', '#333');

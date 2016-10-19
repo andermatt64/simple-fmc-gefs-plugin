@@ -17,6 +17,12 @@ var SimpleFMC = {
 
     SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, 1000);
 
+    // Make sure nose steering/rudder works in mouse mode with mix yaw/roll off
+    if (controls.mode === 'mouse' && !controls.mixYawRoll) {
+        Log.info('Detected mouse mode with mixYawRoll off, applying fixes...');
+        controls.yawExponential = '0.0';
+    }
+
     Log.info('SimpleFMC initialized and ready to go.');
   },
 

@@ -328,7 +328,20 @@ var APS = {
           .val(newHdg);
       }
     } else if (APS.mode === 'RTE') {
-      // TODO: make sure altLabel and iasLabel are set!
+      if (RouteManager._currentWaypoint === null) {
+        RouteManager.nextWaypoint();
+        var waypt = RouteManager._currentWaypoint;
+        RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
+        if (waypt !== null) {
+          if (waypt.altitude !== null) {
+            controls.autopilot.setAltitude(waypt.altitude);
+          }
+
+          if (waypt.ias !== null) {
+            controls.autopilot.setKias(waypt.ias);
+          }
+        }
+      }
     } else if (APS.mode === 'HPT') {
       controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
       APS._holdPatternCoord = {

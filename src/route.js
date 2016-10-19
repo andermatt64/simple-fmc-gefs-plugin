@@ -9,11 +9,17 @@ var RouteManager = {
     _routesList: [],
     _uiList: [],
 
-    // Current active waypoint
-    // {id, lat, lon, altitude, ias}
+    // Current active waypoint, must be a map with the following keys:
+    //   id, lat, lon, altitude, ias
     _currentWaypoint: null,
+
+    // Index pointing to the current waypoint in _routesList/_uiList
     _waypointIndex: 0,
 
+    // Set by external clients
+    // FIXME: Starting to get a bit messy here...
+    //   Ideally, this should be internal modification only...
+    //   Worry about it in later versions...
     _distanceTilWaypoint: 0,
     _eta: 0,
     _totalDist: 0,
@@ -89,6 +95,7 @@ var RouteManager = {
 
       var key = RouteManager._lookupId(obj.id);
       if (key === null) {
+        // TODO: Should check for XXXN/XXXXW type reporting points
         status.msg = 'Invalid waypoint: ' + obj.id;
         return status;
       }
@@ -116,6 +123,7 @@ var RouteManager = {
         msg: ''
       };
 
+      var verifiedList = [];
       for (var i = 0; i < lst.length; i++) {
         var ret = RouteManager._parseDirective(lst[i]);
         if (!ret.ok) {
@@ -123,53 +131,83 @@ var RouteManager = {
           return status;
         }
 
-        // TODO: only add once everything parses!
-        RouteManager._add(ret.data);
+        verifiedList.push(ret.data);
       }
 
+      var totalDist = 0;
+      var prevLocation = {
+        lat: gefs.aircraft.llaLocation[0],
+        lon: gefs.aircraft.llaLocation[1]
+      };
+      for (i = 0; i < verifiedList.length; i++) {
+        RouteManager._add(verifiedList[i]);
+
+        totalDist += Utils.getGreatCircleDistance(prevLocation, verifiedList[i]);
+        prevLocation = verifiedList[i];
+      }
+
+      var overview = $('<div></div>');
+      overview
+        .text('TOTAL DISTANCE:')
+        .append($('<br>'))
+        .append(totalDist + 'KM');
+      Route._details
+        .append(overview);
       return status;
     },
 
     _add: function (entry) {
-      // TODO: entry is a
-      // {
-      //   id, lat, lon, altitude, ias
-      // }
       var item = $('<div></div>');
       item
         .css('margin-top', '1px')
         .css('margin-bottom', '1px')
         .css('padding', '2px')
-        .css('background', '#333')
+        .css('background', '#555')
         .css('width', 'calc(100% - 5px)')
         .css('height', '40px');
+      var wID = $('<span></span>');
+      wID
+        .css('font-size', '11pt')
+        .css('color', '#0f0')
+        .text(entry.id);
 
       item
-        .append($('<span></span>')
-                  .text(entry.id)
-                  .css('color', '#0f0'));
+        .append(wID);
       RouteManager._list
         .append(item);
+
+      RouteManager._uiList.push(item);
+      RouteManager._routesList.push(entry);
 
       console.log(entry);
     },
 
     _clear: function () {
-      // TODO: Clears the entire route manager
       RouteManager._currentWaypoint = null;
       RouteManager._waypointIndex = 0;
+
       RouteManager._distanceTilWaypoint = 0;
       RouteManager._eta = 0;
       RouteManager._totalDist = 0;
+
       RouteManager._list.empty();
       RouteManager._routesList = [];
       RouteManager._uiList = [];
     },
 
     nextWaypoint: function () {
-      // TODO: increment to the next waypoint
-      //       waypoints passed set to different color
-      //       set current a different color
+      RouteManager._uiList[RouteManager._currentWaypoint]
+        .css('background', '#333');
+
+      var next = RouteManager._routesList[RouteManager._waypointIndex + 1];
+      if (next === undefined) {
+        RouteManager._currentWaypoint = null;
+      } else {
+        RouteManager._uiList[RouteManager._waypointIndex + 1]
+          .css('background', '#777');
+        RouteManager._currentWaypoint = next;
+        RouteManager._waypointIndex++;
+      }
     },
 
     reset: function () {
@@ -306,7 +344,7 @@ var Route = {
       .css('font-family', 'Lucida Console, Monaco, monospace')
       .css('font-size', '8pt')
       .keyup(function(evt) {
-            evt.stopImmediatePropagation();
+        evt.stopImmediatePropagation();
       });
 
     Route._submitRoute = $('<button></button>');

@@ -888,9 +888,9 @@ var RouteManager = {
 
       var overview = $('<div></div>');
       overview
-        .text('TOTAL DISTANCE:')
+        .text('ADDED ' + Route._routesList.length + ' WAYPOINTS')
         .append($('<br>'))
-        .append((parseInt(totalDist * 100) / 100) + 'KM');
+        .append('TOTAL DISTANCE:' + (parseInt(totalDist * 100) / 100) + 'KM');
       Route._info
         .append(overview);
 
@@ -909,19 +909,37 @@ var RouteManager = {
         .css('height', '40px');
       var wID = $('<span></span>');
       wID
-        .css('font-size', '11pt')
+        .css('font-size', '12pt')
         .css('color', '#0f0')
+        .css('float', 'left')
         .text(entry.id);
-
       item
         .append(wID);
+
+      if (entry.altitude !== null) {
+        var alt = $('<span></span>');
+        alt
+          .css('color', '#0f0')
+          .css('float', 'right')
+          .text(entry.altitude + 'FT');
+        item
+          .append(alt);
+      }
+
+      if (entry.ias !== null) {
+        var ias = $('<span></span>');
+        ias
+          .css('color', '#0f0')
+          .css('float', 'right')
+          .text(entry.altitude + 'KTS');
+        item
+          .append(ias);
+      }
       RouteManager._list
         .append(item);
 
       RouteManager._uiList.push(item);
       RouteManager._routesList.push(entry);
-
-      console.log(entry);
     },
 
     _clear: function () {
@@ -933,6 +951,7 @@ var RouteManager = {
       RouteManager._totalDist = 0;
 
       RouteManager._list.empty();
+      Route._info.empty();
       RouteManager._routesList = [];
       RouteManager._uiList = [];
     },
@@ -941,7 +960,7 @@ var RouteManager = {
       console.log(RouteManager);
       if (RouteManager._waypointIndex >= 0) {
         RouteManager._uiList[RouteManager._waypointIndex]
-          .css('background', '#333');
+          .css('background', '#111');
       }
 
       var next = RouteManager._routesList[RouteManager._waypointIndex + 1];
@@ -957,7 +976,6 @@ var RouteManager = {
     },
 
     reset: function () {
-      // TODO: resets the whole route manager
       RouteManager._clear();
     }
 };
@@ -985,7 +1003,6 @@ var Route = {
       .append(Route._dialog);
   },
 
-  // https://jsfiddle.net/7zthavz0/5/
   _setupMainDialog: function () {
     Route._details = $('<div></div>');
     Route._details
@@ -1034,8 +1051,6 @@ var Route = {
       .css('border', '1px solid #0f0')
       .css('color', '#0f0')
       .click(function () {
-        // TODO: setup current waypoint by setting currentWaypoint
-        //       and updating a bunch of values...
         RouteManager.nextWaypoint();
         var loc = {
           lat: gefs.aircraft.llaLocation[0],
@@ -1045,6 +1060,15 @@ var Route = {
         if (waypt !== null) {
           Log.info('Current waypoint: ' + RouteManager._currentWaypoint.id);
           RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
+
+          if (waypt.altitude !== null) {
+            controls.autopilot.setAltitude(waypt.altitude);
+          }
+
+          if (waypt.ias !== null) {
+            controls.autopilot.setKias(waypt.ias);
+          }
+          
           APS.rteBtn.click();
         }
       });
@@ -1059,7 +1083,6 @@ var Route = {
       .css('border', '1px solid #0f0')
       .css('color', '#0f0')
       .click(function () {
-        // TODO: clears the route manager
         RouteManager.reset();
       });
 

@@ -881,8 +881,10 @@ var RouteManager = {
         .text('TOTAL DISTANCE:')
         .append($('<br>'))
         .append(totalDist + 'KM');
-      Route._details
+      Route._info
         .append(overview);
+
+      status.ok = true;
       return status;
     },
 
@@ -937,6 +939,7 @@ var RouteManager = {
           .css('background', '#777');
         RouteManager._currentWaypoint = next;
         RouteManager._waypointIndex++;
+        Log.info('Next waypoint: ' + RouteManager._currentWaypoint.id);
       }
     },
 

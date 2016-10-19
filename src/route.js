@@ -95,7 +95,7 @@ var RouteManager = {
 
       var key = RouteManager._lookupId(obj.id);
       if (key === null) {
-        // TODO: Should check for XXXN/XXXXW type reporting points
+        // FIXME TODO: Should check for XXXN/XXXXW type reporting points
         status.msg = 'Invalid waypoint: ' + obj.id;
         return status;
       }
@@ -146,12 +146,14 @@ var RouteManager = {
         prevLocation = verifiedList[i];
       }
 
+      // FIXME TODO: Add more information here?
       var overview = $('<div></div>');
       overview
         .text('ADDED ' + RouteManager._routesList.length + ' WAYPOINTS')
         .append($('<br>'))
         .append('TOTAL DISTANCE:' + (parseInt(totalDist * 100) / 100) + 'KM');
       Route._info
+        .empty()
         .append(overview);
 
       status.ok = true;
@@ -195,6 +197,8 @@ var RouteManager = {
         item
           .append(ias);
       }
+
+      // FIXME TODO: Add more route waypoint information here?
       RouteManager._list
         .append(item);
 
@@ -271,6 +275,7 @@ var Route = {
       .css('float', 'left')
       .css('padding', '2px');
 
+    // FIXME TODO: Better default text?
     Route._info = $('<div></div>');
     Route._info
       .css('width', '100%')

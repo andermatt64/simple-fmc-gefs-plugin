@@ -329,17 +329,25 @@ var APS = {
       }
     } else if (APS.mode === 'RTE') {
       if (RouteManager._currentWaypoint === null) {
+        Log.info('Current waypoint is NULL, getting next waypoint');
         RouteManager.nextWaypoint();
-        var waypt = RouteManager._currentWaypoint;
-        RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
-        if (waypt !== null) {
-          if (waypt.altitude !== null) {
-            controls.autopilot.setAltitude(waypt.altitude);
-          }
+      }
 
-          if (waypt.ias !== null) {
-            controls.autopilot.setKias(waypt.ias);
-          }
+      var waypt = RouteManager._currentWaypoint;
+      var loc = {
+        lat: gefs.aircraft.llaLocation[0],
+        lon: gefs.aircraft.llaLocation[1]
+      };
+      if (waypt !== null) {
+        Log.info('Got next waypoint: ' + waypt.id);
+        RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
+
+        if (waypt.altitude !== null) {
+          controls.autopilot.setAltitude(waypt.altitude);
+        }
+
+        if (waypt.ias !== null) {
+          controls.autopilot.setKias(waypt.ias);
         }
       }
     } else if (APS.mode === 'HPT') {
@@ -450,8 +458,9 @@ var APS = {
               // We count a radius of 1km as hitting the waypoint
               RouteManager.nextWaypoint();
               var waypt = RouteManager._currentWaypoint;
-              RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
               if (waypt !== null) {
+                RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
+
                 if (waypt.altitude !== null) {
                   controls.autopilot.setAltitude(waypt.altitude);
                 }

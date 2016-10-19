@@ -295,7 +295,8 @@ var Route = {
       .click(function () {
         // TODO: setup current waypoint by setting currentWaypoint
         //       and updating a bunch of values...
-        //       Shoud check to see if there is
+        RouteManager.nextWaypoint();
+        
         APS.rteBtn.click();
       });
     var resetBtn = $('<button></button>');

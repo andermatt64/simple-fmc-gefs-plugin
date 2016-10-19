@@ -442,6 +442,7 @@ var APS = {
   update: function () {
     if (controls.autopilot.on) {
       if (APS.mode === 'RTE') {
+          console.log(RouteManager._currentWaypoint);
           if (RouteManager._currentWaypoint === null) {
             // If the current waypoint is null, switch to holding pattern
             APS.hptBtn.click();

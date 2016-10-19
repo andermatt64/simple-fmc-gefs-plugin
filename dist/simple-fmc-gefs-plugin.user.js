@@ -453,6 +453,7 @@ var APS = {
   update: function () {
     if (controls.autopilot.on) {
       if (APS.mode === 'RTE') {
+          console.log(RouteManager._currentWaypoint);
           if (RouteManager._currentWaypoint === null) {
             // If the current waypoint is null, switch to holding pattern
             APS.hptBtn.click();
@@ -937,8 +938,8 @@ var RouteManager = {
     },
 
     nextWaypoint: function () {
-      if (RouteManager._currentWaypoint >= 0) {
-        RouteManager._uiList[RouteManager._currentWaypoint]
+      if (RouteManager._waypointIndex >= 0) {
+        RouteManager._uiList[RouteManager._waypointIndex]
           .css('background', '#333');
       }
 
@@ -1035,7 +1036,7 @@ var Route = {
         // TODO: setup current waypoint by setting currentWaypoint
         //       and updating a bunch of values...
         RouteManager.nextWaypoint();
-        
+        Log.info('Current waypoint: ' + RouteManager._currentWaypoint.id);
         APS.rteBtn.click();
       });
     var resetBtn = $('<button></button>');

@@ -285,8 +285,8 @@ var APS = {
     Log.info('Setting common descent rate to -750FT/MN');
     ap.commonDescentrate = -750;
 
-    Log.info('Setting max bank agnel to 20DEG');
-    ap.maxBankAngle = 20;
+    Log.info('Setting max bank angle to 27DEG');
+    ap.maxBankAngle = 27;
 
     Log.info('Setting max climb rate to +2000FT/MN');
     ap.maxClimbrate = 2000;
@@ -501,8 +501,6 @@ var APS = {
           }
       } else if (APS.mode === 'HPT') {
         if (APS._holdPatternCoord.length === 1) {
-          Log.info('Calculating 2nd waypoint for holding patten');
-
           var hdg = parseInt(gefs.aircraft.animationValue.heading360);
           if (hdg >= controls.autopilot.heading - 3 &&
               hdg <= controls.autopilot.heading + 3) {
@@ -553,6 +551,22 @@ var APS = {
           APS._initHoldPattern();
         }
       }
+    }
+
+    // TODO: autotune AP limits based off speed/altitude?
+    if (gefs.aircraft.animationValue.kias >= 400) {
+      // KIAS is >400kts, limit AP pitch angles
+      Log.info('Setting max pitch angle to 5DEG');
+      ap.maxPitchAngle = 5;
+
+      Log.info('Setting min pitch angle to -5DEG');
+      ap.minPitchAngle = -5;
+    } else {
+      Log.info('Setting max pitch angle to 10DEG');
+      ap.maxPitchAngle = 10;
+
+      Log.info('Setting min pitch angle to -8DEG');
+      ap.minPitchAngle = -8;
     }
   }
 };

@@ -285,8 +285,8 @@ var APS = {
     Log.info('Setting common descent rate to -750FT/MN');
     ap.commonDescentrate = -750;
 
-    Log.info('Setting max bank angle to 27DEG');
-    ap.maxBankAngle = 27;
+    Log.info('Setting max bank angle to 20DEG');
+    ap.maxBankAngle = 20;
 
     Log.info('Setting max climb rate to +2000FT/MN');
     ap.maxClimbrate = 2000;
@@ -531,7 +531,7 @@ var APS = {
           };
           var targetWaypt = APS._holdPatternCoord[APS._holdPatternTicks];
           var distanceTilTarget = Utils.getGreatCircleDistance(currentLoc, targetWaypt);
-          var targetHdg = Utils.getGreatCircleBearing(currentLoc, targetWaypt);
+          var targetHdg = parseInt(Utils.getGreatCircleBearing(currentLoc, targetWaypt));
           if (targetHdg !== controls.autopilot.heading) {
             controls.autopilot.setHeading(targetHdg);
           }
@@ -556,17 +556,39 @@ var APS = {
     // TODO: autotune AP limits based off speed/altitude?
     if (gefs.aircraft.animationValue.kias >= 400) {
       // KIAS is >400kts, limit AP pitch angles
-      Log.info('Setting max pitch angle to 5DEG');
-      controls.autopilot.maxPitchAngle = 5;
+      if (controls.autopilot.maxPitchAngle !== 5) {
+        Log.info('Setting max pitch angle to 5DEG');
+        controls.autopilot.maxPitchAngle = 5;
+      }
 
-      Log.info('Setting min pitch angle to -5DEG');
-      controls.autopilot.minPitchAngle = -5;
+      if (controls.autopilot.minPitchAngle !== -5) {
+        Log.info('Setting min pitch angle to -5DEG');
+        controls.autopilot.minPitchAngle = -5;
+      }
     } else {
-      Log.info('Setting max pitch angle to 10DEG');
-      controls.autopilot.maxPitchAngle = 10;
+      if (controls.autopilot.maxPitchAngle !== 10) {
+        Log.info('Setting max pitch angle to 10DEG');
+        controls.autopilot.maxPitchAngle = 10;
+      }
 
-      Log.info('Setting min pitch angle to -8DEG');
-      controls.autopilot.minPitchAngle = -8;
+      if (controls.autopilot.minPitchAngle !== -8) {
+        Log.info('Setting min pitch angle to -8DEG');
+        controls.autopilot.minPitchAngle = -8;
+      }
+    }
+
+    if (controls.autopilot.on) {
+      if (APS.mode === 'HPT') {
+        if (controls.autopilot.maxBankAngle !== 30) {
+          Log.info('Setting max bank angle to 30DEG');
+          controls.autopilot.maxBankAngle = 30;
+        }
+      } else {
+        if (controls.autopilot.maxBankAngle !== 20) {
+          Log.info('Setting max bank angle to 20DEG');
+          controls.autopilot.maxBankAngle = 20;
+        }
+      }
     }
   }
 };

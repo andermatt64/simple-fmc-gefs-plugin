@@ -37,6 +37,7 @@ var APS = {
 
   _holdPatternTicks: 0,
   _lastDistance: null,
+  _holdPatternCoord: [],
 
   init: function (content) {
     APS.content = content;
@@ -174,12 +175,7 @@ var APS = {
         APS.hdgLabel
           .prop('disabled', true);
 
-        controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
-        APS._holdPatternCoord = {
-          lat: gefs.aircraft.llaLocation[0],
-          lon: gefs.aircraft.llaLocation[1]
-        };
-        APS._holdPatternTicks = 0;
+        APS._initHoldPattern();
       });
 
     var hdgBox = makeThirdsCell(true);
@@ -321,6 +317,15 @@ var APS = {
     SimpleFMC.registerUpdate(APS.update);
   },
 
+  _initHoldPattern: function () {
+    controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
+    APS._holdPatternCoord = [{
+      lat: gefs.aircraft.llaLocation[0],
+      lon: gefs.aircraft.llaLocation[1]
+    }];
+    APS._holdPatternTicks = 0;
+  },
+
   turnOn: function () {
     if (!gefs.aircraft.setup.autopilot) {
       return;
@@ -376,12 +381,7 @@ var APS = {
         }
       }
     } else if (APS.mode === 'HPT') {
-      controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
-      APS._holdPatternCoord = {
-        lat: gefs.aircraft.llaLocation[0],
-        lon: gefs.aircraft.llaLocation[1]
-      };
-      APS._holdPatternTicks = 0;
+      APS._initHoldPattern();
     }
 
     var newIas = parseInt(APS.iasLabel.val());
@@ -511,33 +511,57 @@ var APS = {
               .text(Utils.getTimeStamp(RouteManager._eta * 1000));
           }
       } else if (APS.mode === 'HPT') {
-        var hdg = parseInt(gefs.aircraft.animationValue.heading360);
-        if (hdg >= controls.autopilot.heading - 3 &&
-            hdg <= controls.autopilot.heading + 3) {
-          if (APS._holdPatternTicks > 2) {
-            // After 2kms, switch heading 180deg
-            controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
-            APS._holdPatternCoord = {
-              lat: gefs.aircraft.llaLocation[0],
-              lon: gefs.aircraft.llaLocation[1]
-            };
-            APS._holdPatternTicks = 0;
+        if (APS._holdPatternCoord.length === 1) {
+          Log.info('Calculating 2nd waypoint for holding patten');
+
+          var hdg = parseInt(gefs.aircraft.animationValue.heading360);
+          if (hdg >= controls.autopilot.heading - 3 &&
+              hdg <= controls.autopilot.heading + 3) {
+            // We are near our target heading
+            if (APS._holdPatternTicks > 18) {
+              // We have traveled "straight" for about 16-17 seconds, set another
+              // waypoint and turn back.
+              APS._holdPatternCoord.push({
+                lat: gefs.aircraft.llaLocation[0],
+                lon: gefs.aircraft.llaLocation[1]
+              });
+
+              // Set it to 0 to seek first waypoint again
+              APS._holdPatternTicks = 0;
+              Log.info('Target set for holding pattern');
+            } else {
+              APS._holdPatternTicks += 1;
+            }
           } else {
-            // Count ticks
-            var currentLoc = {
-              lat: gefs.aircraft.llaLocation[0],
-              lon: gefs.aircraft.llaLocation[1]
-            };
-            APS._holdPatternTicks = Utils.getGreatCircleDistance(APS._holdPatternCoord,
-                                                                 currentLoc);
+            // We are in the middle of a turn
+            APS._holdPatternTicks = 0;
           }
-        } else {
-          // In the middle of a turn
-          APS._holdPatternCoord = {
+        } else if (APS._holdPatternCoord.length === 2) {
+          // Our two waypoints are set, we use APS._holdPatternTicks as the index
+          var currentLoc = {
             lat: gefs.aircraft.llaLocation[0],
             lon: gefs.aircraft.llaLocation[1]
           };
-          APS._holdPatternTicks = 0;
+          var targetWaypt = APS._holdPatternCoord[APS._holdPatternTicks];
+          var distanceTilTarget = Utils.getGreatCircleDistance(currentLoc, targetWaypt);
+          var targetHdg = Utils.getGreatCircleBearing(currentLoc, targetWaypt);
+          if (targetHdg !== controls.autopilot.heading) {
+            controls.autopilot.setHeading(targetHdg);
+          }
+
+          if (Math.abs(distanceTilTarget) < 1) {
+            // We are within 1km of the target waypoints
+            if (APS._holdPatternTicks === 0) {
+              APS._holdPatternTicks = 1;
+            } else {
+              APS._holdPatternTicks = 0;
+            }
+          }
+        } else {
+          Log.error('Holding pattern is in a bad state! Reinitializing...');
+          console.log(APS._holdPatternCoord);
+
+          APS._initHoldPattern();
         }
       }
     }

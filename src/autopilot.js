@@ -174,7 +174,7 @@ var APS = {
     var hdgBox = makeThirdsCell(true);
     APS.hdgLabel = makeInput(3);
     APS.hdgLabel
-      .click(function (event) {
+      .keypress(function (event) {
         if (event.keyCode === 13) {
           APS.hdgLabel.blur();
         }
@@ -199,7 +199,7 @@ var APS = {
     var altBox = makeThirdsCell(true);
     APS.altLabel = makeInput(5);
     APS.altLabel
-      .click(function (event) {
+      .keypress(function (event) {
         if (event.keyCode === 13) {
           APS.altLabel.blur();
         }
@@ -224,7 +224,7 @@ var APS = {
     var iasBox = makeThirdsCell(true);
     APS.iasLabel = makeInput(3);
     APS.iasLabel
-      .click(function (event) {
+      .keypress(function (event) {
         if (event.keyCode === 13) {
           APS.iasLabel.blur();
         }
@@ -283,14 +283,28 @@ var APS = {
 
     // Set less aggressive autopilot constants
     var ap = controls.autopilot;
+    Log.info('Setting common climb rate to +500FT/MN');
     ap.commonClimbrate = 500;
+
+    Log.info('Setting common descent rate to -750FT/MN');
     ap.commonDescentrate = -750;
+
+    Log.info('Setting max bank agnel to 20DEG');
     ap.maxBankAngle = 20;
+
+    Log.info('Setting max climb rate to +2000FT/MN');
     ap.maxClimbrate = 2000;
+
+    Log.info('Setting max descent rate to -1800FT/MN');
     ap.maxDescentrate = -1800;
+
+    Log.info('Setting max pitch angle to 10DEG');
     ap.maxPitchAngle = 10;
+
+    Log.info('Setting min pitch angle to -8DEG');
     ap.minPitchAngle = -8;
 
+    Log.info('Finished setting a less aggressive AP');
     APS._hook();
 
     SimpleFMC.registerUpdate(APS.update);

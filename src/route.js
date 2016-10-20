@@ -193,7 +193,8 @@ var RouteManager = {
         ias
           .css('color', '#0f0')
           .css('float', 'right')
-          .text(entry.altitude + 'KTS');
+          .css('padding-left', '10px')
+          .text(entry.ias + 'KTS');
         item
           .append(ias);
       }

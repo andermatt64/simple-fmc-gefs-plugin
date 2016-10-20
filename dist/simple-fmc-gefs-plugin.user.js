@@ -133,7 +133,7 @@ var APS = {
           .css('color', '#f00')
           .css('border', '1px solid #f00');
 
-        // TODO
+        // TODO: trigger heading set to hdgLabel contents
         APS.mode = 'HDG';
         APS.hdgLabel
           .prop('disabled', false);
@@ -152,7 +152,7 @@ var APS = {
           .css('color', '#f00')
           .css('border', '1px solid #f00');
 
-        // TODO
+        // TODO: trigger route?
         APS.mode = 'RTE';
         APS.hdgLabel
           .prop('disabled', true);
@@ -516,8 +516,8 @@ var APS = {
           if (hdg >= controls.autopilot.heading - 3 &&
               hdg <= controls.autopilot.heading + 3) {
             // We are near our target heading
-            if (APS._holdPatternTicks > 18) {
-              // We have traveled "straight" for about 16-17 seconds, set another
+            if (APS._holdPatternTicks > 25) {
+              // We have traveled "straight" for about 23-24 seconds, set another
               // waypoint and turn back.
               APS._holdPatternCoord.push({
                 lat: gefs.aircraft.llaLocation[0],

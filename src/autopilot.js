@@ -557,16 +557,16 @@ var APS = {
     if (gefs.aircraft.animationValue.kias >= 400) {
       // KIAS is >400kts, limit AP pitch angles
       Log.info('Setting max pitch angle to 5DEG');
-      ap.maxPitchAngle = 5;
+      controls.autopilot.maxPitchAngle = 5;
 
       Log.info('Setting min pitch angle to -5DEG');
-      ap.minPitchAngle = -5;
+      controls.autopilot.minPitchAngle = -5;
     } else {
       Log.info('Setting max pitch angle to 10DEG');
-      ap.maxPitchAngle = 10;
+      controls.autopilot.maxPitchAngle = 10;
 
       Log.info('Setting min pitch angle to -8DEG');
-      ap.minPitchAngle = -8;
+      controls.autopilot.minPitchAngle = -8;
     }
   }
 };

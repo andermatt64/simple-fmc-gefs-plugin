@@ -505,8 +505,8 @@ var APS = {
           if (hdg >= controls.autopilot.heading - 3 &&
               hdg <= controls.autopilot.heading + 3) {
             // We are near our target heading
-            if (APS._holdPatternTicks > 25) {
-              // We have traveled "straight" for about 23-24 seconds, set another
+            if (APS._holdPatternTicks > 35) {
+              // We have traveled "straight" for a bit, set another
               // waypoint and turn back.
               APS._holdPatternCoord.push({
                 lat: gefs.aircraft.llaLocation[0],

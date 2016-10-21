@@ -1447,7 +1447,7 @@ var AGLStatus = {
     _planeHeight: 0,
 
     init: function (content) {
-      APStatus._panel = makeStatusPanel();
+      AGLStatus._panel = makeStatusPanel();
 
       var container = $('<div></div>');
       container

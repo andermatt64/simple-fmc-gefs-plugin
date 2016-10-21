@@ -1440,6 +1440,58 @@ var ElevatorTrim = {
   }
 };
 
+var AGLStatus = {
+    _panel: null,
+    _label: null,
+
+    _planeHeight: 0,
+
+    init: function (content) {
+      APStatus._panel = makeStatusPanel();
+
+      var container = $('<div></div>');
+      container
+        .css('margin-left', '5px')
+        .css('margin-top', '5px');
+
+      AGLStatus._label = $('<span></span>');
+      var calibrateBtn = $('<button></button>');
+      calibrateBtn
+        .text('CALIBRATE')
+        .css('border', '1px solid #0f0')
+        .css('background', '#000')
+        .css('color', '#0f0')
+        .click(function () {
+          AGLStatus._planeHeight = gefs.aircraft.animationValue.altitude - (gefs.groundElevation * metersToFeet);
+          Log.info('Calibrated AGL! planeHeight=' + AGLStatus._planeHeight);
+        });
+      container
+        .text('AGL')
+        .append($('<br>'))
+        .append(APStatus._label)
+        .append($('<br>'))
+        .append(calibrateBtn);
+      AGLStatus._panel
+        .append(container);
+
+      content.append(AGLStatus._panel);
+    },
+
+    update: function (altitude) {
+      var agl = altitude - (gefs.groundElevation * metersToFeet) - AGLStatus._planeHeight;
+      AGLStatus._label
+        .text(parseInt(agl).toString() + 'FT');
+
+      if (agl <= 500) {
+        AGLStatus._label.css('color', '#ff3300');
+      } else if (agl > 500 && agl <= 1500) {
+        AGLStatus._label.css('color', '#ff9933');
+      } else {
+        AGLStatus._label.css('color', '#339966');
+      }
+    }
+};
+
 var APStatus = {
     _panel: null,
     _label: null,
@@ -1447,7 +1499,8 @@ var APStatus = {
 
     init: function (content) {
       APStatus._panel = makeStatusPanel();
-
+      APStatus._panel
+        .css('height', '90px');
       var container = $('<div></div>');
       container
         .css('margin-left', '5px')
@@ -1812,6 +1865,7 @@ var Status = {
     FlapsAndGear.init(content);
     ElevatorTrim.init(content);
     Brakes.init(content);
+    AGLStatus.init(content);
     APStatus.init(content);
 
     SimpleFMC.registerUpdate(function () {
@@ -1828,6 +1882,7 @@ var Status = {
                           gefs.aircraft.animationValue.mach);
       Brakes.update(gefs.aircraft.animationValue.airbrakesPosition,
                     gefs.aircraft.animationValue.brakes);
+      AGLStatus.update(gefs.aircraft.animationValue.altitude);
       APStatus.update(controls.autopilot.on,
                       APS.mode);
     });

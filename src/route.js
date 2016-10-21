@@ -229,7 +229,7 @@ var RouteManager = {
       }
 
       var next = RouteManager._routesList[RouteManager._waypointIndex + 1];
-      if (next === undefined) {
+      if (next === undefined | next === null) {
         RouteManager._currentWaypoint = null;
       } else {
         RouteManager._uiList[RouteManager._waypointIndex + 1]

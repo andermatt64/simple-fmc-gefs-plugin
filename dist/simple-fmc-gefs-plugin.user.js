@@ -1468,7 +1468,7 @@ var AGLStatus = {
       container
         .text('AGL')
         .append($('<br>'))
-        .append(APStatus._label)
+        .append(AGLStatus._label)
         .append($('<br>'))
         .append(calibrateBtn);
       AGLStatus._panel

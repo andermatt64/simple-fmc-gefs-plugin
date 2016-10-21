@@ -14,6 +14,9 @@
  */
 
 var APS = {
+  // Radius around waypoint that counts as hitting the waypoint
+  TARGET_HIT_RADIUS: 0.4,
+
   // Valid modes:
   //   HDG -> holding on a specific altitude/heading/speed
   //   RTE -> follows a established route
@@ -481,8 +484,8 @@ var APS = {
               controls.autopilot.setHeading(bearing);
             }
 
-            if (Math.abs(RouteManager._distanceTilWaypoint) < 1) {
-              // We count a radius of 1km as hitting the waypoint
+            if (Math.abs(RouteManager._distanceTilWaypoint) < APS.TARGET_HIT_RADIUS) {
+              // We count a radius of a defined value as hitting the waypoint
               RouteManager.nextWaypoint();
               var waypt = RouteManager._currentWaypoint;
               if (waypt !== null) {
@@ -547,8 +550,8 @@ var APS = {
             controls.autopilot.setHeading(targetHdg);
           }
 
-          if (Math.abs(distanceTilTarget) < 1) {
-            // We are within 1km of the target waypoints
+          if (Math.abs(distanceTilTarget) < APS.TARGET_HIT_RADIUS) {
+            // We are within a defined km of the target waypoints
             if (APS._holdPatternTicks === 0) {
               APS._holdPatternTicks = 1;
             } else {

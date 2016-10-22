@@ -356,29 +356,26 @@ var APS = {
     SimpleFMC.registerUpdate(APS.update);
   },
 
+  _ensureAPLimit: function (limitName, limitValue) {
+    if (controls.autopilot[limitName] !== undefined) {
+      if (controls.autopilot[limitName] !== limitValue) {
+        Log.info('Setting autopilot ' + limitName + ' to ' + limitValue.toString());
+        controls.autopilot[limitName] = limitValue;
+      }
+    } else {
+      Log.warn(limitName + ' is not a defined autopilot limit');
+    }
+  },
+
   _setLessAggressiveAP: function () {
     // Set less aggressive autopilot constants
-    var ap = controls.autopilot;
-    Log.info('Setting common climb rate to +500FT/MN');
-    ap.commonClimbrate = 500;
-
-    Log.info('Setting common descent rate to -750FT/MN');
-    ap.commonDescentrate = -750;
-
-    Log.info('Setting max bank angle to 20DEG');
-    ap.maxBankAngle = 20;
-
-    Log.info('Setting max climb rate to +2000FT/MN');
-    ap.maxClimbrate = 2000;
-
-    Log.info('Setting max descent rate to -1800FT/MN');
-    ap.maxDescentrate = -1800;
-
-    Log.info('Setting max pitch angle to 10DEG');
-    ap.maxPitchAngle = 10;
-
-    Log.info('Setting min pitch angle to -8DEG');
-    ap.minPitchAngle = -8;
+    APS._ensureAPLimit('commonClimbrate', 500);
+    APS._ensureAPLimit('commonDescentrate', -750);
+    APS._ensureAPLimit('maxBankAngle', 20);
+    APS._ensureAPLimit('maxClimbrate', 2000);
+    APS._ensureAPLimit('maxDescentrate', -1800);
+    APS._ensureAPLimit('maxPitchAngle', 10);
+    APS._ensureAPLimit('minPitchAngle', -8);
 
     Log.info('Finished setting a less aggressive AP');
   },
@@ -587,40 +584,20 @@ var APS = {
       }
     }
 
-    if (gefs.aircraft.animationValue.kias >= 400) {
-      // KIAS is >400kts, limit AP pitch angles
-      if (controls.autopilot.maxPitchAngle !== 5) {
-        Log.info('Setting max pitch angle to 5DEG');
-        controls.autopilot.maxPitchAngle = 5;
-      }
-
-      if (controls.autopilot.minPitchAngle !== -5) {
-        Log.info('Setting min pitch angle to -5DEG');
-        controls.autopilot.minPitchAngle = -5;
-      }
-    } else {
-      if (controls.autopilot.maxPitchAngle !== 10) {
-        Log.info('Setting max pitch angle to 10DEG');
-        controls.autopilot.maxPitchAngle = 10;
-      }
-
-      if (controls.autopilot.minPitchAngle !== -8) {
-        Log.info('Setting min pitch angle to -8DEG');
-        controls.autopilot.minPitchAngle = -8;
-      }
-    }
-
     if (controls.autopilot.on) {
-      if (APS.mode === 'HPT') {
-        if (controls.autopilot.maxBankAngle !== 30) {
-          Log.info('Setting max bank angle to 30DEG');
-          controls.autopilot.maxBankAngle = 30;
-        }
+      if (gefs.aircraft.animationValue.kias >= 400) {
+        // KIAS is >400kts, limit AP pitch angles
+        APS._ensureAPLimit('maxPitchAngle', 5);
+        APS._ensureAPLimit('minPitchAngle', -5);
       } else {
-        if (controls.autopilot.maxBankAngle !== 20) {
-          Log.info('Setting max bank angle to 20DEG');
-          controls.autopilot.maxBankAngle = 20;
-        }
+        APS._ensureAPLimit('maxPitchAngle', 10);
+        APS._ensureAPLimit('minPitchAngle', -8);
+      }
+
+      if (APS.mode === 'HPT') {
+        APS._ensureAPLimit('maxBankAngle', 30);
+      } else {
+        APS._ensureAPLimit('maxBankAngle', 20);
       }
     }
   }

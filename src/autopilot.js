@@ -31,10 +31,77 @@ var APS = {
   _lastDistance: null,
   _holdPatternCoord: [],
 
+  // Sets the autopilot heading and updates the heading input to the
+  // new heading
+  _setAPHeading: function (hdg, onErrorSetCurrent) {
+    var newHdg = parseInt(hdg);
+    if (!isNaN(newHdg) && newHdg >= 0 && newHdg <= 360) {
+      controls.autopilot.setHeading(newHdg % 360);
+    } else {
+      newHdg = parseInt(gefs.aircraft.animationValue.heading360);
+
+      if (onErrorSetCurrent !== undefined && onErrorSetCurrent) {
+        var rollAngle = gefs.aircraft.animationValue.aroll;
+        if (Math.abs(rollAngle) >= 1) {
+          // Smoother transition into autopilot
+          if (rollAngle > 0) {
+            newHdg -= 8;
+          } else {
+            newHdg += 8;
+          }
+        }
+        controls.autopilot.setHeading(newHdg);
+      }
+
+      APS.hdgLabel
+        .val(newHdg);
+    }
+  },
+
+  // Sets the autopilot altitude and updates the altitude input to the
+  // new altitude
+  _setAPAltitude: function (alt, onErrorSetCurrent) {
+    var newAlt = parseInt(alt);
+    if (!isNaN(newAlt)) {
+      controls.autopilot.setAltitude(newAlt);
+    } else {
+      newAlt = parseInt(gefs.aircraft.animationValue.altitude);
+
+      if (onErrorSetCurrent !== undefined && onErrorSetCurrent) {
+        var climbRate = gefs.aircraft.animationValue.climbrate;
+        if (Math.abs(climbRate) >= 100) {
+          if (climbRate > 0) {
+            newAlt += 500;
+          } else {
+            newAlt -= 500;
+          }
+        }
+        controls.autopilot.setAltitude(newAlt);
+      }
+
+      APS.altLabel
+        .val(newAlt);
+    }
+  },
+
+  // Sets the autopilot IAS and updates the IAS input to the new IAS
+  _setAPIas: function (ias, onErrorSetCurrent) {
+    var newIas = parseInt(ias);
+    if (!isNaN(newIas) && newIas > 0) {
+      controls.autopilot.setKias(newIas);
+    } else {
+      newIas = parseInt(gefs.aircraft.animationValue.kias);
+      if (onErrorSetCurrent !== undefined && onErrorSetCurrent) {
+        controls.autopilot.setKias(newIas);
+      }
+
+      APS.iasLabel
+        .val(newIas);
+    }
+  },
+
   init: function (content) {
     APS.content = content;
-
-    // https://jsfiddle.net/7zthavz0/7/
 
     var makeModeCell = function (btn) {
       var cell = $('<div></div>');
@@ -148,6 +215,27 @@ var APS = {
         APS.mode = 'RTE';
         APS.hdgLabel
           .prop('disabled', true);
+
+        if (RouteManager._currentWaypoint === null) {
+          RouteManager.nextWaypoint();
+          var loc = {
+            lat: gefs.aircraft.llaLocation[0],
+            lon: gefs.aircraft.llaLocation[1]
+          };
+          var waypt = RouteManager._currentWaypoint;
+          if (waypt !== null) {
+            Log.info('Current waypoint: ' + RouteManager._currentWaypoint.id);
+            RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
+
+            if (waypt.altitude !== null) {
+              controls.autopilot.setAltitude(waypt.altitude);
+            }
+
+            if (waypt.ias !== null) {
+              controls.autopilot.setKias(waypt.ias);
+            }
+          }
+        }
       });
 
     APS.hptBtn
@@ -180,13 +268,7 @@ var APS = {
       })
       .blur(function () {
         if (controls.autopilot.on && APS.mode === 'HDG') {
-          var newHdg = parseInt(APS.hdgLabel.val());
-          if (!isNaN(newHdg) && newHdg >= 0 && newHdg <= 360) {
-            controls.autopilot.setHeading(newHdg % 360);
-          } else {
-            APS.hdgLabel
-              .val(parseInt(gefs.aircraft.animationValue.heading360));
-          }
+          APS._setAPHeading(APS.hdgLabel.val());
         }
       });
     hdgBox
@@ -205,13 +287,7 @@ var APS = {
       })
       .blur(function () {
         if (controls.autopilot.on) {
-          var newAlt = parseInt(APS.altLabel.val());
-          if (!isNaN(newAlt)) {
-            controls.autopilot.setAltitude(newAlt);
-          } else {
-            APS.altLabel
-              .val(parseInt(gefs.aircraft.animationValue.altitude));
-          }
+          APS._setAPAltitude(APS.altLabel.val());
         }
       });
     altBox
@@ -230,13 +306,7 @@ var APS = {
       })
       .blur(function () {
         if (controls.autopilot.on) {
-          var newIas = parseInt(APS.iasLabel.val());
-          if (!isNaN(newIas) && newIas > 0) {
-            controls.autopilot.setKias(newIas);
-          } else {
-            APS.iasLabel
-              .val(parseInt(gefs.aircraft.animationValue.kias));
-          }
+          APS._setAPIas(APS.iasLabel.val());
         }
       });
     iasBox
@@ -280,6 +350,13 @@ var APS = {
       .append(distBox)
       .append(etaBox);
 
+    APS._hook();
+    APS._setLessAggressiveAP();
+
+    SimpleFMC.registerUpdate(APS.update);
+  },
+
+  _setLessAggressiveAP: function () {
     // Set less aggressive autopilot constants
     var ap = controls.autopilot;
     Log.info('Setting common climb rate to +500FT/MN');
@@ -304,9 +381,6 @@ var APS = {
     ap.minPitchAngle = -8;
 
     Log.info('Finished setting a less aggressive AP');
-    APS._hook();
-
-    SimpleFMC.registerUpdate(APS.update);
   },
 
   _initHoldPattern: function () {
@@ -331,24 +405,7 @@ var APS = {
   	controls.autopilot.throttlePID.reset();
 
     if (APS.mode === 'HDG') {
-      var newHdg = parseInt(APS.hdgLabel.val());
-      if (!isNaN(newHdg) && newHdg >= 0 && newHdg <= 360) {
-        controls.autopilot.setHeading(newHdg % 360);
-      } else {
-        newHdg = parseInt(gefs.aircraft.animationValue.heading360);
-        var rollAngle = gefs.aircraft.animationValue.aroll;
-        if (Math.abs(rollAngle) >= 1) {
-          // Smoother transition into autopilot
-          if (rollAngle > 0) {
-            newHdg -= 8;
-          } else {
-            newHdg += 8;
-          }
-        }
-        controls.autopilot.setHeading(newHdg);
-        APS.hdgLabel
-          .val(newHdg);
-      }
+      APS._setAPHeading(APS.hdgLabel.val(), true);
     } else if (APS.mode === 'RTE') {
       if (RouteManager._currentWaypoint === null) {
         Log.info('Current waypoint is NULL, getting next waypoint');
@@ -376,33 +433,8 @@ var APS = {
       APS._initHoldPattern();
     }
 
-    var newIas = parseInt(APS.iasLabel.val());
-    if (!isNaN(newIas) && newIas > 0) {
-      controls.autopilot.setKias(newIas);
-    } else {
-      newIas = parseInt(gefs.aircraft.animationValue.kias);
-      controls.autopilot.setKias(newIas);
-      APS.iasLabel
-        .val(newIas);
-    }
-
-    var newAlt = parseInt(APS.altLabel.val());
-    if (!isNaN(newAlt)) {
-      controls.autopilot.setAltitude(newAlt);
-    } else {
-      newAlt = parseInt(gefs.aircraft.animationValue.altitude);
-      var climbRate = gefs.aircraft.animationValue.climbrate;
-      if (Math.abs(climbRate) >= 100) {
-        if (climbRate > 0) {
-          newAlt += 500;
-        } else {
-          newAlt -= 500;
-        }
-      }
-      controls.autopilot.setAltitude(newAlt);
-      APS.altLabel
-        .val(newAlt);
-    }
+    APS._setAPIas(APS.iasLabel.val(), true);
+    APS._setAPAltitude(APS.altLabel.val(), true);
 
     controls.autopilot.on = true;
   	ui.hud.autopilotIndicator(true);
@@ -459,49 +491,48 @@ var APS = {
   update: function () {
     if (controls.autopilot.on) {
       if (APS.mode === 'RTE') {
-          if (RouteManager._currentWaypoint === null) {
-            // If the current waypoint is null, switch to holding pattern
-            APS.hptBtn.click();
-          } else {
-            var loc = {
-              lat: gefs.aircraft.llaLocation[0],
-              lon: gefs.aircraft.llaLocation[1]
-            };
-            RouteManager._distanceTilWaypoint = Utils.getGreatCircleDistance(loc, RouteManager._currentWaypoint);
-            var bearing = parseInt(Utils.getGreatCircleBearing(loc, RouteManager._currentWaypoint));
-            if (bearing !== controls.autopilot.heading) {
-              controls.autopilot.setHeading(bearing);
-            }
-
-            if (Math.abs(RouteManager._distanceTilWaypoint) < APS.TARGET_HIT_RADIUS) {
-              // We count a radius of a defined value as hitting the waypoint
-              RouteManager.nextWaypoint();
-              var waypt = RouteManager._currentWaypoint;
-              if (waypt !== null) {
-                RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
-
-                if (waypt.altitude !== null) {
-                  controls.autopilot.setAltitude(waypt.altitude);
-                }
-
-                if (waypt.ias !== null) {
-                  controls.autopilot.setKias(waypt.ias);
-                }
-              }
-            } else {
-              // Calculate ETA
-              var deltaDist = Math.abs(APS._lastDistance - RouteManager._distanceTilWaypoint);
-              RouteManager._eta = parseInt((1 / deltaDist) * RouteManager._distanceTilWaypoint);
-              APS._lastDistance = RouteManager._distanceTilWaypoint;
-            }
-
-            APS.nextLabel
-              .text(RouteManager._currentWaypoint.id);
-            APS.distLabel
-              .text((parseInt(RouteManager._distanceTilWaypoint * 100) / 100) + 'KM');
-            APS.etaLabel
-              .text(Utils.getTimeStamp(RouteManager._eta * 1000));
+        if (RouteManager._currentWaypoint === null) {
+          // If the current waypoint is null, switch to holding pattern
+          APS.hptBtn.click();
+        } else {
+          var loc = {
+            lat: gefs.aircraft.llaLocation[0],
+            lon: gefs.aircraft.llaLocation[1]
+          };
+          RouteManager._distanceTilWaypoint = Utils.getGreatCircleDistance(loc, RouteManager._currentWaypoint);
+          var bearing = parseInt(Utils.getGreatCircleBearing(loc, RouteManager._currentWaypoint));
+          if (bearing !== controls.autopilot.heading) {
+            controls.autopilot.setHeading(bearing);
           }
+
+          if (Math.abs(RouteManager._distanceTilWaypoint) < APS.TARGET_HIT_RADIUS) {
+            // We count a radius of a defined value as hitting the waypoint
+            RouteManager.nextWaypoint();
+            var waypt = RouteManager._currentWaypoint;
+            if (waypt !== null) {
+              RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
+
+              if (waypt.altitude !== null) {
+                controls.autopilot.setAltitude(waypt.altitude);
+              }
+
+              if (waypt.ias !== null) {
+                controls.autopilot.setKias(waypt.ias);
+              }
+            }
+          } else {
+            // Calculate ETA
+            var deltaDist = Math.abs(APS._lastDistance - RouteManager._distanceTilWaypoint);
+            RouteManager._eta = parseInt((1 / deltaDist) * RouteManager._distanceTilWaypoint);              APS._lastDistance = RouteManager._distanceTilWaypoint;
+          }
+
+          APS.nextLabel
+            .text(RouteManager._currentWaypoint.id);
+          APS.distLabel
+            .text((parseInt(RouteManager._distanceTilWaypoint * 100) / 100) + 'KM');
+          APS.etaLabel
+            .text(Utils.getTimeStamp(RouteManager._eta * 1000));
+        }
       } else if (APS.mode === 'HPT') {
         if (APS._holdPatternCoord.length === 1) {
           var hdg = parseInt(gefs.aircraft.animationValue.heading360);
@@ -556,7 +587,6 @@ var APS = {
       }
     }
 
-    // TODO: autotune AP limits based off speed/altitude?
     if (gefs.aircraft.animationValue.kias >= 400) {
       // KIAS is >400kts, limit AP pitch angles
       if (controls.autopilot.maxPitchAngle !== 5) {

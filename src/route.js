@@ -333,26 +333,7 @@ var Route = {
       .css('border', '1px solid #0f0')
       .css('color', '#0f0')
       .click(function () {
-        RouteManager.nextWaypoint();
-        var loc = {
-          lat: gefs.aircraft.llaLocation[0],
-          lon: gefs.aircraft.llaLocation[1]
-        };
-        var waypt = RouteManager._currentWaypoint;
-        if (waypt !== null) {
-          Log.info('Current waypoint: ' + RouteManager._currentWaypoint.id);
-          RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
-
-          if (waypt.altitude !== null) {
-            controls.autopilot.setAltitude(waypt.altitude);
-          }
-
-          if (waypt.ias !== null) {
-            controls.autopilot.setKias(waypt.ias);
-          }
-
-          APS.rteBtn.click();
-        }
+        APS.rteBtn.click();
       });
     var resetBtn = $('<button></button>');
     resetBtn

@@ -53,6 +53,22 @@ var RouteManager = {
         return key;
       }
 
+      if (target.length === 12 &&
+          (target[4] === 'N' || target[4] === 'S') &&
+          (target[11] === 'E' || target[11] === 'W')) {
+        var lat = parseInt(target.slice(0, 4)) / 100;
+        var lon = parseInt(target.slice(6, 11)) / 100;
+
+        lat = (target[4] === 'S') ? -lat : lat;
+        lon = (target[11] === 'W') ? -lon : lon;
+
+        key = {
+          lat: lat,
+          lon: lon,
+          name: 'GPS'
+        };
+        return key;
+      }
       return null;
     },
 
@@ -95,7 +111,6 @@ var RouteManager = {
 
       var key = RouteManager._lookupId(obj.id);
       if (key === null) {
-        // FIXME TODO: Should check for XXXN/XXXXW type reporting points
         status.msg = 'Invalid waypoint: ' + obj.id;
         return status;
       }

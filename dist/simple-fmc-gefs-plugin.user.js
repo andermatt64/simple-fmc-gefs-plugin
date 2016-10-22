@@ -414,6 +414,8 @@ var APS = {
 
     if (APS.mode === 'HDG') {
       APS._setAPHeading(APS.hdgLabel.val(), true);
+      APS._setAPIas(APS.iasLabel.val(), true);
+      APS._setAPAltitude(APS.altLabel.val(), true);
     } else if (APS.mode === 'RTE') {
       if (RouteManager._currentWaypoint === null) {
         Log.info('Current waypoint is NULL, getting next waypoint');
@@ -431,18 +433,21 @@ var APS = {
 
         if (waypt.altitude !== null) {
           controls.autopilot.setAltitude(waypt.altitude);
+        } else {
+          APS._setAPAltitude(APS.altLabel.val(), true);
         }
 
         if (waypt.ias !== null) {
           controls.autopilot.setKias(waypt.ias);
+        } else {
+          APS._setAPIas(APS.iasLabel.val(), true);
         }
       }
     } else if (APS.mode === 'HPT') {
       APS._initHoldPattern();
+      APS._setAPIas(APS.iasLabel.val(), true);
+      APS._setAPAltitude(APS.altLabel.val(), true);
     }
-
-    APS._setAPIas(APS.iasLabel.val(), true);
-    APS._setAPAltitude(APS.altLabel.val(), true);
 
     controls.autopilot.on = true;
   	ui.hud.autopilotIndicator(true);

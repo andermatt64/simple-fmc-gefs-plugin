@@ -99,54 +99,34 @@ var UI = {
     var routeButton = makeButton('RTE');
     var logButton = makeButton('LOG', true);
 
-    infoButton.click(function () {
-      if (UI._state.active !== UI.infoContainer) {
-        UI._state.active.fadeOut(function () {
-          UI.infoContainer.fadeIn(function () {
-            UI._state.active = UI.infoContainer;
+    var switchContent = function (target) {
+        if (UI._state.active !== target) {
+          UI._state.active.stop(true, true).fadeOut(function () {
+            target.stop(true, true).fadeIn(function () {
+              UI._state.active = target;
+            });
           });
-        });
-      }
+        }
+    };
+
+    infoButton.click(function () {
+      switchContent(UI.infoContainer);
     });
 
     statusButton.click(function () {
-      if (UI._state.active !== UI.statusContainer) {
-        UI._state.active.fadeOut(function () {
-          UI.statusContainer.fadeIn(function () {
-            UI._state.active = UI.statusContainer;
-          });
-        });
-      }
+      switchContent(UI.statusContainer);
     });
 
     apsButton.click(function () {
-      if (UI._state.active !== UI.apsContainer) {
-        UI._state.active.fadeOut(function () {
-          UI.apsContainer.fadeIn(function () {
-            UI._state.active = UI.apsContainer;
-          });
-        });
-      }
+      switchContent(UI.apsContainer);
     });
 
     routeButton.click(function () {
-      if (UI._state.active !== UI.routeContainer) {
-        UI._state.active.fadeOut(function () {
-          UI.routeContainer.fadeIn(function () {
-            UI._state.active = UI.routeContainer;
-          });
-        });
-      }
+      switchContent(UI.routeContainer);
     });
 
     logButton.click(function () {
-      if (UI._state.active !== UI.logContainer) {
-        UI._state.active.fadeOut(function () {
-          UI.logContainer.fadeIn(function () {
-            UI._state.active = UI.logContainer;
-          });
-        });
-      }
+      switchContent(UI.logContainer);
     });
 
     containerPanel.append(UI.infoContainer);

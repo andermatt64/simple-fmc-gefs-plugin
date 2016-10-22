@@ -48,6 +48,8 @@ var Info = {
       .append('UPTIME: ')
       .append(Info._uptime)
       .append($('<br><br>'))
+      .append('MAKE SURE PLANE HEIGHT IS CALIBRATED!')
+      .append($('<br><br>'))
       .append(credits);
 
     Info.content

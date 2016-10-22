@@ -149,6 +149,7 @@ var AGLStatus = {
     _label: null,
 
     _planeHeight: 0,
+    _calibrateBtn: null,
 
     init: function (content) {
       AGLStatus._panel = makeStatusPanel();
@@ -159,9 +160,10 @@ var AGLStatus = {
         .css('margin-top', '5px');
 
       AGLStatus._label = $('<span></span>');
-      var calibrateBtn = $('<button></button>');
-      calibrateBtn
-        .text('CALIBRATE')
+      AGLStatus._calibrateBtn = $('<button></button>');
+      AGLStatus._calibrateBtn
+        .text('CAL')
+        .css('font-family', '"Lucida Console", Monaco, monospace')
         .css('border', '1px solid #0f0')
         .css('background', '#000')
         .css('color', '#0f0')
@@ -174,7 +176,7 @@ var AGLStatus = {
         .append($('<br>'))
         .append(AGLStatus._label)
         .append($('<br>'))
-        .append(calibrateBtn);
+        .append(AGLStatus._calibrateBtn);
       AGLStatus._panel
         .append(container);
 

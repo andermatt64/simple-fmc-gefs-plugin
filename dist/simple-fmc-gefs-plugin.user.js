@@ -709,6 +709,8 @@ var Info = {
       .append('UPTIME: ')
       .append(Info._uptime)
       .append($('<br><br>'))
+      .append('MAKE SURE PLANE HEIGHT IS CALIBRATED!')
+      .append($('<br><br>'))
       .append(credits);
 
     Info.content
@@ -991,7 +993,7 @@ var RouteManager = {
       overview
         .text('ADDED ' + RouteManager._routesList.length + ' WAYPOINTS')
         .append($('<br>'))
-        .append('TOTAL DISTANCE:' + (parseInt(totalDist * 100) / 100) + 'KM');
+        .append('TOTAL DISTANCE: ' + (parseInt(totalDist * 100) / 100) + 'KM');
       Route._info
         .empty()
         .append(overview);
@@ -1011,7 +1013,7 @@ var RouteManager = {
         .css('height', '40px');
       var wID = $('<span></span>');
       wID
-        .css('font-size', '12pt')
+        .css('font-size', '14pt')
         .css('color', '#0f0')
         .css('float', 'left')
         .text(entry.id);
@@ -1033,7 +1035,7 @@ var RouteManager = {
         ias
           .css('color', '#0f0')
           .css('float', 'right')
-          .css('padding-left', '10px')
+          .css('padding-right', '10px')
           .text(entry.ias + 'KTS');
         item
           .append(ias);
@@ -1448,6 +1450,7 @@ var AGLStatus = {
     _label: null,
 
     _planeHeight: 0,
+    _calibrateBtn: null,
 
     init: function (content) {
       AGLStatus._panel = makeStatusPanel();
@@ -1458,9 +1461,10 @@ var AGLStatus = {
         .css('margin-top', '5px');
 
       AGLStatus._label = $('<span></span>');
-      var calibrateBtn = $('<button></button>');
-      calibrateBtn
-        .text('CALIBRATE')
+      AGLStatus._calibrateBtn = $('<button></button>');
+      AGLStatus._calibrateBtn
+        .text('CAL')
+        .css('font-family', '"Lucida Console", Monaco, monospace')
         .css('border', '1px solid #0f0')
         .css('background', '#000')
         .css('color', '#0f0')
@@ -1473,7 +1477,7 @@ var AGLStatus = {
         .append($('<br>'))
         .append(AGLStatus._label)
         .append($('<br>'))
-        .append(calibrateBtn);
+        .append(AGLStatus._calibrateBtn);
       AGLStatus._panel
         .append(container);
 
@@ -1993,54 +1997,34 @@ var UI = {
     var routeButton = makeButton('RTE');
     var logButton = makeButton('LOG', true);
 
-    infoButton.click(function () {
-      if (UI._state.active !== UI.infoContainer) {
-        UI._state.active.fadeOut(function () {
-          UI.infoContainer.fadeIn(function () {
-            UI._state.active = UI.infoContainer;
+    var switchContent = function (target) {
+        if (UI._state.active !== target) {
+          UI._state.active.stop(true, true).fadeOut(function () {
+            target.stop(true, true).fadeIn(function () {
+              UI._state.active = target;
+            });
           });
-        });
-      }
+        }
+    };
+
+    infoButton.click(function () {
+      switchContent(UI.infoContainer);
     });
 
     statusButton.click(function () {
-      if (UI._state.active !== UI.statusContainer) {
-        UI._state.active.fadeOut(function () {
-          UI.statusContainer.fadeIn(function () {
-            UI._state.active = UI.statusContainer;
-          });
-        });
-      }
+      switchContent(UI.statusContainer);
     });
 
     apsButton.click(function () {
-      if (UI._state.active !== UI.apsContainer) {
-        UI._state.active.fadeOut(function () {
-          UI.apsContainer.fadeIn(function () {
-            UI._state.active = UI.apsContainer;
-          });
-        });
-      }
+      switchContent(UI.apsContainer);
     });
 
     routeButton.click(function () {
-      if (UI._state.active !== UI.routeContainer) {
-        UI._state.active.fadeOut(function () {
-          UI.routeContainer.fadeIn(function () {
-            UI._state.active = UI.routeContainer;
-          });
-        });
-      }
+      switchContent(UI.routeContainer);
     });
 
     logButton.click(function () {
-      if (UI._state.active !== UI.logContainer) {
-        UI._state.active.fadeOut(function () {
-          UI.logContainer.fadeIn(function () {
-            UI._state.active = UI.logContainer;
-          });
-        });
-      }
+      switchContent(UI.logContainer);
     });
 
     containerPanel.append(UI.infoContainer);

@@ -166,7 +166,7 @@ var RouteManager = {
       overview
         .text('ADDED ' + RouteManager._routesList.length + ' WAYPOINTS')
         .append($('<br>'))
-        .append('TOTAL DISTANCE:' + (parseInt(totalDist * 100) / 100) + 'KM');
+        .append('TOTAL DISTANCE: ' + (parseInt(totalDist * 100) / 100) + 'KM');
       Route._info
         .empty()
         .append(overview);
@@ -186,7 +186,7 @@ var RouteManager = {
         .css('height', '40px');
       var wID = $('<span></span>');
       wID
-        .css('font-size', '12pt')
+        .css('font-size', '14pt')
         .css('color', '#0f0')
         .css('float', 'left')
         .text(entry.id);
@@ -208,7 +208,7 @@ var RouteManager = {
         ias
           .css('color', '#0f0')
           .css('float', 'right')
-          .css('padding-left', '10px')
+          .css('padding-right', '10px')
           .text(entry.ias + 'KTS');
         item
           .append(ias);

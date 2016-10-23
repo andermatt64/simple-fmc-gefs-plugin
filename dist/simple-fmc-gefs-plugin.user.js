@@ -868,6 +868,13 @@ var RouteManager = {
         content.append(RouteManager._list);
     },
 
+    _isGPSCoordFormat: function (target) {
+      target = target.toUpperCase();
+      return (target.length === 12) &&
+             (target[4] === 'N' || target[4] === 'S') &&
+             (target[11] === 'E' || target[11] === 'W');
+    },
+
     _lookupId: function (id) {
       var target = id.toUpperCase();
       var key = LOCATION_DB.fixes[target];
@@ -885,9 +892,7 @@ var RouteManager = {
         return key;
       }
 
-      if (target.length === 12 &&
-          (target[4] === 'N' || target[4] === 'S') &&
-          (target[11] === 'E' || target[11] === 'W')) {
+      if (RouteManager._isGPSCoordFormat(id)) {
         var lat = parseInt(target.slice(0, 4)) / 100;
         var lon = parseInt(target.slice(6, 11)) / 100;
 
@@ -964,6 +969,22 @@ var RouteManager = {
       return status;
     },
 
+    // Convert the route to gcmap.com syntax
+    _toGCMapFormat: function () {
+      var gcList = [];
+      for (var i = 0; i < RouteManager._routesList.length; i++) {
+        var entry = RouteManager._routesList[i];
+        if (RouteManager._isGPSCoordFormat(entry.id)) {
+          gcList.push(entry.id[4] + (entry.lat * 100).toString() +
+                      ' ' +
+                      entry.id[11] + (entry.lon * 100).toString());
+        } else {
+          gcList.push(entry.id);
+        }
+      }
+      return gcList.join('-');
+    },
+
     load: function (lst) {
       var status = {
         ok: false,
@@ -994,11 +1015,16 @@ var RouteManager = {
       }
 
       // FIXME TODO: Add more information here?
+      var gcmap = $('<pre></pre>');
+      gcmap
+        .text(RouteManager._toGCMapFormat());
       var overview = $('<div></div>');
       overview
         .text('ADDED ' + RouteManager._routesList.length + ' WAYPOINTS')
         .append($('<br>'))
-        .append('TOTAL DISTANCE: ' + (parseInt(totalDist * 100) / 100) + 'KM');
+        .append('TOTAL DISTANCE: ' + (parseInt(totalDist * 100) / 100) + 'KM')
+        .append($('<br>'))
+        .append(gcmap);
       Route._info
         .empty()
         .append(overview);

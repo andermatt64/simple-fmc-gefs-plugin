@@ -146,7 +146,7 @@ var RouteManager = {
     // Convert the route to gcmap.com syntax
     _toGCMapFormat: function () {
       var gcList = [];
-      var toGCMapFmt = function (v) {
+      var toGCMapFmt = function (v, isLng) {
         var h = parseInt(Math.abs(v));
         var m = (Math.abs(v) - h) * 60;
         var s = parseInt(((m - parseInt(m)) * 60) + 0.5);
@@ -180,7 +180,7 @@ var RouteManager = {
 
         return h + m + s;
       };
-      
+
       for (var i = 0; i < RouteManager._routesList.length; i++) {
         var entry = RouteManager._routesList[i];
         if (entry.type === 'gps') {

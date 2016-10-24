@@ -152,7 +152,7 @@ var RouteManager = {
         var s = parseInt(((m - parseInt(m)) * 60) + 0.5);
 
         m = parseInt(m);
-
+        console.log([h, m, s]);
         var len = h.toString().length;
         if (isLng !== undefined && isLng) {
           if (len === 1) {

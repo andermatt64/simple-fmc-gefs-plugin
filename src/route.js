@@ -148,10 +148,13 @@ var RouteManager = {
       var gcList = [];
       for (var i = 0; i < RouteManager._routesList.length; i++) {
         var entry = RouteManager._routesList[i];
-        if (entry.type === 'gps' || entry.type === 'navaid') {
+        if (entry.type === 'gps') {
           gcList.push(entry.id[4] + (entry.lat * 100).toString() +
                       ' ' +
                       entry.id[11] + (entry.lon * 100).toString());
+        } else if (entry.type === 'navaid') {
+          gcList.push(((entry.lat > 0) ? 'N' : 'S') + parseInt(entry.lat * 100).toString() + ' ' +
+                      ((entry.lon > 0) ? 'E' : 'W') + parseInt(entry.lon * 100).toString());
         } else {
           gcList.push(entry.id);
         }

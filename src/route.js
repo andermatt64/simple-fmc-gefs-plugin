@@ -229,13 +229,14 @@ var RouteManager = {
       gcmap
         .css('font-family', 'Courier New')
         .css('font-size', '6pt')
+        .css('line-height', '10px')
         .text(RouteManager._toGCMapFormat());
       var overview = $('<div></div>');
       overview
         .text('ADDED ' + RouteManager._routesList.length + ' WAYPOINTS')
         .append($('<br>'))
         .append('TOTAL DISTANCE: ' + (parseInt(totalDist * 100) / 100) + 'KM')
-        .append($('<br>'))
+        .append($('<br><br>'))
         .append(gcmap);
       Route._info
         .empty()

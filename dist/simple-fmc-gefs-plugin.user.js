@@ -978,6 +978,41 @@ var RouteManager = {
     // Convert the route to gcmap.com syntax
     _toGCMapFormat: function () {
       var gcList = [];
+      var toGCMapFmt = function (v) {
+        var h = parseInt(Math.abs(v));
+        var m = (Math.abs(v) - h) * 60;
+        var s = parseInt(((m - parseInt(m)) * 60) + 0.5);
+
+        m = parseInt(m);
+
+        var len = 0;
+        if (isLng !== undefined && isLng) {
+          len = h.toString().length;
+          if (len === 1) {
+            h = '00' + h.toString();
+          } else if (len === 2) {
+            h = '0' + h.toString();
+          }
+        } else {
+          len = h.toString().length;
+          if (len === 1) {
+            h = '0' + h.toString();
+          }
+        }
+
+        len = m.toString().length;
+        if (len === 1) {
+          m = '0' + m.toString();
+        }
+
+        len = s.toString().length;
+        if (len === 1) {
+          s = '0' + s.toString();
+        }
+
+        return h + m + s;
+      };
+      
       for (var i = 0; i < RouteManager._routesList.length; i++) {
         var entry = RouteManager._routesList[i];
         if (entry.type === 'gps') {
@@ -985,8 +1020,8 @@ var RouteManager = {
                       ' ' +
                       entry.id[11] + (entry.lon * 100).toString());
         } else if (entry.type === 'navaid') {
-          gcList.push(((entry.lat > 0) ? 'N' : 'S') + parseInt(entry.lat * 100).toString() + ' ' +
-                      ((entry.lon > 0) ? 'E' : 'W') + parseInt(entry.lon * 100).toString());
+          gcList.push(((entry.lat > 0) ? 'N' : 'S') + toGCMapFmt(entry.lat) + ' ' +
+                      ((entry.lon > 0) ? 'E' : 'W') + toGCMapFmt(entry.lon, true));
         } else {
           gcList.push(entry.id);
         }

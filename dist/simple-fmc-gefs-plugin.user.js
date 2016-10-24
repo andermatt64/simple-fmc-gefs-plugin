@@ -985,16 +985,14 @@ var RouteManager = {
 
         m = parseInt(m);
 
-        var len = 0;
+        var len = h.toString().length;
         if (isLng !== undefined && isLng) {
-          len = h.toString().length;
           if (len === 1) {
             h = '00' + h.toString();
           } else if (len === 2) {
             h = '0' + h.toString();
           }
         } else {
-          len = h.toString().length;
           if (len === 1) {
             h = '0' + h.toString();
           }
@@ -1010,7 +1008,7 @@ var RouteManager = {
           s = '0' + s.toString();
         }
 
-        return h + m + s;
+        return h + '' + m + '' + s;
       };
 
       for (var i = 0; i < RouteManager._routesList.length; i++) {

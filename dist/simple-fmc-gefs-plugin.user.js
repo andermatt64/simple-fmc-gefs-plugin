@@ -984,7 +984,7 @@ var RouteManager = {
         var s = parseInt(((m - parseInt(m)) * 60) + 0.5);
 
         m = parseInt(m);
-        
+
         var len = h.toString().length;
         if (isLng !== undefined && isLng) {
           if (len === 1) {
@@ -1014,9 +1014,9 @@ var RouteManager = {
       for (var i = 0; i < RouteManager._routesList.length; i++) {
         var entry = RouteManager._routesList[i];
         if (entry.type === 'gps') {
-          gcList.push(entry.id[4] + (entry.lat * 100).toString() +
+          gcList.push(entry.id[4] + Math.abs(entry.lat * 100).toString() +
                       ' ' +
-                      entry.id[11] + (entry.lon * 100).toString());
+                      entry.id[11] + Math.abs(entry.lon * 100).toString());
         } else if (entry.type === 'navaid') {
           gcList.push(((entry.lat > 0) ? 'N' : 'S') + toGCMapFmt(entry.lat) + ' ' +
                       ((entry.lon > 0) ? 'E' : 'W') + toGCMapFmt(entry.lon, true));
@@ -1057,8 +1057,10 @@ var RouteManager = {
       }
 
       // FIXME TODO: Add more information here?
-      var gcmap = $('<pre></pre>');
+      var gcmap = $('<div></div>');
       gcmap
+        .css('font-family', 'Courier New')
+        .css('font-size', '6pt')
         .text(RouteManager._toGCMapFormat());
       var overview = $('<div></div>');
       overview

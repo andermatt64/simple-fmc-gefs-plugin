@@ -1013,7 +1013,7 @@ var RouteManager = {
 
       for (var i = 0; i < RouteManager._routesList.length; i++) {
         var entry = RouteManager._routesList[i];
-        if (entry.type === 'gps' && entry.type === 'navaid') {
+        if (entry.type === 'gps' || entry.type === 'navaid') {
           gcList.push(((entry.lat > 0) ? 'N' : 'S') + toGCMapFmt(entry.lat) + ' ' +
                       ((entry.lon > 0) ? 'E' : 'W') + toGCMapFmt(entry.lon, true));
         } else {

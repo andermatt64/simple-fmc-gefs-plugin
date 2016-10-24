@@ -47,16 +47,19 @@ var RouteManager = {
       var target = id.toUpperCase();
       var key = LOCATION_DB.fixes[target];
       if (key !== undefined) {
+        key.type = 'fix';
         return key;
       }
 
       key = LOCATION_DB.airports[target];
       if (key !== undefined) {
+        key.type = 'airport';
         return key;
       }
 
       key = LOCATION_DB.navaids[target];
       if (key !== undefined) {
+        key.type = 'navaid';
         return key;
       }
 
@@ -68,9 +71,10 @@ var RouteManager = {
         lon = (target[11] === 'W') ? -lon : lon;
 
         key = {
+          type: 'gps',
           lat: lat,
           lon: lon,
-          name: 'GPS'
+          name: lat.toString() + ',' + lon.toString()
         };
         return key;
       }
@@ -88,6 +92,7 @@ var RouteManager = {
       var iasDelim = data.indexOf(':');
 
       var obj = {
+        type: null,
         id: null,
         altitude: null,
         ias: null,
@@ -128,6 +133,7 @@ var RouteManager = {
         return status;
       }
 
+      obj.type = key.type;
       obj.lat = key.lat;
       obj.lon = key.lon;
 
@@ -142,7 +148,7 @@ var RouteManager = {
       var gcList = [];
       for (var i = 0; i < RouteManager._routesList.length; i++) {
         var entry = RouteManager._routesList[i];
-        if (RouteManager._isGPSCoordFormat(entry.id)) {
+        if (entry.type === 'gps' || entry.type === 'navaid') {
           gcList.push(entry.id[4] + (entry.lat * 100).toString() +
                       ' ' +
                       entry.id[11] + (entry.lon * 100).toString());

@@ -8,7 +8,8 @@ module.exports = function(grunt) {
                '// @require     https://raw.githubusercontent.com/andermatt64/simple-fmc-gefs-plugin/master/dist/simple-fmc-gefs-plugin-locations.min.js\n' +
                '// @match       http://*.gefs-online.com/gefs.php\n' +
                '// @grant       none\n' +
-               '// ==/UserScript==\n\n';
+               '// ==/UserScript==\n\n' +
+               '// <%= (new Date()).toString() %>\n\n';
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),

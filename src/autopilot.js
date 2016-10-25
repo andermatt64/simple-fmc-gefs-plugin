@@ -4,7 +4,7 @@
 
 var APS = {
   // Radius around waypoint that counts as hitting the waypoint
-  TARGET_HIT_RADIUS: 0.4,
+  TARGET_HIT_RADIUS: 1,
 
   // Valid modes:
   //   HDG -> holding on a specific altitude/heading/speed

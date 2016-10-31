@@ -144,11 +144,9 @@ var ElevatorTrim = {
   }
 };
 
-if (metersToFeet === undefined) {
-  metersToFeet = 3.28084;
-}
-
 var AGLStatus = {
+    metersToFeet: 3.28084,
+
     _panel: null,
     _label: null,
 
@@ -172,7 +170,7 @@ var AGLStatus = {
         .css('background', '#000')
         .css('color', '#0f0')
         .click(function () {
-          AGLStatus._planeHeight = gefs.aircraft.animationValue.altitude - (gefs.groundElevation * metersToFeet);
+          AGLStatus._planeHeight = gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet);
           Log.info('Calibrated AGL! planeHeight=' + AGLStatus._planeHeight);
         });
       container
@@ -188,7 +186,7 @@ var AGLStatus = {
     },
 
     update: function (altitude) {
-      var agl = altitude - (gefs.groundElevation * metersToFeet) - AGLStatus._planeHeight;
+      var agl = altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight;
       AGLStatus._label
         .text(parseInt(agl).toString() + 'FT');
 

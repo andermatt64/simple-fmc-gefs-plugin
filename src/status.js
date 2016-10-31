@@ -144,6 +144,10 @@ var ElevatorTrim = {
   }
 };
 
+if (metersToFeet === undefined) {
+  metersToFeet = 3.28084;
+}
+
 var AGLStatus = {
     _panel: null,
     _label: null,

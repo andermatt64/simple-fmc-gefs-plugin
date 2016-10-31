@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Oct 24 2016 21:09:21 GMT-0400 (Eastern Daylight Time)
+// Mon Oct 31 2016 19:45:48 GMT-0400 (Eastern Daylight Time)
 
 /*
  * Implements autopilot system functionality
@@ -1518,6 +1518,10 @@ var ElevatorTrim = {
       .text(mach.toString());
   }
 };
+
+if (metersToFeet === undefined) {
+  metersToFeet = 3.28084;
+}
 
 var AGLStatus = {
     _panel: null,

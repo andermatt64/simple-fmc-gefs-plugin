@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Oct 31 2016 19:50:52 GMT-0400 (Eastern Daylight Time)
+// Sun Nov 13 2016 20:37:13 GMT-0500 (Eastern Standard Time)
 
 /*
  * Implements autopilot system functionality
@@ -858,519 +858,535 @@ var RouteManager = {
     _eta: 0,
     _totalDist: 0,
 
-    init: function (content) {
+    init: function(content) {
         RouteManager._list = $('<div></div>');
         RouteManager._list
-          .css('width', 'calc(50% - 4px)')
-          .css('height', '286px')
-          .css('float', 'left')
-          .css('padding', '2px')
-          .css('overflow-y', 'scroll');
+            .css('width', 'calc(50% - 4px)')
+            .css('height', '286px')
+            .css('float', 'left')
+            .css('padding', '2px')
+            .css('overflow-y', 'scroll');
 
         content.append(RouteManager._list);
     },
 
-    _isGPSCoordFormat: function (target) {
-      target = target.toUpperCase();
-      return (target.length === 12) &&
-             (target[4] === 'N' || target[4] === 'S') &&
-             (target[11] === 'E' || target[11] === 'W');
+    _isGPSCoordFormat: function(target) {
+        target = target.toUpperCase();
+        return ((target.length === 20) &&
+                (target[8] === 'N' || target[8] === 'S') &&
+                (target[19] === 'E' || target[19] === 'W')) ||
+            ((target.length === 12) &&
+                (target[4] === 'N' || target[4] === 'S') &&
+                (target[11] === 'E' || target[11] === 'W'));
     },
 
-    _lookupId: function (id) {
-      var target = id.toUpperCase();
-      var key = LOCATION_DB.fixes[target];
-      if (key !== undefined) {
-        key.type = 'fix';
-        return key;
-      }
-
-      key = LOCATION_DB.airports[target];
-      if (key !== undefined) {
-        key.type = 'airport';
-        return key;
-      }
-
-      key = LOCATION_DB.navaids[target];
-      if (key !== undefined) {
-        key.type = 'navaid';
-        return key;
-      }
-
-      if (RouteManager._isGPSCoordFormat(id)) {
-        var lat = parseInt(target.slice(0, 4)) / 100;
-        var lon = parseInt(target.slice(6, 11)) / 100;
-
-        lat = (target[4] === 'S') ? -lat : lat;
-        lon = (target[11] === 'W') ? -lon : lon;
-
-        key = {
-          type: 'gps',
-          lat: lat,
-          lon: lon,
-          name: lat.toString() + ',' + lon.toString()
-        };
-        return key;
-      }
-      return null;
-    },
-
-    _parseDirective: function (data) {
-      var status = {
-        ok: false,
-        msg: '',
-        data: null
-      };
-
-      var altDelim = data.indexOf('@');
-      var iasDelim = data.indexOf(':');
-
-      var obj = {
-        type: null,
-        id: null,
-        altitude: null,
-        ias: null,
-        lat: null,
-        lon: null
-      };
-
-      if (altDelim === -1 && iasDelim === -1) {
-        obj.id = data;
-      } else if (altDelim === -1) {
-        obj.id = data.slice(0, iasDelim);
-        obj.ias = parseInt(data.slice(iasDelim + 1));
-      } else if (iasDelim === -1) {
-        obj.id = data.slice(0, altDelim);
-        obj.altitude = parseInt(data.slice(altDelim + 1));
-      } else {
-        if (altDelim > iasDelim) {
-          obj.id = data.slice(0, iasDelim);
-        } else {
-          obj.id = data.slice(0, altDelim);
+    _lookupId: function(id) {
+        var target = id.toUpperCase();
+        var key = LOCATION_DB.fixes[target];
+        if (key !== undefined) {
+            key.type = 'fix';
+            return key;
         }
 
-        obj.altitude = parseInt(data.slice(altDelim + 1));
-        obj.ias = parseInt(data.slice(iasDelim + 1));
-      }
+        key = LOCATION_DB.airports[target];
+        if (key !== undefined) {
+            key.type = 'airport';
+            return key;
+        }
 
-      var key = RouteManager._lookupId(obj.id);
-      if (key === null) {
-        status.msg = 'Invalid waypoint: ' + obj.id;
+        key = LOCATION_DB.navaids[target];
+        if (key !== undefined) {
+            key.type = 'navaid';
+            return key;
+        }
+
+        if (RouteManager._isGPSCoordFormat(id)) {
+          var lat = 0;
+          var lon = 0;
+
+          if (id.length === 12) {
+            lat = parseInt(target.slice(0, 4)) / 100;
+            lon = parseInt(target.slice(6, 11)) / 100;
+
+            lat = (target[4] === 'S') ? -lat : lat;
+            lon = (target[11] === 'W') ? -lon : lon;
+          } else if (id.length === 20) {
+            lat = parseInt(target.slice(0, 8)) / 100;
+            lon = parseInt(target.slice(10, 19)) / 100;
+
+            lat = (target[8] === 'S') ? -lat : lat;
+            lon = (target[19] === 'W') ? -lon : lon;
+          } else {
+            throw "Bad GPS coordinate format";
+          }
+
+          key = {
+              type: 'gps',
+              lat: lat,
+              lon: lon,
+              name: lat.toString() + ',' + lon.toString()
+          };
+          return key;
+        }
+        return null;
+    },
+
+    _parseDirective: function(data) {
+        var status = {
+            ok: false,
+            msg: '',
+            data: null
+        };
+
+        var altDelim = data.indexOf('@');
+        var iasDelim = data.indexOf(':');
+
+        var obj = {
+            type: null,
+            id: null,
+            altitude: null,
+            ias: null,
+            lat: null,
+            lon: null
+        };
+
+        if (altDelim === -1 && iasDelim === -1) {
+            obj.id = data;
+        } else if (altDelim === -1) {
+            obj.id = data.slice(0, iasDelim);
+            obj.ias = parseInt(data.slice(iasDelim + 1));
+        } else if (iasDelim === -1) {
+            obj.id = data.slice(0, altDelim);
+            obj.altitude = parseInt(data.slice(altDelim + 1));
+        } else {
+            if (altDelim > iasDelim) {
+                obj.id = data.slice(0, iasDelim);
+            } else {
+                obj.id = data.slice(0, altDelim);
+            }
+
+            obj.altitude = parseInt(data.slice(altDelim + 1));
+            obj.ias = parseInt(data.slice(iasDelim + 1));
+        }
+
+        var key = RouteManager._lookupId(obj.id);
+        if (key === null) {
+            status.msg = 'Invalid waypoint: ' + obj.id;
+            return status;
+        }
+
+        if (isNaN(obj.altitude)) {
+            status.msg = 'Invalid altitude for waypoint: ' + obj.id;
+            return status;
+        } else if (isNaN(obj.ias)) {
+            status.msg = 'Invalid IAS for waypoint: ' + obj.id;
+            return status;
+        }
+
+        obj.type = key.type;
+        obj.lat = key.lat;
+        obj.lon = key.lon;
+
+        status.ok = true;
+        status.data = obj;
+
         return status;
-      }
-
-      if (isNaN(obj.altitude)) {
-        status.msg = 'Invalid altitude for waypoint: ' + obj.id;
-        return status;
-      } else if (isNaN(obj.ias)) {
-        status.msg = 'Invalid IAS for waypoint: ' + obj.id;
-        return status;
-      }
-
-      obj.type = key.type;
-      obj.lat = key.lat;
-      obj.lon = key.lon;
-
-      status.ok = true;
-      status.data = obj;
-
-      return status;
     },
 
     // Convert the route to gcmap.com syntax
-    _toGCMapFormat: function () {
-      var gcList = [];
-      var toGCMapFmt = function (v, isLng) {
-        var h = parseInt(Math.abs(v));
-        var m = (Math.abs(v) - h) * 60;
-        var s = parseInt(((m - parseInt(m)) * 60) + 0.5);
+    _toGCMapFormat: function() {
+        var gcList = [];
+        var toGCMapFmt = function(v, isLng) {
+            var h = parseInt(Math.abs(v));
+            var m = (Math.abs(v) - h) * 60;
+            var s = parseInt(((m - parseInt(m)) * 60) + 0.5);
 
-        m = parseInt(m);
+            m = parseInt(m);
 
-        var len = h.toString().length;
-        if (isLng !== undefined && isLng) {
-          if (len === 1) {
-            h = '00' + h.toString();
-          } else if (len === 2) {
-            h = '0' + h.toString();
-          }
-        } else {
-          if (len === 1) {
-            h = '0' + h.toString();
-          }
+            var len = h.toString().length;
+            if (isLng !== undefined && isLng) {
+                if (len === 1) {
+                    h = '00' + h.toString();
+                } else if (len === 2) {
+                    h = '0' + h.toString();
+                }
+            } else {
+                if (len === 1) {
+                    h = '0' + h.toString();
+                }
+            }
+
+            len = m.toString().length;
+            if (len === 1) {
+                m = '0' + m.toString();
+            }
+
+            len = s.toString().length;
+            if (len === 1) {
+                s = '0' + s.toString();
+            }
+
+            return h + '' + m + '' + s;
+        };
+
+        for (var i = 0; i < RouteManager._routesList.length; i++) {
+            var entry = RouteManager._routesList[i];
+            if (entry.type === 'gps' || entry.type === 'navaid') {
+                gcList.push(((entry.lat > 0) ? 'N' : 'S') + toGCMapFmt(entry.lat) + ' ' +
+                    ((entry.lon > 0) ? 'E' : 'W') + toGCMapFmt(entry.lon, true));
+            } else {
+                gcList.push(entry.id);
+            }
         }
-
-        len = m.toString().length;
-        if (len === 1) {
-          m = '0' + m.toString();
-        }
-
-        len = s.toString().length;
-        if (len === 1) {
-          s = '0' + s.toString();
-        }
-
-        return h + '' + m + '' + s;
-      };
-
-      for (var i = 0; i < RouteManager._routesList.length; i++) {
-        var entry = RouteManager._routesList[i];
-        if (entry.type === 'gps' || entry.type === 'navaid') {
-          gcList.push(((entry.lat > 0) ? 'N' : 'S') + toGCMapFmt(entry.lat) + ' ' +
-                      ((entry.lon > 0) ? 'E' : 'W') + toGCMapFmt(entry.lon, true));
-        } else {
-          gcList.push(entry.id);
-        }
-      }
-      return gcList.join('-');
+        return gcList.join('-');
     },
 
-    load: function (lst) {
-      var status = {
-        ok: false,
-        msg: ''
-      };
+    load: function(lst) {
+        var status = {
+            ok: false,
+            msg: ''
+        };
 
-      var verifiedList = [];
-      for (var i = 0; i < lst.length; i++) {
-        var ret = RouteManager._parseDirective(lst[i]);
-        if (!ret.ok) {
-          status.msg = ret.msg;
-          return status;
+        var verifiedList = [];
+        for (var i = 0; i < lst.length; i++) {
+            var ret = RouteManager._parseDirective(lst[i]);
+            if (!ret.ok) {
+                status.msg = ret.msg;
+                return status;
+            }
+
+            verifiedList.push(ret.data);
         }
 
-        verifiedList.push(ret.data);
-      }
+        var totalDist = 0;
+        var prevLocation = {
+            lat: gefs.aircraft.llaLocation[0],
+            lon: gefs.aircraft.llaLocation[1]
+        };
+        for (i = 0; i < verifiedList.length; i++) {
+            RouteManager._add(verifiedList[i]);
 
-      var totalDist = 0;
-      var prevLocation = {
-        lat: gefs.aircraft.llaLocation[0],
-        lon: gefs.aircraft.llaLocation[1]
-      };
-      for (i = 0; i < verifiedList.length; i++) {
-        RouteManager._add(verifiedList[i]);
+            totalDist += Utils.getGreatCircleDistance(prevLocation, verifiedList[i]);
+            prevLocation = verifiedList[i];
+        }
 
-        totalDist += Utils.getGreatCircleDistance(prevLocation, verifiedList[i]);
-        prevLocation = verifiedList[i];
-      }
+        // FIXME TODO: Add more information here?
+        var gcmap = $('<div></div>');
+        gcmap
+            .css('font-family', 'Courier New')
+            .css('font-size', '6pt')
+            .css('line-height', '10px')
+            .text(RouteManager._toGCMapFormat());
+        var overview = $('<div></div>');
+        overview
+            .text('ADDED ' + RouteManager._routesList.length + ' WAYPOINTS')
+            .append($('<br>'))
+            .append('TOTAL DISTANCE: ' + (parseInt(totalDist * 100) / 100) + 'KM')
+            .append($('<br><br>'))
+            .append(gcmap);
+        Route._info
+            .empty()
+            .append(overview);
 
-      // FIXME TODO: Add more information here?
-      var gcmap = $('<div></div>');
-      gcmap
-        .css('font-family', 'Courier New')
-        .css('font-size', '6pt')
-        .css('line-height', '10px')
-        .text(RouteManager._toGCMapFormat());
-      var overview = $('<div></div>');
-      overview
-        .text('ADDED ' + RouteManager._routesList.length + ' WAYPOINTS')
-        .append($('<br>'))
-        .append('TOTAL DISTANCE: ' + (parseInt(totalDist * 100) / 100) + 'KM')
-        .append($('<br><br>'))
-        .append(gcmap);
-      Route._info
-        .empty()
-        .append(overview);
-
-      status.ok = true;
-      return status;
+        status.ok = true;
+        return status;
     },
 
-    _add: function (entry) {
-      var item = $('<div></div>');
-      item
-        .css('margin-top', '1px')
-        .css('margin-bottom', '1px')
-        .css('padding', '2px')
-        .css('background', '#555')
-        .css('width', 'calc(100% - 5px)')
-        .css('height', '40px');
-      var wID = $('<span></span>');
-      wID
-        .css('font-size', '14pt')
-        .css('color', '#0f0')
-        .css('float', 'left')
-        .text(entry.id);
-      item
-        .append(wID);
-
-      if (entry.altitude !== null) {
-        var alt = $('<span></span>');
-        alt
-          .css('color', '#0f0')
-          .css('float', 'right')
-          .text(entry.altitude + 'FT');
+    _add: function(entry) {
+        var item = $('<div></div>');
         item
-          .append(alt);
-      }
-
-      if (entry.ias !== null) {
-        var ias = $('<span></span>');
-        ias
-          .css('color', '#0f0')
-          .css('float', 'right')
-          .css('padding-right', '10px')
-          .text(entry.ias + 'KTS');
+            .css('margin-top', '1px')
+            .css('margin-bottom', '1px')
+            .css('padding', '2px')
+            .css('background', '#555')
+            .css('width', 'calc(100% - 5px)')
+            .css('height', '40px');
+        var wID = $('<span></span>');
+        wID
+            .css('font-size', '14pt')
+            .css('color', '#0f0')
+            .css('float', 'left')
+            .text(entry.id);
         item
-          .append(ias);
-      }
+            .append(wID);
 
-      // FIXME TODO: Add more route waypoint information here?
-      RouteManager._list
-        .append(item);
+        if (entry.altitude !== null) {
+            var alt = $('<span></span>');
+            alt
+                .css('color', '#0f0')
+                .css('float', 'right')
+                .text(entry.altitude + 'FT');
+            item
+                .append(alt);
+        }
 
-      RouteManager._uiList.push(item);
-      RouteManager._routesList.push(entry);
+        if (entry.ias !== null) {
+            var ias = $('<span></span>');
+            ias
+                .css('color', '#0f0')
+                .css('float', 'right')
+                .css('padding-right', '10px')
+                .text(entry.ias + 'KTS');
+            item
+                .append(ias);
+        }
+
+        // FIXME TODO: Add more route waypoint information here?
+        RouteManager._list
+            .append(item);
+
+        RouteManager._uiList.push(item);
+        RouteManager._routesList.push(entry);
     },
 
-    _clear: function () {
-      RouteManager._currentWaypoint = null;
-      RouteManager._waypointIndex = -1;
-
-      RouteManager._distanceTilWaypoint = 0;
-      RouteManager._eta = 0;
-      RouteManager._totalDist = 0;
-
-      RouteManager._list.empty();
-      Route._info.empty();
-      RouteManager._routesList = [];
-      RouteManager._uiList = [];
-    },
-
-    nextWaypoint: function () {
-      console.log(RouteManager);
-      if (RouteManager._waypointIndex >= 0) {
-        RouteManager._uiList[RouteManager._waypointIndex]
-          .css('background', '#111');
-      }
-
-      var next = RouteManager._routesList[RouteManager._waypointIndex + 1];
-      if (next === undefined | next === null) {
+    _clear: function() {
         RouteManager._currentWaypoint = null;
-      } else {
-        RouteManager._uiList[RouteManager._waypointIndex + 1]
-          .css('background', '#777');
-        RouteManager._currentWaypoint = next;
-        RouteManager._waypointIndex++;
-        Log.info('Next waypoint: ' + RouteManager._currentWaypoint.id);
-      }
+        RouteManager._waypointIndex = -1;
+
+        RouteManager._distanceTilWaypoint = 0;
+        RouteManager._eta = 0;
+        RouteManager._totalDist = 0;
+
+        RouteManager._list.empty();
+        Route._info.empty();
+        RouteManager._routesList = [];
+        RouteManager._uiList = [];
     },
 
-    reset: function () {
-      RouteManager._clear();
+    nextWaypoint: function() {
+        console.log(RouteManager);
+        if (RouteManager._waypointIndex >= 0) {
+            RouteManager._uiList[RouteManager._waypointIndex]
+                .css('background', '#111');
+        }
+
+        var next = RouteManager._routesList[RouteManager._waypointIndex + 1];
+        if (next === undefined | next === null) {
+            RouteManager._currentWaypoint = null;
+        } else {
+            RouteManager._uiList[RouteManager._waypointIndex + 1]
+                .css('background', '#777');
+            RouteManager._currentWaypoint = next;
+            RouteManager._waypointIndex++;
+            Log.info('Next waypoint: ' + RouteManager._currentWaypoint.id);
+        }
+    },
+
+    reset: function() {
+        RouteManager._clear();
     }
 };
 
 var Route = {
-  content: null,
-  _dialog: null,
-  _routeEntry: null,
-  _submitRoute: null,
-  _status: null,
-  _info: null,
-  _details: null,
+    content: null,
+    _dialog: null,
+    _routeEntry: null,
+    _submitRoute: null,
+    _status: null,
+    _info: null,
+    _details: null,
 
-  init: function (content) {
-    Route.content = content;
+    init: function(content) {
+        Route.content = content;
 
-    RouteManager.init(content);
+        RouteManager.init(content);
 
-    Route._setupMainDialog();
-    Route._setupRouteDialog();
+        Route._setupMainDialog();
+        Route._setupRouteDialog();
 
-    Route.content
-      .append(RouteManager._list)
-      .append(Route._details)
-      .append(Route._dialog);
-  },
+        Route.content
+            .append(RouteManager._list)
+            .append(Route._details)
+            .append(Route._dialog);
+    },
 
-  _setupMainDialog: function () {
-    Route._details = $('<div></div>');
-    Route._details
-      .css('width', 'calc(50% - 4px)')
-      .css('height', '286px')
-      .css('float', 'left')
-      .css('padding', '2px');
-
-    // FIXME TODO: Better default text?
-    Route._info = $('<div></div>');
-    Route._info
-      .css('width', '100%')
-      .css('height', '90%')
-      .text('PRESS LOAD TO DEFINE A ROUTE TO FOLLOW');
-
-    var controls = $('<div></div>');
-    controls
-      .css('width', '100%')
-      .css('height', '10%')
-      .css('text-align', 'center')
-      .css('margin-left', '3px');
-
-    var loadBtn = $('<button></button>');
-    loadBtn
-      .text('LOAD')
-      .css('padding', '0px')
-      .css('margin', '0px')
-      .css('height', '100%')
-      .css('width', '33%')
-      .css('background', '#333')
-      .css('border', '1px solid #0f0')
-      .css('color', '#0f0')
-      .click(function () {
-        RouteManager._list
-          .css('display', 'none');
+    _setupMainDialog: function() {
+        Route._details = $('<div></div>');
         Route._details
-          .css('display', 'none');
-        Route._dialog.show();
-      });
-    var actBtn = $('<button></button>');
-    actBtn
-      .text('ACTV')
-      .css('padding', '0px')
-      .css('margin', '0px')
-      .css('height', '100%')
-      .css('width', '33%')
-      .css('background', '#333')
-      .css('border', '1px solid #0f0')
-      .css('color', '#0f0')
-      .click(function () {
-        APS.rteBtn.click();
-      });
-    var resetBtn = $('<button></button>');
-    resetBtn
-      .text('RESET')
-      .css('padding', '0px')
-      .css('margin', '0px')
-      .css('height', '100%')
-      .css('width', '33%')
-      .css('background', '#333')
-      .css('border', '1px solid #0f0')
-      .css('color', '#0f0')
-      .click(function () {
-        RouteManager.reset();
-      });
+            .css('width', 'calc(50% - 4px)')
+            .css('height', '286px')
+            .css('float', 'left')
+            .css('padding', '2px');
 
-    controls
-      .append(loadBtn)
-      .append(actBtn)
-      .append(resetBtn);
-    Route._details
-      .append(Route._info)
-      .append(controls);
-  },
+        // FIXME TODO: Better default text?
+        Route._info = $('<div></div>');
+        Route._info
+            .css('width', '100%')
+            .css('height', '90%')
+            .text('PRESS LOAD TO DEFINE A ROUTE TO FOLLOW');
 
-  _setupRouteDialog: function () {
-    Route._dialog = $('<div></div>');
-    Route._dialog
-      .css('display', 'none');
+        var controls = $('<div></div>');
+        controls
+            .css('width', '100%')
+            .css('height', '10%')
+            .css('text-align', 'center')
+            .css('margin-left', '3px');
 
-    var msg = $('<div></div>');
-    msg
-      .css('height', '20px')
-      .text('Enter route information as specified by ')
-      .append($('<a href="https://github.com/andermatt64/simple-fmc-gefs-plugin/blob/master/ROUTES.md">ROUTES.md</a>'));
+        var loadBtn = $('<button></button>');
+        loadBtn
+            .text('LOAD')
+            .css('padding', '0px')
+            .css('margin', '0px')
+            .css('height', '100%')
+            .css('width', '33%')
+            .css('background', '#333')
+            .css('border', '1px solid #0f0')
+            .css('color', '#0f0')
+            .click(function() {
+                RouteManager._list
+                    .css('display', 'none');
+                Route._details
+                    .css('display', 'none');
+                Route._dialog.show();
+            });
+        var actBtn = $('<button></button>');
+        actBtn
+            .text('ACTV')
+            .css('padding', '0px')
+            .css('margin', '0px')
+            .css('height', '100%')
+            .css('width', '33%')
+            .css('background', '#333')
+            .css('border', '1px solid #0f0')
+            .css('color', '#0f0')
+            .click(function() {
+                APS.rteBtn.click();
+            });
+        var resetBtn = $('<button></button>');
+        resetBtn
+            .text('RESET')
+            .css('padding', '0px')
+            .css('margin', '0px')
+            .css('height', '100%')
+            .css('width', '33%')
+            .css('background', '#333')
+            .css('border', '1px solid #0f0')
+            .css('color', '#0f0')
+            .click(function() {
+                RouteManager.reset();
+            });
 
-    Route._status = $('<div></div>');
-    Route._status
-      .css('height', '80px')
-      .css('color', '#f00');
+        controls
+            .append(loadBtn)
+            .append(actBtn)
+            .append(resetBtn);
+        Route._details
+            .append(Route._info)
+            .append(controls);
+    },
 
-    Route._routeEntry = $('<textarea></textarea>');
-    Route._routeEntry
-      .css('width', 'calc(100% - 5px)')
-      .css('height', '150px')
-      .css('background', '#555')
-      .css('color', '#0f9')
-      .css('border', '1px solid #0f0')
-      .css('margin', '0px')
-      .css('font-family', 'Lucida Console, Monaco, monospace')
-      .css('font-size', '8pt')
-      .keyup(function(evt) {
-        evt.stopImmediatePropagation();
-      });
-
-    Route._submitRoute = $('<button></button>');
-    Route._submitRoute
-      .text('SUBMIT')
-      .css('border', '1px solid #0f0')
-      .css('background', '#333')
-      .css('color', '#0f0')
-      .css('margin', '0px')
-      .css('width', '50%')
-      .css('text-align', 'center')
-      .click(function () {
-        var raw = Route._routeEntry.val();
-        if (raw.length === 0) {
-          Route._status
-            .text('ERROR: Empty entry box!');
-          return;
-        }
-
-        var rawList = raw.split(' ');
-        if (rawList.length === 0) {
-          Route._status
-            .text('ERROR: Entry is not valid');
-          return;
-        }
-
-        var points = [];
-        for (var i = 0; i < rawList.length; i++) {
-          if (rawList[i].length > 0) {
-            points.push(rawList[i]);
-          }
-        }
-
-        if (points.length === 0) {
-          Route._status
-            .text('ERROR: Invalid list format!');
-          return;
-        }
-
-        var status = RouteManager.load(points);
-        if (!status.ok) {
-          Route._status
-            .text('ERROR: ' + status.msg);
-          return;
-        }
-
-        // On success, hide the dialog
-        Route._routeEntry.text('');
-        Route._status.text('');
+    _setupRouteDialog: function() {
+        Route._dialog = $('<div></div>');
         Route._dialog
-          .fadeOut(function () {
-            RouteManager._list
-              .css('display', 'block');
-            Route._details
-              .css('display', 'block');
-          });
-      });
+            .css('display', 'none');
 
-    var cancelBtn = $('<button></button>');
-    cancelBtn
-      .text('CANCEL')
-      .css('border', '1px solid #0f0')
-      .css('background', '#333')
-      .css('color', '#0f0')
-      .css('margin', '0px')
-      .css('width', '50%')
-      .css('text-align', 'center')
-      .click(function () {
+        var msg = $('<div></div>');
+        msg
+            .css('height', '20px')
+            .text('Enter route information as specified by ')
+            .append($('<a href="https://github.com/andermatt64/simple-fmc-gefs-plugin/blob/master/ROUTES.md">ROUTES.md</a>'));
+
+        Route._status = $('<div></div>');
+        Route._status
+            .css('height', '80px')
+            .css('color', '#f00');
+
+        Route._routeEntry = $('<textarea></textarea>');
+        Route._routeEntry
+            .css('width', 'calc(100% - 5px)')
+            .css('height', '150px')
+            .css('background', '#555')
+            .css('color', '#0f9')
+            .css('border', '1px solid #0f0')
+            .css('margin', '0px')
+            .css('font-family', 'Lucida Console, Monaco, monospace')
+            .css('font-size', '8pt')
+            .keyup(function(evt) {
+                evt.stopImmediatePropagation();
+            });
+
+        Route._submitRoute = $('<button></button>');
+        Route._submitRoute
+            .text('SUBMIT')
+            .css('border', '1px solid #0f0')
+            .css('background', '#333')
+            .css('color', '#0f0')
+            .css('margin', '0px')
+            .css('width', '50%')
+            .css('text-align', 'center')
+            .click(function() {
+                var raw = Route._routeEntry.val();
+                if (raw.length === 0) {
+                    Route._status
+                        .text('ERROR: Empty entry box!');
+                    return;
+                }
+
+                var rawList = raw.split(' ');
+                if (rawList.length === 0) {
+                    Route._status
+                        .text('ERROR: Entry is not valid');
+                    return;
+                }
+
+                var points = [];
+                for (var i = 0; i < rawList.length; i++) {
+                    if (rawList[i].length > 0) {
+                        points.push(rawList[i]);
+                    }
+                }
+
+                if (points.length === 0) {
+                    Route._status
+                        .text('ERROR: Invalid list format!');
+                    return;
+                }
+
+                var status = RouteManager.load(points);
+                if (!status.ok) {
+                    Route._status
+                        .text('ERROR: ' + status.msg);
+                    return;
+                }
+
+                // On success, hide the dialog
+                Route._routeEntry.text('');
+                Route._status.text('');
+                Route._dialog
+                    .fadeOut(function() {
+                        RouteManager._list
+                            .css('display', 'block');
+                        Route._details
+                            .css('display', 'block');
+                    });
+            });
+
+        var cancelBtn = $('<button></button>');
+        cancelBtn
+            .text('CANCEL')
+            .css('border', '1px solid #0f0')
+            .css('background', '#333')
+            .css('color', '#0f0')
+            .css('margin', '0px')
+            .css('width', '50%')
+            .css('text-align', 'center')
+            .click(function() {
+                Route._dialog
+                    .fadeOut(function() {
+                        RouteManager._list
+                            .css('display', 'block');
+                        Route._details
+                            .css('display', 'block');
+                    });
+            });
+
         Route._dialog
-          .fadeOut(function () {
-            RouteManager._list
-              .css('display', 'block');
-            Route._details
-              .css('display', 'block');
-          });
-      });
-
-    Route._dialog
-      .append(msg)
-      .append(Route._status)
-      .append(Route._routeEntry)
-      .append(cancelBtn)
-      .append(Route._submitRoute);
-  }
+            .append(msg)
+            .append(Route._status)
+            .append(Route._routeEntry)
+            .append(cancelBtn)
+            .append(Route._submitRoute);
+    }
 };
 
 /*

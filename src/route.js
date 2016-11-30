@@ -38,10 +38,7 @@ var RouteManager = {
 
     _isGPSCoordFormat: function(target) {
         target = target.toUpperCase();
-        return ((target.length === 20) &&
-                (target[8] === 'N' || target[8] === 'S') &&
-                (target[19] === 'E' || target[19] === 'W')) ||
-            ((target.length === 12) &&
+        return ((target.length === 12) &&
                 (target[4] === 'N' || target[4] === 'S') &&
                 (target[11] === 'E' || target[11] === 'W'));
     },
@@ -76,12 +73,6 @@ var RouteManager = {
 
             lat = (target[4] === 'S') ? -lat : lat;
             lon = (target[11] === 'W') ? -lon : lon;
-          } else if (id.length === 20) {
-            lat = parseInt(target.slice(0, 8)) / 100;
-            lon = parseInt(target.slice(10, 19)) / 100;
-
-            lat = (target[8] === 'S') ? -lat : lat;
-            lon = (target[19] === 'W') ? -lon : lon;
           } else {
             throw "Bad GPS coordinate format";
           }

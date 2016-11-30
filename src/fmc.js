@@ -4,6 +4,9 @@
  * TIPS: Make sure Mix Yaw/Roll is off and Exponential is set to 0.0
  */
 
+// Update interval
+FMC_UPDATE_INTERVAL = 500;
+
 var SimpleFMC = {
   timerID: null,
   updateFnList: [],
@@ -15,7 +18,7 @@ var SimpleFMC = {
     Route.init(UI.routeContainer);
     Info.init(UI.infoContainer);
 
-    SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, 1000);
+    SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, FMC_UPDATE_INTERVAL);
 
     // Make sure nose steering/rudder works in mouse mode with mix yaw/roll off
     if (controls.mode === 'mouse' && !controls.mixYawRoll) {

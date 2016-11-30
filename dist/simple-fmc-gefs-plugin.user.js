@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Sun Nov 13 2016 20:37:13 GMT-0500 (Eastern Standard Time)
+// Wed Nov 30 2016 01:16:10 GMT-0500 (Eastern Standard Time)
 
 /*
  * Implements autopilot system functionality
@@ -554,7 +554,7 @@ var APS = {
           if (hdg >= controls.autopilot.heading - 3 &&
               hdg <= controls.autopilot.heading + 3) {
             // We are near our target heading
-            if (APS._holdPatternTicks > 35) {
+            if (APS._holdPatternTicks > 70) {
               // We have traveled "straight" for a bit, set another
               // waypoint and turn back.
               APS._holdPatternCoord.push({
@@ -627,6 +627,9 @@ var APS = {
  * TIPS: Make sure Mix Yaw/Roll is off and Exponential is set to 0.0
  */
 
+// Update interval
+FMC_UPDATE_INTERVAL = 500;
+
 var SimpleFMC = {
   timerID: null,
   updateFnList: [],
@@ -638,7 +641,7 @@ var SimpleFMC = {
     Route.init(UI.routeContainer);
     Info.init(UI.infoContainer);
 
-    SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, 1000);
+    SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, FMC_UPDATE_INTERVAL);
 
     // Make sure nose steering/rudder works in mouse mode with mix yaw/roll off
     if (controls.mode === 'mouse' && !controls.mixYawRoll) {
@@ -872,10 +875,7 @@ var RouteManager = {
 
     _isGPSCoordFormat: function(target) {
         target = target.toUpperCase();
-        return ((target.length === 20) &&
-                (target[8] === 'N' || target[8] === 'S') &&
-                (target[19] === 'E' || target[19] === 'W')) ||
-            ((target.length === 12) &&
+        return ((target.length === 12) &&
                 (target[4] === 'N' || target[4] === 'S') &&
                 (target[11] === 'E' || target[11] === 'W'));
     },
@@ -910,12 +910,6 @@ var RouteManager = {
 
             lat = (target[4] === 'S') ? -lat : lat;
             lon = (target[11] === 'W') ? -lon : lon;
-          } else if (id.length === 20) {
-            lat = parseInt(target.slice(0, 8)) / 100;
-            lon = parseInt(target.slice(10, 19)) / 100;
-
-            lat = (target[8] === 'S') ? -lat : lat;
-            lon = (target[19] === 'W') ? -lon : lon;
           } else {
             throw "Bad GPS coordinate format";
           }

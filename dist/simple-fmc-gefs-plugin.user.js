@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Wed Nov 30 2016 01:16:10 GMT-0500 (Eastern Standard Time)
+// Wed Nov 30 2016 22:57:36 GMT-0500 (Eastern Standard Time)
 
 /*
  * Implements autopilot system functionality
@@ -538,7 +538,8 @@ var APS = {
           } else {
             // Calculate ETA
             var deltaDist = Math.abs(APS._lastDistance - RouteManager._distanceTilWaypoint);
-            RouteManager._eta = parseInt((1 / deltaDist) * RouteManager._distanceTilWaypoint);              APS._lastDistance = RouteManager._distanceTilWaypoint;
+            RouteManager._eta = parseInt(((FMC_UPDATE_INTERVAL / 1000) / deltaDist) * RouteManager._distanceTilWaypoint);
+            APS._lastDistance = RouteManager._distanceTilWaypoint;
           }
 
           APS.nextLabel
@@ -554,7 +555,7 @@ var APS = {
           if (hdg >= controls.autopilot.heading - 3 &&
               hdg <= controls.autopilot.heading + 3) {
             // We are near our target heading
-            if (APS._holdPatternTicks > 70) {
+            if (APS._holdPatternTicks > (35 * (1000 / FMC_UPDATE_INTERVAL))) {
               // We have traveled "straight" for a bit, set another
               // waypoint and turn back.
               APS._holdPatternCoord.push({
@@ -1572,6 +1573,8 @@ var AGLStatus = {
 
     update: function (altitude) {
       var agl = altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight;
+
+      // TODO: This should update agl in some global state
       AGLStatus._label
         .text(parseInt(agl).toString() + 'FT');
 

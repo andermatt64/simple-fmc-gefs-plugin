@@ -187,6 +187,8 @@ var AGLStatus = {
 
     update: function (altitude) {
       var agl = altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight;
+
+      // TODO: This should update agl in some global state
       AGLStatus._label
         .text(parseInt(agl).toString() + 'FT');
 

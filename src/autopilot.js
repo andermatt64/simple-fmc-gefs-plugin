@@ -29,6 +29,7 @@ var APS = {
 
   _holdPatternTicks: 0,
   _lastDistance: null,
+  _lastTime: 0,
   _holdPatternCoord: [],
 
   // Sets the autopilot heading and updates the heading input to the
@@ -524,8 +525,11 @@ var APS = {
             }
           } else {
             // Calculate ETA
+            var currentTime = (new Date()).getTime();
+            var deltaTime = currentTime - APS._lastTime;
             var deltaDist = Math.abs(APS._lastDistance - RouteManager._distanceTilWaypoint);
-            RouteManager._eta = parseInt(((FMC_UPDATE_INTERVAL / 1000) / deltaDist) * RouteManager._distanceTilWaypoint);
+            RouteManager._eta = parseInt(((deltaTime / 1000.0) / deltaDist) * RouteManager._distanceTilWaypoint);
+            APS._lastTime = currentTime;
             APS._lastDistance = RouteManager._distanceTilWaypoint;
           }
 

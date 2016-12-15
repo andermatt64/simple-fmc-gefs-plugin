@@ -24,7 +24,7 @@
         name: "",
         distance: 999999
       };
-      var airportFix = ["VHHH", "ZBAA", "WSSS", "SAEZ", "NZAA", "FACT", "EGLL"];
+      var airportFix = ["VHHH", "OMDB", "ZBAA", "WSSS", "SAEZ", "NZAA", "FACT", "EGLL"];
       for (var i = 0; i < airportFix.length; i++) {
         key = LOCATION_DB.airports[airportFix[i]];
         if (key !== undefined) {

@@ -15,6 +15,7 @@
      var airportFix = ["VHHH", "ZBAA", "ZSPD", "WSSS", "SCEL", "NZAA", "FACT"];
      for (var i = 0; i < airportFix.length; i++) {
        var key = LOCATION_DB.airports[airportFix[i]];
+       console.log(key);
        if (key !== undefined) {
          var current = {
            lat: gefs.aircraft.llaLocation[0],
@@ -23,7 +24,7 @@
 
          var distance = Utils.getGreatCircleDistance(current, key);
          var altitude = gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight;
-
+         console.log(airportFix[i] + " -> Distance: " + distance + ", Altitude: " + altitude);
          if (distance < 5 && altitude < 1500) {
            if (TerrainFix._ellipseProvider !== gefs.api.viewer.terrainProvider) {
              gefs.api.viewer.terrainProvider = TerrainFix._ellipseProvider;

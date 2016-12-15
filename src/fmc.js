@@ -5,7 +5,7 @@
  */
 
 // Update interval
-FMC_UPDATE_INTERVAL = 500;
+FMC_UPDATE_INTERVAL = 1000;
 
 var SimpleFMC = {
   timerID: null,
@@ -18,7 +18,7 @@ var SimpleFMC = {
     Route.init(UI.routeContainer);
     Info.init(UI.infoContainer);
     TerrainFix.init();
-    
+
     SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, FMC_UPDATE_INTERVAL);
 
     // Make sure nose steering/rudder works in mouse mode with mix yaw/roll off

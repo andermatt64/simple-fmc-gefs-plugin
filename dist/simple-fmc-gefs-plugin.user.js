@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Wed Dec 14 2016 22:00:22 GMT-0500 (Eastern Standard Time)
+// Wed Dec 14 2016 22:05:15 GMT-0500 (Eastern Standard Time)
 
 /*
  * Implements autopilot system functionality
@@ -633,7 +633,7 @@ var APS = {
  */
 
 // Update interval
-FMC_UPDATE_INTERVAL = 500;
+FMC_UPDATE_INTERVAL = 1000;
 
 var SimpleFMC = {
   timerID: null,
@@ -646,7 +646,7 @@ var SimpleFMC = {
     Route.init(UI.routeContainer);
     Info.init(UI.infoContainer);
     TerrainFix.init();
-    
+
     SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, FMC_UPDATE_INTERVAL);
 
     // Make sure nose steering/rudder works in mouse mode with mix yaw/roll off
@@ -2007,6 +2007,7 @@ var Status = {
      var airportFix = ["VHHH", "ZBAA", "ZSPD", "WSSS", "SCEL", "NZAA", "FACT"];
      for (var i = 0; i < airportFix.length; i++) {
        var key = LOCATION_DB.airports[airportFix[i]];
+       console.log(key);
        if (key !== undefined) {
          var current = {
            lat: gefs.aircraft.llaLocation[0],
@@ -2015,7 +2016,7 @@ var Status = {
 
          var distance = Utils.getGreatCircleDistance(current, key);
          var altitude = gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight;
-
+         console.log(airportFix[i] + " -> Distance: " + distance + ", Altitude: " + altitude);
          if (distance < 5 && altitude < 1500) {
            if (TerrainFix._ellipseProvider !== gefs.api.viewer.terrainProvider) {
              gefs.api.viewer.terrainProvider = TerrainFix._ellipseProvider;

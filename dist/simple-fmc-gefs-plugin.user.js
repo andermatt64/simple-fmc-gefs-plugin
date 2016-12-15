@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Tue Dec 13 2016 18:39:04 GMT-0500 (Eastern Standard Time)
+// Wed Dec 14 2016 21:54:00 GMT-0500 (Eastern Standard Time)
 
 /*
  * Implements autopilot system functionality
@@ -645,7 +645,8 @@ var SimpleFMC = {
     APS.init(UI.apsContainer);
     Route.init(UI.routeContainer);
     Info.init(UI.infoContainer);
-
+    TerrainFix.init();
+    
     SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, FMC_UPDATE_INTERVAL);
 
     // Make sure nose steering/rudder works in mouse mode with mix yaw/roll off
@@ -1988,6 +1989,46 @@ var Status = {
     });
   }
 };
+
+/*
+ * Implements a fix for bad runway terrain at certain airports
+ */
+
+ var TerrainFix = {
+   _oldTerrainProvider: null,
+   _ellipseProvider: new Cesium.EllipsoidTerrainProvider(),
+
+   init: function () {
+     TerrainFix._oldTerrainProvider = gefs.api.viewer.terrainProvider;
+     SimpleFMC.registerUpdate(TerrainFix.update);
+   },
+
+   update: function () {
+     var airportFix = ["HKG", "PEK", "PVG", "SIN", "SCL", "AKL", "CPT"];
+     for (var i = 0; i < airportFix.length; i++) {
+       var key = LOCATION_DB.airports[airportFix[i]];
+       if (key !== undefined) {
+         var current = {
+           lat: gefs.aircraft.llaLocation[0],
+           lon: gefs.aircraft.llaLocation[1]
+         };
+
+         var distance = Utils.getGreatCircleDistance(current, key);
+         var altitude = gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight;
+
+         if (distance < 5 && altitude < 1500) {
+           if (TerrainFix._ellipseProvider !== gefs.api.viewer.terrainProvider) {
+             gefs.api.viewer.terrainProvider = TerrainFix._ellipseProvider;
+           }
+         } else {
+           if (TerrainFix._oldTerrainProvider !== gefs.api.viewer.terrainProvider) {
+             gefs.api.viewer.terrainProvider = TerrainFix._oldTerrainProvider;
+           }
+         }
+       }
+     }
+   }
+ };
 
 /*
  * Implements the SimpleFMC UI

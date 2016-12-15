@@ -17,7 +17,8 @@ var SimpleFMC = {
     APS.init(UI.apsContainer);
     Route.init(UI.routeContainer);
     Info.init(UI.infoContainer);
-
+    TerrainFix.init();
+    
     SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, FMC_UPDATE_INTERVAL);
 
     // Make sure nose steering/rudder works in mouse mode with mix yaw/roll off

@@ -43,16 +43,17 @@
      var altitude = gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight;
      if (altitude < TerrainFix.ALTITUDE_THRESHOLD) {
        var closest = TerrainFix.closestAirport();
-       console.log(closest.name + " => distance: " + closest.distance + ", altitude=" + altitude);
        if (closest.distance < TerrainFix.DISTANCE_RADIUS) {
          if (TerrainFix._ellipseProvider !== gefs.api.viewer.terrainProvider) {
            gefs.api.viewer.terrainProvider = TerrainFix._ellipseProvider;
          }
-       } else {
-         if (TerrainFix._oldTerrainProvider !== gefs.api.viewer.terrainProvider) {
-           gefs.api.viewer.terrainProvider = TerrainFix._oldTerrainProvider;
-         }
+
+         return;
        }
+     }
+
+     if (TerrainFix._oldTerrainProvider !== gefs.api.viewer.terrainProvider) {
+       gefs.api.viewer.terrainProvider = TerrainFix._oldTerrainProvider;
      }
    }
  };

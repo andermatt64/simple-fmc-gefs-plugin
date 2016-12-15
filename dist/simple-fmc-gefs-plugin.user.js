@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Wed Dec 14 2016 23:03:34 GMT-0500 (Eastern Standard Time)
+// Wed Dec 14 2016 23:10:45 GMT-0500 (Eastern Standard Time)
 
 /*
  * Implements autopilot system functionality
@@ -1995,7 +1995,7 @@ var Status = {
  */
 
  var TerrainFix = {
-   ALTITUDE_THRESHOLD: 1500,
+   ALTITUDE_THRESHOLD: 1100,
    DISTANCE_RADIUS: 5,
 
    _oldTerrainProvider: null,

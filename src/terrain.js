@@ -3,7 +3,7 @@
  */
 
  var TerrainFix = {
-   ALTITUDE_THRESHOLD: 1500,
+   ALTITUDE_THRESHOLD: 1100,
    DISTANCE_RADIUS: 5,
 
    _oldTerrainProvider: null,

@@ -12,7 +12,7 @@
    },
 
    update: function () {
-     var airportFix = ["HKG", "PEK", "PVG", "SIN", "SCL", "AKL", "CPT"];
+     var airportFix = ["VHHH", "ZBAA", "ZSPD", "WSSS", "SCEL", "NZAA", "FACT"];
      for (var i = 0; i < airportFix.length; i++) {
        var key = LOCATION_DB.airports[airportFix[i]];
        if (key !== undefined) {

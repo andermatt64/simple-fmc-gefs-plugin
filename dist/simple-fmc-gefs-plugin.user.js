@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Wed Dec 14 2016 21:54:00 GMT-0500 (Eastern Standard Time)
+// Wed Dec 14 2016 22:00:22 GMT-0500 (Eastern Standard Time)
 
 /*
  * Implements autopilot system functionality
@@ -2004,7 +2004,7 @@ var Status = {
    },
 
    update: function () {
-     var airportFix = ["HKG", "PEK", "PVG", "SIN", "SCL", "AKL", "CPT"];
+     var airportFix = ["VHHH", "ZBAA", "ZSPD", "WSSS", "SCEL", "NZAA", "FACT"];
      for (var i = 0; i < airportFix.length; i++) {
        var key = LOCATION_DB.airports[airportFix[i]];
        if (key !== undefined) {

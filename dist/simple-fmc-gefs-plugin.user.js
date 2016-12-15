@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Wed Dec 14 2016 22:05:15 GMT-0500 (Eastern Standard Time)
+// Wed Dec 14 2016 22:51:22 GMT-0500 (Eastern Standard Time)
 
 /*
  * Implements autopilot system functionality
@@ -1995,6 +1995,9 @@ var Status = {
  */
 
  var TerrainFix = {
+   ALTITUDE_THRESHOLD: 1500,
+   DISTANCE_RADIUS: 5,
+
    _oldTerrainProvider: null,
    _ellipseProvider: new Cesium.EllipsoidTerrainProvider(),
 
@@ -2003,28 +2006,42 @@ var Status = {
      SimpleFMC.registerUpdate(TerrainFix.update);
    },
 
-   update: function () {
-     var airportFix = ["VHHH", "ZBAA", "ZSPD", "WSSS", "SCEL", "NZAA", "FACT"];
-     for (var i = 0; i < airportFix.length; i++) {
-       var key = LOCATION_DB.airports[airportFix[i]];
-       console.log(key);
-       if (key !== undefined) {
-         var current = {
-           lat: gefs.aircraft.llaLocation[0],
-           lon: gefs.aircraft.llaLocation[1]
-         };
+   closestAirport: function () {
+      var key = null;
+      var current = {
+        lat: gefs.aircraft.llaLocation[0],
+        lon: gefs.aircraft.llaLocation[1]
+      };
+      var closest = {
+        name: "",
+        distance: 999999
+      };
+      var airportFix = ["VHHH", "ZBAA", "WSSS", "SAEZ", "NZAA", "FACT", "EGLL"];
+      for (var i = 0; i < airportFix.length; i++) {
+        key = LOCATION_DB.airports[airportFix[i]];
+        if (key !== undefined) {
+          var distance = Utils.getGreatCircleDistance(current, key);
+          if (distance < closest.distance) {
+            closest.name = airportFix[i];
+            closest.distance = distance;
+          }
+        }
+      }
 
-         var distance = Utils.getGreatCircleDistance(current, key);
-         var altitude = gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight;
-         console.log(airportFix[i] + " -> Distance: " + distance + ", Altitude: " + altitude);
-         if (distance < 5 && altitude < 1500) {
-           if (TerrainFix._ellipseProvider !== gefs.api.viewer.terrainProvider) {
-             gefs.api.viewer.terrainProvider = TerrainFix._ellipseProvider;
-           }
-         } else {
-           if (TerrainFix._oldTerrainProvider !== gefs.api.viewer.terrainProvider) {
-             gefs.api.viewer.terrainProvider = TerrainFix._oldTerrainProvider;
-           }
+      return closest;
+   },
+
+   update: function () {
+     var altitude = gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight;
+     if (altitude < TerrainFix.ALTITUDE_THRESHOLD) {
+       var closest = TerrainFix.closestAirport();
+       if (closest.distance < TerrainFix.DISTANCE_RADIUS) {
+         if (TerrainFix._ellipseProvider !== gefs.api.viewer.terrainProvider) {
+           gefs.api.viewer.terrainProvider = TerrainFix._ellipseProvider;
+         }
+       } else {
+         if (TerrainFix._oldTerrainProvider !== gefs.api.viewer.terrainProvider) {
+           gefs.api.viewer.terrainProvider = TerrainFix._oldTerrainProvider;
          }
        }
      }

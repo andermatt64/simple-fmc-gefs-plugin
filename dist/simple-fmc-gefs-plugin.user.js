@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Wed Dec 14 2016 23:19:40 GMT-0500 (Eastern Standard Time)
+// Sun Dec 18 2016 22:09:53 GMT-0500 (Eastern Standard Time)
 
 /*
  * Implements autopilot system functionality
@@ -1996,7 +1996,7 @@ var Status = {
 
  var TerrainFix = {
    ALTITUDE_THRESHOLD: 1100,
-   DISTANCE_RADIUS: 5,
+   DISTANCE_RADIUS: 10,
 
    _oldTerrainProvider: null,
    _ellipseProvider: new Cesium.EllipsoidTerrainProvider(),
@@ -2016,16 +2016,25 @@ var Status = {
         name: "",
         distance: 999999
       };
-      var airportFix = ["VHHH", "OMDB", "ZBAA", "WSSS", "SAEZ", "NZAA", "FACT", "EGLL"];
+      var airportFix = ["VHHH",
+                        "OMDB",
+                        "ZBAA",
+                        "WSSS",
+                        "SAEZ",
+                        "NZAA",
+                        "FACT",
+                        "EDDM",
+                        "YPPH", 
+                        "EGLL"];
       for (var i = 0; i < airportFix.length; i++) {
-        key = LOCATION_DB.airports[airportFix[i]];
-        if (key !== undefined) {
-          var distance = Utils.getGreatCircleDistance(current, key);
-          if (distance < closest.distance) {
-            closest.name = airportFix[i];
-            closest.distance = distance;
+          key = LOCATION_DB.airports[airportFix[i]];
+          if (key !== undefined) {
+              var distance = Utils.getGreatCircleDistance(current, key);
+              if (distance < closest.distance) {
+                  closest.name = airportFix[i];
+                  closest.distance = distance;
+              }
           }
-        }
       }
 
       return closest;

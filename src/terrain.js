@@ -4,7 +4,7 @@
 
  var TerrainFix = {
    ALTITUDE_THRESHOLD: 1100,
-   DISTANCE_RADIUS: 5,
+   DISTANCE_RADIUS: 10,
 
    _oldTerrainProvider: null,
    _ellipseProvider: new Cesium.EllipsoidTerrainProvider(),
@@ -24,16 +24,25 @@
         name: "",
         distance: 999999
       };
-      var airportFix = ["VHHH", "OMDB", "ZBAA", "WSSS", "SAEZ", "NZAA", "FACT", "EGLL"];
+      var airportFix = ["VHHH",
+                        "OMDB",
+                        "ZBAA",
+                        "WSSS",
+                        "SAEZ",
+                        "NZAA",
+                        "FACT",
+                        "EDDM",
+                        "YPPH", 
+                        "EGLL"];
       for (var i = 0; i < airportFix.length; i++) {
-        key = LOCATION_DB.airports[airportFix[i]];
-        if (key !== undefined) {
-          var distance = Utils.getGreatCircleDistance(current, key);
-          if (distance < closest.distance) {
-            closest.name = airportFix[i];
-            closest.distance = distance;
+          key = LOCATION_DB.airports[airportFix[i]];
+          if (key !== undefined) {
+              var distance = Utils.getGreatCircleDistance(current, key);
+              if (distance < closest.distance) {
+                  closest.name = airportFix[i];
+                  closest.distance = distance;
+              }
           }
-        }
       }
 
       return closest;

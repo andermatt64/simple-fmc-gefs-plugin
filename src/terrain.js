@@ -7,9 +7,10 @@
    DISTANCE_RADIUS: 10,
 
    _oldTerrainProvider: null,
-   _ellipseProvider: new Cesium.EllipsoidTerrainProvider(),
+   _ellipseProvider: null,
 
    init: function () {
+     TerrainFix._ellipseProvider = new Cesium.EllipsoidTerrainProvider();
      TerrainFix._oldTerrainProvider = gefs.api.viewer.terrainProvider;
      SimpleFMC.registerUpdate(TerrainFix.update);
    },
@@ -32,7 +33,7 @@
                         "NZAA",
                         "FACT",
                         "EDDM",
-                        "YPPH", 
+                        "YPPH",
                         "EGLL"];
       for (var i = 0; i < airportFix.length; i++) {
           key = LOCATION_DB.airports[airportFix[i]];

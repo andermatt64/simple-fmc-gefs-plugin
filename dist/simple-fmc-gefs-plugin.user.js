@@ -9,7 +9,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Sun Dec 18 2016 22:09:53 GMT-0500 (Eastern Standard Time)
+// Wed Dec 21 2016 20:43:58 GMT-0500 (Eastern Standard Time)
 
 /*
  * Implements autopilot system functionality
@@ -1999,9 +1999,10 @@ var Status = {
    DISTANCE_RADIUS: 10,
 
    _oldTerrainProvider: null,
-   _ellipseProvider: new Cesium.EllipsoidTerrainProvider(),
+   _ellipseProvider: null,
 
    init: function () {
+     TerrainFix._ellipseProvider = new Cesium.EllipsoidTerrainProvider();
      TerrainFix._oldTerrainProvider = gefs.api.viewer.terrainProvider;
      SimpleFMC.registerUpdate(TerrainFix.update);
    },
@@ -2024,7 +2025,7 @@ var Status = {
                         "NZAA",
                         "FACT",
                         "EDDM",
-                        "YPPH", 
+                        "YPPH",
                         "EGLL"];
       for (var i = 0; i < airportFix.length; i++) {
           key = LOCATION_DB.airports[airportFix[i]];

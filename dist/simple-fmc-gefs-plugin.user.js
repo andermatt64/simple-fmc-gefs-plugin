@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        simple-fmc-gefs-plugin
 // @namespace   andermatt64-gefs-plugins
-// @version     0.1.0
+// @version     0.2.0
 // @description Simple FMC GEFS Plugin
 // @author      andermatt64
 // @require     https://raw.githubusercontent.com/andermatt64/simple-fmc-gefs-plugin/master/dist/simple-fmc-gefs-plugin-locations.min.js
@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Sat Dec 31 2016 19:36:29 GMT-0500 (EST)
+// Sun Jan 01 2017 16:13:22 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality

@@ -70971,11 +70971,6 @@ LOCATION_DB = {
             "lon": -121.3513333,
             "name": "Lincoln Regional Airport Karl Harder Field"
         },
-        "KIDL": {
-            "lat": 40.639751,
-            "lon": -73.778924,
-            "name": "Idlewild Intl"
-        },
         "KLHX": {
             "lat": 38.049719,
             "lon": -103.509431,
@@ -72806,11 +72801,6 @@ LOCATION_DB = {
             "lon": -48.460739,
             "name": "Julio Cesar"
         },
-        "EFHE": {
-            "lat": 60.1478,
-            "lon": 24.9244,
-            "name": "Hernesaari Heliport"
-        },
         "EFHF": {
             "lat": 60.254558,
             "lon": 25.042828,
@@ -73766,11 +73756,6 @@ LOCATION_DB = {
             "lon": -119.4773,
             "name": "Prosser"
         },
-        "EKMS": {
-            "lat": 62.1021,
-            "lon": -7.6459,
-            "name": "Mykines Heliport"
-        },
         "OPTH": {
             "lat": 24.841519,
             "lon": 68.838408,
@@ -74675,11 +74660,6 @@ LOCATION_DB = {
             "lat": 40.913306,
             "lon": 24.619223,
             "name": "Megas Alexandros Intl"
-        },
-        "BGSC": {
-            "lat": 70.485278,
-            "lon": -21.966667,
-            "name": "Ittoqqortoormiit Heliport"
         },
         "LGKZ": {
             "lat": 40.28611,
@@ -76481,11 +76461,6 @@ LOCATION_DB = {
             "lon": -133.375833,
             "name": "Faro"
         },
-        "EGEG": {
-            "lat": 55.5141,
-            "lon": -4.1749,
-            "name": "Glasgow City Heliport"
-        },
         "MPMG": {
             "lat": 8.973339,
             "lon": -79.555583,
@@ -78250,11 +78225,6 @@ LOCATION_DB = {
             "lat": 21.180406,
             "lon": 81.738753,
             "name": "Raipur"
-        },
-        "BGUM": {
-            "lat": 70.4047,
-            "lon": 52.0702,
-            "name": "Uummannaq Heliport"
         },
         "BGUK": {
             "lat": 72.7902,
@@ -83981,11 +83951,6 @@ LOCATION_DB = {
             "lon": -65.890278,
             "name": "Saint John"
         },
-        "CYSD": {
-            "lat": 50.2666701,
-            "lon": -111.182999,
-            "name": "Suffield Heliport"
-        },
         "PHJH": {
             "lat": 20.962936,
             "lon": -156.673031,
@@ -84801,16 +84766,6 @@ LOCATION_DB = {
             "lon": -65.4227,
             "name": "Vieques Airport"
         },
-        "NONE": {
-            "lat": 40.7425,
-            "lon": -73.971944,
-            "name": "East 34th Street Heliport"
-        },
-        "SYTC": {
-            "lat": 43.0767,
-            "lon": -76.1691,
-            "name": "William F. Walsh Regional Transportation Center"
-        },
         "UNTT": {
             "lat": 56.380278,
             "lon": 85.208333,
@@ -85410,16 +85365,6 @@ LOCATION_DB = {
             "lat": 45.372869,
             "lon": 36.402761,
             "name": "Kerch Intl"
-        },
-        "NBWK": {
-            "lat": 40.496432,
-            "lon": -74.446447,
-            "name": "New Brunswick Station"
-        },
-        "BGFH": {
-            "lat": 61.9922,
-            "lon": -49.6625,
-            "name": "Paamiut Heliport"
         },
         "UKFB": {
             "lat": 44.691431,
@@ -86536,11 +86481,6 @@ LOCATION_DB = {
             "lon": 114.080397,
             "name": "Sek Kong"
         },
-        "VHST": {
-            "lat": 22.289372,
-            "lon": 114.152153,
-            "name": "Shun Tak Heliport"
-        },
         "KTNT": {
             "lat": 25.861806,
             "lon": -80.897,
@@ -87511,11 +87451,6 @@ LOCATION_DB = {
             "lon": -90.835833,
             "name": "San Jose"
         },
-        "BGJH": {
-            "lat": 60.7158,
-            "lon": -46.0294,
-            "name": "Qaqortoq Heliport"
-        },
         "FNCA": {
             "lat": -5.596992,
             "lon": 12.188353,
@@ -88401,11 +88336,6 @@ LOCATION_DB = {
             "lon": -117.015389,
             "name": "Lewiston Nez Perce Co"
         },
-        "LSXB": {
-            "lat": 47.076667,
-            "lon": 9.5,
-            "name": "Balzers Heliport"
-        },
         "ESDF": {
             "lat": 56.266667,
             "lon": 15.265,
@@ -89035,11 +88965,6 @@ LOCATION_DB = {
             "lat": 53.271592,
             "lon": 7.442344,
             "name": "Leer Papenburg"
-        },
-        "LMMG": {
-            "lat": 36.027222,
-            "lon": 14.272778,
-            "name": "Xewkija Heliport"
         },
         "EDWE": {
             "lat": 53.391186,
@@ -89971,11 +89896,6 @@ LOCATION_DB = {
             "lon": -49.301528,
             "name": "Conceicao Do Araguaia"
         },
-        "GECT": {
-            "lat": 35.8969,
-            "lon": -5.29908,
-            "name": "Ceuta Heliport"
-        },
         "OIAA": {
             "lat": 30.371111,
             "lon": 48.228333,
@@ -90071,20 +89991,10 @@ LOCATION_DB = {
             "lon": -70.75645,
             "name": "Guasdualito"
         },
-        "BGNN": {
-            "lat": 60.14,
-            "lon": -45.2317,
-            "name": "Nanortalik Heliport"
-        },
         "ZGOW": {
             "lat": 23.4,
             "lon": 116.683,
             "name": "Wai Sha Airport"
-        },
-        "BGNS": {
-            "lat": 60.9167,
-            "lon": -46.0586,
-            "name": "Narsaq Heliport"
         },
         "YPAG": {
             "lat": -32.506944,
@@ -92396,11 +92306,6 @@ LOCATION_DB = {
             "lon": 169.308,
             "name": "Ipota Airport"
         },
-        "EGLW": {
-            "lat": 51.47,
-            "lon": -0.177833,
-            "name": "London Heliport"
-        },
         "EGLJ": {
             "lat": 51.676111,
             "lon": -1.080833,
@@ -92896,11 +92801,6 @@ LOCATION_DB = {
             "lon": 30.349639,
             "name": "Vitebsk"
         },
-        "EECL": {
-            "lat": 59.4486,
-            "lon": 24.7532,
-            "name": "Tallinn Linnahall Heliport"
-        },
         "FWCC": {
             "lat": -11.8333,
             "lon": 34.1667,
@@ -93035,11 +92935,6 @@ LOCATION_DB = {
             "lat": 48.288333,
             "lon": 3.246389,
             "name": "Dole-Pont Sur Yonne Airport"
-        },
-        "KJRA": {
-            "lat": 40.7545,
-            "lon": -74.0071,
-            "name": "West 30th St. Heliport"
         },
         "VOCB": {
             "lat": 11.030031,
@@ -93610,11 +93505,6 @@ LOCATION_DB = {
             "lat": 40.147275,
             "lon": 44.395881,
             "name": "Zvartnots"
-        },
-        "ENVR": {
-            "lat": 67.6667,
-            "lon": 12.6833,
-            "name": "V\u00e6r\u00f8y Heliport"
         },
         "UDYE": {
             "lat": 40.122114,
@@ -94671,11 +94561,6 @@ LOCATION_DB = {
             "lon": 40.71225,
             "name": "Nacala"
         },
-        "HI07": {
-            "lat": 19.9136,
-            "lon": -155.864,
-            "name": "Waikoloa Heliport"
-        },
         "EHTX": {
             "lat": 53.1153,
             "lon": 4.83361,
@@ -94765,11 +94650,6 @@ LOCATION_DB = {
             "lat": -5.035767,
             "lon": 18.785631,
             "name": "Kikwit"
-        },
-        "EBKW": {
-            "lat": 51.3222,
-            "lon": 3.29306,
-            "name": "Knokke-Heist Westkapelle Heliport"
         },
         "OIBV": {
             "lat": 26.8103,
@@ -94885,11 +94765,6 @@ LOCATION_DB = {
             "lat": 34.0953521,
             "lon": -117.2348722,
             "name": "San Bernardino International Airport"
-        },
-        "KJRB": {
-            "lat": 40.701214,
-            "lon": -74.009028,
-            "name": "Wall Street Heliport"
         },
         "KBFI": {
             "lat": 47.53,
@@ -96471,11 +96346,6 @@ LOCATION_DB = {
             "lon": -83.994028,
             "name": "Mc Ghee Tyson"
         },
-        "NK39": {
-            "lat": 40.7126,
-            "lon": -73.9996,
-            "name": "One Police Plaza Heliport"
-        },
         "URWW": {
             "lat": 48.782528,
             "lon": 44.345544,
@@ -97730,11 +97600,6 @@ LOCATION_DB = {
             "lat": -17.751561,
             "lon": 30.924706,
             "name": "Charles Prince"
-        },
-        "EGHK": {
-            "lat": 50.1281,
-            "lon": -5.51845,
-            "name": "Penzance Heliport"
         },
         "KTWF": {
             "lat": 42.481803,
@@ -99626,11 +99491,6 @@ LOCATION_DB = {
             "lon": -77.061139,
             "name": "Collique"
         },
-        "EGHT": {
-            "lat": 49.945556,
-            "lon": -6.331389,
-            "name": "Tresco Heliport"
-        },
         "DNAK": {
             "lat": 7.246739,
             "lon": 5.301008,
@@ -100445,11 +100305,6 @@ LOCATION_DB = {
             "lat": 65.612222,
             "lon": -37.618333,
             "name": "Tasiilaq"
-        },
-        "BGAP": {
-            "lat": 60.4644,
-            "lon": -45.5778,
-            "name": "Alluitsup Paa Heliport"
         },
         "VAND": {
             "lat": 19.1833,
@@ -101605,11 +101460,6 @@ LOCATION_DB = {
             "lat": 47.585,
             "lon": 10.6866,
             "name": "Fussen"
-        },
-        "BGGN": {
-            "lat": 69.2511,
-            "lon": -53.5381,
-            "name": "Qeqertarsuaq Heliport"
         },
         "SVLO": {
             "lat": 11.808822,

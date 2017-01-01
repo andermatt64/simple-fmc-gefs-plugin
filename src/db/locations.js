@@ -69026,11 +69026,6 @@ LOCATION_DB = {
             "lon": 104.759531,
             "name": "Savannakhet"
         },
-        "TRTC": {
-            "lat": 40.218839,
-            "lon": -74.754279,
-            "name": "Trenton Transit Center"
-        },
         "VLSV": {
             "lat": 15.709444,
             "lon": 106.411667,
@@ -71161,11 +71156,6 @@ LOCATION_DB = {
             "lon": -96.5905278,
             "name": "Collin County Regional Airport at Mc Kinney"
         },
-        "KGST": {
-            "lat": 44.256944,
-            "lon": -76.536943,
-            "name": "Kingston Train Station"
-        },
         "KGSP": {
             "lat": 34.895556,
             "lon": -82.218889,
@@ -72736,11 +72726,6 @@ LOCATION_DB = {
             "lon": -15.947956,
             "name": "Nouakchott"
         },
-        "TPEI": {
-            "lat": 25.046176,
-            "lon": 121.517532,
-            "name": "Main Station"
-        },
         "CCK4": {
             "lat": 52.3728,
             "lon": -55.6739,
@@ -74020,11 +74005,6 @@ LOCATION_DB = {
             "lat": 18.33482,
             "lon": -64.952187,
             "name": "Crown Bay"
-        },
-        "DCBS": {
-            "lat": 38.90339,
-            "lon": -77.00583,
-            "name": "Greyhound Station"
         },
         "HKMY": {
             "lat": 3.465,
@@ -75515,11 +75495,6 @@ LOCATION_DB = {
             "lat": 49.1325,
             "lon": -68.204444,
             "name": "Baie Comeau"
-        },
-        "HOLM": {
-            "lat": 40.032679,
-            "lon": -75.023718,
-            "name": "Holmesburg Jct Station"
         },
         "CYBF": {
             "lat": 54.304722,
@@ -78321,11 +78296,6 @@ LOCATION_DB = {
             "lon": 26.157564,
             "name": "New Tempe"
         },
-        "FATT": {
-            "lat": -26.776556,
-            "lon": 29.338778,
-            "name": "Tutuka Power Station"
-        },
         "FATZ": {
             "lat": -23.824417,
             "lon": 30.329306,
@@ -80706,11 +80676,6 @@ LOCATION_DB = {
             "lon": -0.550833,
             "name": "Scampton"
         },
-        "BOST": {
-            "lat": 42.35,
-            "lon": -71.0558,
-            "name": "Boston South Station"
-        },
         "EGXZ": {
             "lat": 54.205522,
             "lon": -1.382094,
@@ -80990,11 +80955,6 @@ LOCATION_DB = {
             "lat": 46.927744,
             "lon": 28.930978,
             "name": "Chisinau Intl"
-        },
-        "HZLT": {
-            "lat": 40.954055,
-            "lon": -75.976102,
-            "name": "Hazelton Bus Station"
         },
         "GRND": {
             "lat": 37.184055,
@@ -83441,11 +83401,6 @@ LOCATION_DB = {
             "lon": 179.341,
             "name": "Savusavu Airport"
         },
-        "SEAT": {
-            "lat": 47.5985,
-            "lon": -122.3299,
-            "name": "King St Station"
-        },
         "NFNK": {
             "lat": -18.1992,
             "lon": -178.817,
@@ -84816,11 +84771,6 @@ LOCATION_DB = {
             "lon": -84.615556,
             "name": "Lake Cumberland Regional Airport"
         },
-        "NIAG": {
-            "lat": 43.108802,
-            "lon": -79.06361,
-            "name": "Niagara Falls Station"
-        },
         "KE25": {
             "lat": 33.96889877,
             "lon": -112.7990036,
@@ -86181,11 +86131,6 @@ LOCATION_DB = {
             "lon": -104.842581,
             "name": "Tepic"
         },
-        "MTRL": {
-            "lat": 45.51527887,
-            "lon": -73.561427593,
-            "name": "Montreal Central Bus Station"
-        },
         "BRKM": {
             "lat": 44.6003,
             "lon": -75.7039,
@@ -86195,11 +86140,6 @@ LOCATION_DB = {
             "lat": 31.469028,
             "lon": -109.603667,
             "name": "Bisbee Douglas Intl"
-        },
-        "BRKV": {
-            "lat": 44.5919,
-            "lon": -75.693343,
-            "name": "Brockville VIA Station"
         },
         "DFOO": {
             "lat": 11.160056,
@@ -90556,11 +90496,6 @@ LOCATION_DB = {
             "lon": -78.574636,
             "name": "Chachoan"
         },
-        "FGRS": {
-            "lat": 42.265065,
-            "lon": 2.968822,
-            "name": "Railway Station"
-        },
         "FQUG": {
             "lat": -14.704617,
             "lon": 34.352369,
@@ -91120,11 +91055,6 @@ LOCATION_DB = {
             "lat": -1.653433,
             "lon": -78.656142,
             "name": "Chimborazo"
-        },
-        "TLDO": {
-            "lat": 39.862363,
-            "lon": -4.011083,
-            "name": "Toledo Railway Station"
         },
         "UESK": {
             "lat": 67.2748,
@@ -92020,11 +91950,6 @@ LOCATION_DB = {
             "lat": 18.5725,
             "lon": -69.9856,
             "name": "Dr Joaquin Balaguer International Airport"
-        },
-        "PKPS": {
-            "lat": 41.706516,
-            "lon": -73.937774,
-            "name": "Metro-North Station"
         },
         "SUMU": {
             "lat": -34.838417,
@@ -97705,11 +97630,6 @@ LOCATION_DB = {
             "lat": 40.294139,
             "lon": -3.723833,
             "name": "Getafe"
-        },
-        "STHT": {
-            "lat": 41.413179,
-            "lon": -73.623551,
-            "name": "Southeast"
         },
         "FLKY": {
             "lat": -8.525,

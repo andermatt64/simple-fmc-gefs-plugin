@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Sat Dec 31 2016 19:21:22 GMT-0500 (EST)
+// Sat Dec 31 2016 19:36:29 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -474,6 +474,8 @@ var APS = {
       .text('AUTOPILOT\nDISENGAGED')
       .css('border', '1px solid #f00')
       .css('color', '#f00');
+
+    SimpleFMC._checkMixYawRollExponential();
   },
 
   _hook: function () {
@@ -640,21 +642,26 @@ var SimpleFMC = {
   timerID: null,
   updateFnList: [],
 
+  _checkMixYawRollExponential: function () {
+    // Make sure nose steering/rudder works in mouse mode with mix yaw/roll off
+    if (controls.mode === 'mouse' && !controls.mixYawRoll) {
+        Log.info('Detected mouse mode with mixYawRoll off, applying fixes...');
+        controls.yawExponential = '0.0';
+    }
+  },
+
   init: function () {
     Log.init(UI.logContainer);
     Status.init(UI.statusContainer);
     APS.init(UI.apsContainer);
+    MapDisplay.init(UI.mapContainer);
     Route.init(UI.routeContainer);
     Info.init(UI.infoContainer);
     TerrainFix.init();
 
     SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, FMC_UPDATE_INTERVAL);
 
-    // Make sure nose steering/rudder works in mouse mode with mix yaw/roll off
-    if (controls.mode === 'mouse' && !controls.mixYawRoll) {
-        Log.info('Detected mouse mode with mixYawRoll off, applying fixes...');
-        controls.yawExponential = '0.0';
-    }
+    SimpleFMC._checkMixYawRollExponential();
 
     Log.info('SimpleFMC initialized and ready to go.');
   },
@@ -841,6 +848,18 @@ var Log = {
     }
   }, 16);
 })();
+
+/*
+ * Implements the map panel
+ */
+
+var MapDisplay = {
+  content: null,
+
+  init: function (content) {
+    MapDisplay.content = content;
+  }
+};
 
 /*
  * Implements the route panel
@@ -2072,6 +2091,7 @@ var UI = {
   infoContainer: null,
   statusContainer: null,
   apsContainer: null,
+  mapContainer: null,
   routeContainer: null,
   logContainer: null,
 
@@ -2144,6 +2164,11 @@ var UI = {
       .css('display', 'none')
       .css('padding', '5px');
 
+    UI.mapContainer = $('<div></div>');
+    UI.mapContainer
+      .css('display', 'none')
+      .css('padding', '5px');
+
     UI.routeContainer = $('<div></div>');
     UI.routeContainer
       .css('display', 'none')
@@ -2159,6 +2184,7 @@ var UI = {
     var infoButton = makeButton('INFO');
     var statusButton = makeButton('STAT');
     var apsButton = makeButton('APS');
+    var mapButton = makeButton('MAP');
     var routeButton = makeButton('RTE');
     var logButton = makeButton('LOG', true);
 
@@ -2184,6 +2210,10 @@ var UI = {
       switchContent(UI.apsContainer);
     });
 
+    mapButton.click(function () {
+      switchContent(UI.mapContainer);
+    });
+
     routeButton.click(function () {
       switchContent(UI.routeContainer);
     });
@@ -2195,6 +2225,7 @@ var UI = {
     containerPanel.append(UI.infoContainer);
     containerPanel.append(UI.statusContainer);
     containerPanel.append(UI.apsContainer);
+    containerPanel.append(UI.mapContainer);
     containerPanel.append(UI.routeContainer);
     containerPanel.append(UI.logContainer);
 
@@ -2202,6 +2233,7 @@ var UI = {
       .append(infoButton)
       .append(statusButton)
       .append(apsButton)
+      .append(mapButton)
       .append(routeButton)
       .append(logButton);
 

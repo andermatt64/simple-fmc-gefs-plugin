@@ -9,6 +9,7 @@ var UI = {
   infoContainer: null,
   statusContainer: null,
   apsContainer: null,
+  mapContainer: null,
   routeContainer: null,
   logContainer: null,
 
@@ -81,6 +82,11 @@ var UI = {
       .css('display', 'none')
       .css('padding', '5px');
 
+    UI.mapContainer = $('<div></div>');
+    UI.mapContainer
+      .css('display', 'none')
+      .css('padding', '5px');
+
     UI.routeContainer = $('<div></div>');
     UI.routeContainer
       .css('display', 'none')
@@ -96,6 +102,7 @@ var UI = {
     var infoButton = makeButton('INFO');
     var statusButton = makeButton('STAT');
     var apsButton = makeButton('APS');
+    var mapButton = makeButton('MAP');
     var routeButton = makeButton('RTE');
     var logButton = makeButton('LOG', true);
 
@@ -121,6 +128,10 @@ var UI = {
       switchContent(UI.apsContainer);
     });
 
+    mapButton.click(function () {
+      switchContent(UI.mapContainer);
+    });
+
     routeButton.click(function () {
       switchContent(UI.routeContainer);
     });
@@ -132,6 +143,7 @@ var UI = {
     containerPanel.append(UI.infoContainer);
     containerPanel.append(UI.statusContainer);
     containerPanel.append(UI.apsContainer);
+    containerPanel.append(UI.mapContainer);
     containerPanel.append(UI.routeContainer);
     containerPanel.append(UI.logContainer);
 
@@ -139,6 +151,7 @@ var UI = {
       .append(infoButton)
       .append(statusButton)
       .append(apsButton)
+      .append(mapButton)
       .append(routeButton)
       .append(logButton);
 

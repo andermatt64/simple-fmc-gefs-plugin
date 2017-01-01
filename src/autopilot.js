@@ -460,6 +460,8 @@ var APS = {
       .text('AUTOPILOT\nDISENGAGED')
       .css('border', '1px solid #f00')
       .css('color', '#f00');
+
+    SimpleFMC._checkMixYawRollExponential();
   },
 
   _hook: function () {

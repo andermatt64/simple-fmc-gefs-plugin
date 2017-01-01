@@ -11,21 +11,26 @@ var SimpleFMC = {
   timerID: null,
   updateFnList: [],
 
+  _checkMixYawRollExponential: function () {
+    // Make sure nose steering/rudder works in mouse mode with mix yaw/roll off
+    if (controls.mode === 'mouse' && !controls.mixYawRoll) {
+        Log.info('Detected mouse mode with mixYawRoll off, applying fixes...');
+        controls.yawExponential = '0.0';
+    }
+  },
+
   init: function () {
     Log.init(UI.logContainer);
     Status.init(UI.statusContainer);
     APS.init(UI.apsContainer);
+    MapDisplay.init(UI.mapContainer);
     Route.init(UI.routeContainer);
     Info.init(UI.infoContainer);
     TerrainFix.init();
 
     SimpleFMC.timerID = setInterval(SimpleFMC.backgroundUpdate, FMC_UPDATE_INTERVAL);
 
-    // Make sure nose steering/rudder works in mouse mode with mix yaw/roll off
-    if (controls.mode === 'mouse' && !controls.mixYawRoll) {
-        Log.info('Detected mouse mode with mixYawRoll off, applying fixes...');
-        controls.yawExponential = '0.0';
-    }
+    SimpleFMC._checkMixYawRollExponential();
 
     Log.info('SimpleFMC initialized and ready to go.');
   },

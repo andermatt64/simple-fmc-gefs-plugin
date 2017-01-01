@@ -3290,7 +3290,7 @@ AIRPORT_MAP = {
     "20,-37": {
         "1,1": {
             "1,1": ["NY94", "PKPS"],
-            "0,1": ["KHPN", "WPLN", "STHT"],
+            "0,1": ["KHPN", "STHT"],
             "0,0": ["KOXC", "KBDR", "KDXR"]
         },
         "1,0": {
@@ -3298,12 +3298,12 @@ AIRPORT_MAP = {
         },
         "0,1": {
             "1,0": ["KFRG", "KISP"],
-            "1,1": ["KLGA", "NYPA", "KJFK"]
+            "1,1": ["KLGA", "KJFK"]
         },
         "0,0": {
             "0,0": ["KNEL"],
             "0,1": ["KTTN", "TRTC", "KWRI"],
-            "1,0": ["KMMU", "KTEB", "MRST", "SMMT", "MDSN", "KEWR", "MPLD", "KLDJ", "KCDW"],
+            "1,0": ["KMMU", "KTEB", "KEWR", "KLDJ", "KCDW"],
             "1,1": ["KSMQ"]
         }
     },

@@ -79491,11 +79491,6 @@ LOCATION_DB = {
             "lon": 170.198333,
             "name": "Dunedin"
         },
-        "MRST": {
-            "lat": 40.796957,
-            "lon": -74.473834,
-            "name": "Morristown Station"
-        },
         "UEMM": {
             "lat": 62.0626,
             "lon": 129.3334,
@@ -81491,11 +81486,6 @@ LOCATION_DB = {
             "lon": -121.149964,
             "name": "Roberts Fld"
         },
-        "SMMT": {
-            "lat": 40.716556,
-            "lon": -74.35775,
-            "name": "Summit NJT Station"
-        },
         "LEFM": {
             "lat": 40.889233,
             "lon": -4.239478,
@@ -82350,11 +82340,6 @@ LOCATION_DB = {
             "lat": 7.89129,
             "lon": -11.1766,
             "name": "Kenema Airport"
-        },
-        "NYPA": {
-            "lat": 40.75616,
-            "lon": -73.9906,
-            "name": "Port Authority Bus Terminal"
         },
         "KCDK": {
             "lat": 29.1342222,
@@ -89301,11 +89286,6 @@ LOCATION_DB = {
             "lon": -69.761706,
             "name": "San Isidro Ab"
         },
-        "MDSN": {
-            "lat": 40.757028,
-            "lon": -74.415194,
-            "name": "Madison NJT Station"
-        },
         "KDLH": {
             "lat": 46.842091,
             "lon": -92.193649,
@@ -93736,11 +93716,6 @@ LOCATION_DB = {
             "lon": -77.3,
             "name": "Nassau Paradise Island Airport"
         },
-        "MPLD": {
-            "lat": 40.731111,
-            "lon": -74.275556,
-            "name": "Maplewood NJT Station"
-        },
         "UUOT": {
             "lat": 52.81,
             "lon": 41.48,
@@ -96865,11 +96840,6 @@ LOCATION_DB = {
             "lat": 18.251464,
             "lon": -71.1204,
             "name": "Maria Montez Intl"
-        },
-        "WPLN": {
-            "lat": 41.032549,
-            "lon": -73.775069,
-            "name": "White Plains"
         },
         "OICS": {
             "lat": 35.245856,

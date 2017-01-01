@@ -6,6 +6,7 @@ module.exports = function(grunt) {
                '// @description <%= pkg.description %>\n' +
                '// @author      andermatt64\n' +
                '// @require     https://raw.githubusercontent.com/andermatt64/simple-fmc-gefs-plugin/master/dist/simple-fmc-gefs-plugin-locations.min.js\n' +
+               '// @require     https://raw.githubusercontent.com/andermatt64/simple-fmc-gefs-plugin/master/dist/simple-fmc-gefs-plugin-airportmap.min.js\n' +
                '// @match       http://*.gefs-online.com/gefs.php\n' +
                '// @grant       none\n' +
                '// ==/UserScript==\n\n' +
@@ -30,7 +31,8 @@ module.exports = function(grunt) {
       dist: {
         files: {
           'dist/<%= pkg.name %>.min.user.js': ['<%= concat.dist.dest %>'],
-          'dist/<%= pkg.name %>-locations.min.js': ['src/db/locations.js']
+          'dist/<%= pkg.name %>-locations.min.js': ['src/db/locations.js'],
+          'dist/<%= pkg.name %>-airportmap.min.js': ['src/db/airport_map.js']
         }
       }
     },

@@ -1,15 +1,16 @@
 // ==UserScript==
 // @name        simple-fmc-gefs-plugin
 // @namespace   andermatt64-gefs-plugins
-// @version     0.0.1
+// @version     0.1.0
 // @description Simple FMC GEFS Plugin
 // @author      andermatt64
 // @require     https://raw.githubusercontent.com/andermatt64/simple-fmc-gefs-plugin/master/dist/simple-fmc-gefs-plugin-locations.min.js
+// @require     https://raw.githubusercontent.com/andermatt64/simple-fmc-gefs-plugin/master/dist/simple-fmc-gefs-plugin-airportmap.min.js
 // @match       http://*.gefs-online.com/gefs.php
 // @grant       none
 // ==/UserScript==
 
-// Wed Dec 21 2016 20:43:58 GMT-0500 (Eastern Standard Time)
+// Sat Dec 31 2016 19:21:22 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality

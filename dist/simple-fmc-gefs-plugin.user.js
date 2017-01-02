@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Jan 02 2017 13:05:52 GMT-0500 (EST)
+// Mon Jan 02 2017 13:13:19 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -1157,16 +1157,16 @@ var MapDisplay = {
       MapDisplay._drawText(RouteManager._currentWaypoint.id, 27, bottomY - 52, 10, '#0f0');
 
       // Draw distance til waypoint
-      var totalDist = (parseInt(RouteManager._totalDist * 100) / 100).toFixed(2);
+      var remDist = (parseInt(RouteManager._distanceTilWaypoint  * 100) / 100).toFixed(2);
       MapDisplay._drawText("DIST: ", 2, bottomY - 40, 10, '#fff');
-      MapDisplay._drawText(totalDist + "KM", 33, bottomY - 40, 10, '#0f0');
+      MapDisplay._drawText(remDist + "KM", 33, bottomY - 40, 10, '#0f0');
 
       // Draw time til waypoint
       MapDisplay._drawText("ETA: ", 2, bottomY - 28, 10, '#fff');
       MapDisplay._drawText(Utils.getTimeStamp(RouteManager._eta * 1000), 27, bottomY - 28, 10, '#0f0');
 
       // Draw total distance for planned route
-      totalDist = (parseInt(RouteManager._routeTotalDist * 100) / 100).toFixed(2);
+      var totalDist = (parseInt(RouteManager._routeTotalDist * 100) / 100).toFixed(2);
       MapDisplay._drawText("TTL: ", 2, bottomY - 12, 10, '#fff');
       MapDisplay._drawText(totalDist + "KM", 27, bottomY - 12, 10, '#0f0');
     }

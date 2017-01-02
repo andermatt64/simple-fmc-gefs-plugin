@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Jan 02 2017 12:45:53 GMT-0500 (EST)
+// Mon Jan 02 2017 13:00:15 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -1153,22 +1153,22 @@ var MapDisplay = {
       var bottomY = MapDisplay.mapView.height();
 
       // Draw next waypoint
-      MapDisplay._drawText("WPT: ", 2, bottomY - 45, 10, '#fff');
-      MapDisplay._drawText(RouteManager._currentWaypoint.id, 27, bottomY - 45, 10, '#0f0');
+      MapDisplay._drawText("WPT: ", 2, bottomY - 49, 10, '#fff');
+      MapDisplay._drawText(RouteManager._currentWaypoint.id, 27, bottomY - 49, 10, '#0f0');
 
       // Draw distance til waypoint
       var totalDist = (parseInt(RouteManager._totalDist * 100) / 100).toFixed(2);
-      MapDisplay._drawText("DIST: ", 2, bottomY - 31, 10, '#fff');
-      MapDisplay._drawText(totalDist + "KM", 33, bottomY - 31, 10, '#0f0');
+      MapDisplay._drawText("DIST: ", 2, bottomY - 35, 10, '#fff');
+      MapDisplay._drawText(totalDist + "KM", 33, bottomY - 35, 10, '#0f0');
 
       // Draw time til waypoint
-      MapDisplay._drawText("ETA: ", 2, bottomY - 17, 10, '#fff');
-      MapDisplay._drawText(Utils.getTimeStamp(RouteManager._eta * 1000), 27, bottomY - 17, 10, '#0f0');
+      MapDisplay._drawText("ETA: ", 2, bottomY - 21, 10, '#fff');
+      MapDisplay._drawText(Utils.getTimeStamp(RouteManager._eta * 1000), 27, bottomY - 21, 10, '#0f0');
 
       // Draw total distance for planned route
       totalDist = (parseInt(RouteManager._routeTotalDist * 100) / 100).toFixed(2);
       MapDisplay._drawText("TTL: ", 2, bottomY - 12, 10, '#fff');
-      MapDisplay._drawText(totalDist, 27, bottomY - 12, 10, '#0f0');
+      MapDisplay._drawText(totalDist + "KM", 27, bottomY - 12, 10, '#0f0');
     }
   },
 
@@ -2673,11 +2673,15 @@ var UI = {
     var routeButton = makeButton('RTE');
     var logButton = makeButton('LOG', true);
 
-    var switchContent = function (target) {
+    var switchContent = function (target, cb) {
         if (UI._state.active !== target) {
           UI._state.active.stop(true, true).fadeOut(function () {
             target.stop(true, true).fadeIn(function () {
               UI._state.active = target;
+
+              if (cb !== undefined) {
+                cb();
+              }
             });
           });
         }
@@ -2696,9 +2700,9 @@ var UI = {
     });
 
     mapButton.click(function () {
-      MapDisplay._syncDims();
-      
-      switchContent(UI.mapContainer);
+      switchContent(UI.mapContainer, function () {
+        MapDisplay._syncDims();
+      });
     });
 
     routeButton.click(function () {

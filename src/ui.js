@@ -106,11 +106,15 @@ var UI = {
     var routeButton = makeButton('RTE');
     var logButton = makeButton('LOG', true);
 
-    var switchContent = function (target) {
+    var switchContent = function (target, cb) {
         if (UI._state.active !== target) {
           UI._state.active.stop(true, true).fadeOut(function () {
             target.stop(true, true).fadeIn(function () {
               UI._state.active = target;
+
+              if (cb !== undefined) {
+                cb();
+              }
             });
           });
         }
@@ -129,9 +133,9 @@ var UI = {
     });
 
     mapButton.click(function () {
-      MapDisplay._syncDims();
-      
-      switchContent(UI.mapContainer);
+      switchContent(UI.mapContainer, function () {
+        MapDisplay._syncDims();
+      });
     });
 
     routeButton.click(function () {

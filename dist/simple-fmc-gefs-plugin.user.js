@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Jan 02 2017 00:00:42 GMT-0500 (EST)
+// Mon Jan 02 2017 00:02:13 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -1006,7 +1006,7 @@ var MapDisplay = {
     ctx.fill();
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#ff0';
-    cts.stroke();
+    ctx.stroke();
 
     // Draw heading box
     ctx.beginPath();

@@ -155,7 +155,7 @@ var MapDisplay = {
     ctx.fill();
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#ff0';
-    cts.stroke();
+    ctx.stroke();
 
     // Draw heading box
     ctx.beginPath();

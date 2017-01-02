@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Jan 02 2017 00:55:43 GMT-0500 (EST)
+// Mon Jan 02 2017 00:57:52 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -967,7 +967,7 @@ var MapDisplay = {
 
       var sector = [];
       for (var l2_key in AIRPORT_MAP[key]) {
-        for (var l3_key in AIRPORT_MAP[l2_key]) {
+        for (var l3_key in AIRPORT_MAP[key][l2_key]) {
           sector = sector.concat(AIRPORT_MAP[key][l2_key][l3_key]);
         }
       }
@@ -1116,8 +1116,6 @@ var MapDisplay = {
     var nearby = MapDisplay.getNearbyAirports(location);
     for (var key in nearby) {
       var airport = LOCATION_DB.airports[nearby[key]];
-      console.log(nearby[key]);
-      console.log(airport);
       var distance = Utils.getGreatCircleDistance(location, airport);
       if (distance <= MapDisplay.getRadius()) {
         airports.push({

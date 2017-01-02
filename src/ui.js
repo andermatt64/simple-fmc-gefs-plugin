@@ -130,6 +130,7 @@ var UI = {
 
     mapButton.click(function () {
       switchContent(UI.mapContainer);
+      MapDisplay._syncDims();
     });
 
     routeButton.click(function () {

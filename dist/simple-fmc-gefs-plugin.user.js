@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Jan 02 2017 00:18:58 GMT-0500 (EST)
+// Mon Jan 02 2017 00:49:57 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -853,8 +853,14 @@ var Log = {
  * Implements the map panel
  */
 
+var within = function (min, x, max) {
+    return (x >= min) && (x < max);
+};
+
 var MapDisplay = {
   AIRCRAFT_SIZE: 15,
+  AIRPORT_SIZE: 5,
+  WAYPT_RADIUS: 7,
   MAP_RADIUS: 223,
 
   content: null,
@@ -983,12 +989,159 @@ var MapDisplay = {
     return parseInt(MapDisplay.rangeSelector.val());
   },
 
+  getCurrentLocation: function () {
+    var location = gefs.aircraft.llaLocation;
+    return {
+      lat: location[0],
+      lon: location[1],
+      hdg: parseInt(gefs.aircraft.animationValue.heading360 % 360)
+    };
+  },
+
+  // XXX: Only supports -90 to 90 for now!
+  getDegreeDelta: function (hdg, bearing) {
+    var degDelta;
+    var maxLeft = hdg - 90;
+    var maxRight = hdg + 90;
+
+    if (maxLeft < 0) {
+      if (within(360 + maxLeft, hdg, 360) && within(0, bearing, maxRight)) {
+        degDelta = -((360 - hdg) + bearing);
+      } else if (within(360 + maxLeft, bearing, 360) && within(0, hdg, maxRight)) {
+        degDelta = (360 - bearing) + hdg;
+      } else if (within(maxRight, bearing, 360 - maxLeft)) {
+        degDelta = null;
+      } else {
+        degDelta = hdg - bearing;
+      }
+    } else if (maxRight >= 360) {
+      if (within(maxLeft, hdg, 360) && within(0, bearing, maxRight - 360)) {
+        degDelta = -((360 - hdg) + (bearing - 360));
+      } else if (within(maxLeft, bearing, 360) && within(0, hdg, maxRight - 360)) {
+        degDelta = (360 - bearing) + (hdg - 360);
+      } else if (within(maxRight - 360, bearing, maxLeft)) {
+        degDelta = null;
+      } else {
+        degDelta = hdg - bearing;
+      }
+    } else {
+      degDelta = hdg - bearing;
+    }
+
+    return degDelta;
+  },
+
+  // XXX: Only supports -90 to 90 for now!
+  calculateCoordForPoint: function (normalizedDistance, degDelta) {
+    var xDiff = parseInt((normalizedDistance * Math.sin(Utils.toRadians(Math.abs(degDelta)))) + 0.5);
+    var yDiff = parseInt((normalizedDistance * Math.cos(Utils.toRadians(Math.abs(degDelta)))) + 0.5);
+
+    var target = MapDisplay._mapCenterPoint();
+    if (degDelta < 0) {
+      target.x += xDiff;
+    } else {
+      target.x -= xDiff;
+    }
+    target.y -= yDiff;
+
+    return target;
+  },
+
+  _drawWaypoint: function (x, y, label) {
+    var ctx = MapDisplay._ctx;
+
+    ctx.beginPath();
+    ctx.arc(x - MapDisplay.WAYPT_RADIUS,
+            y - MapDisplay.WAYPT_RADIUS,
+            MapDisplay.WAYPT_RADIUS,
+            0,
+            0.5 * Math.PI);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#c3f';
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(x - MapDisplay.WAYPT_RADIUS,
+            y + MapDisplay.WAYPT_RADIUS,
+            MapDisplay.WAYPT_RADIUS,
+            1.5 * Math.PI,
+            2 * Math.PI);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#c3f';
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(x + MapDisplay.WAYPT_RADIUS,
+            y - MapDisplay.WAYPT_RADIUS,
+            MapDisplay.WAYPT_RADIUS,
+            0.5 * Math.PI,
+            Math.PI);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#c3f';
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(x + MapDisplay.WAYPT_RADIUS,
+            y + MapDisplay.WAYPT_RADIUS,
+            MapDisplay.WAYPT_RADIUS,
+            Math.PI,
+            1.5 * Math.PI);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#c3f';
+    ctx.stroke();
+
+    MapDisplay._drawText(label, x + MapDisplay.WAYPT_RADIUS - 2, y + MapDisplay.WAYPT_RADIUS - 2, 9, '#fff');
+  },
+
   paintWaypoints: function () {
 
   },
 
-  paintAirports: function () {
+  _drawAirport: function (x, y, label) {
+    var ctx = MapDisplay._ctx;
 
+    ctx.beginPath();
+    ctx.arc(x, y, MapDisplay.AIRPORT_SIZE, 0, 2 * Math.PI);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#3cf';
+    ctx.stroke();
+
+    MapDisplay._drawText(label, x + parseInt(MapDisplay.AIRPORT_SIZE + 0.5), y + parseInt(MapDisplay.AIRPORT_SIZE + 0.5), 9, '#3cf');
+  },
+
+  paintAirports: function () {
+    var location = MapDisplay.getCurrentLocation();
+
+    var airports = [];
+    var nearby = MapDisplay.getNearbyAirports(location);
+    for (var key in nearby) {
+      var airport = LOCATION_DB.airports[nearby[key]];
+      var distance = Utils.getGreatCircleDistance(location, airport);
+      if (distance <= MapDisplay.getRadius()) {
+        airports.push({
+          airport: airport,
+          distance: distance,
+          code: nearby[key]
+        });
+      }
+    }
+
+    // Only show 30 airports at maximum
+    var maxObjects = airports.length;
+    if (maxObjects > 30) {
+      maxObjects = 30;
+    }
+
+    for (var i = 0; i < maxObjects; i++) {
+      var result = airports[i];
+      var bearing = Utils.getGreatCircleBearing(location, result.airport);
+      var radius = parseInt(((MapDisplay.MAP_RADIUS / MapDisplay.getRadius()) * result.distance) + 0.5);
+      var degDelta = MapDisplay.getDegreeDelta(location.hdg, bearing);
+      if (degDelta !== null) {
+        var point = MapDisplay.calculateCoordForPoint(radius, degDelta);
+        MapDisplay._drawAirport(point.x, point.y, result.code);
+      }
+    }
   },
 
   paintInfo: function () {
@@ -2465,6 +2618,7 @@ var UI = {
 
     mapButton.click(function () {
       switchContent(UI.mapContainer);
+      MapDisplay._syncDims();
     });
 
     routeButton.click(function () {

@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Jan 02 2017 00:57:52 GMT-0500 (EST)
+// Mon Jan 02 2017 01:16:44 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -1093,8 +1093,63 @@ var MapDisplay = {
     MapDisplay._drawText(label, x + MapDisplay.WAYPT_RADIUS - 2, y + MapDisplay.WAYPT_RADIUS - 2, 9, '#fff');
   },
 
-  paintWaypoints: function () {
+  _getWaypoints: function () {
+    return RouteManager._routesList;
+  },
 
+  _getCurrentWaypointIndex: function () {
+    return RouteManager._waypointIndex;
+  },
+
+  paintWaypoints: function () {
+    var waypoints = MapDisplay._getWaypoints();
+    if (MapDisplay._getCurrentWaypointIndex() >= 0 && waypoints.length > 0) {
+      var ctx = MapDisplay._ctx;
+      var location = MapDisplay.getCurrentLocation();
+      var wayptMap = {};
+
+      // FIXME: This process can probably be simplified more...
+      for (var i = MapDisplay._getCurrentWaypointIndex(); i < waypoints.length; i++) {
+        var waypt = waypoints[i];
+        var distance = Utils.getGreatCircleDistance(location, waypt);
+        var bearing = Utils.getGreatCircleBearing(location, waypt);
+        var radius = parseInt(((MapDisplay.MAP_RADIUS / MapDisplay.getRadius()) * distance) + 0.5);
+        var degDelta = MapDisplay.getDegreeDelta(location.hdg, bearing);
+        if (degDelta !== null) {
+          var target = MapDisplay.calculateCoordForPoint(radius, degDelta);
+          MapDisplay._drawWaypoint(target.x, target.y, waypt.id);
+          wayptMap[waypt.id] = target;
+        }
+      }
+
+      // Draw connecting lines
+      var prevCoord = MapDisplay._mapCenterPoint();
+      var prevLocation = MapDisplay.getCurrentLocation();
+      for (i = MapDisplay._getCurrentWaypointIndex(); i < waypoints.length; i++) {
+        var current = waypoints[i];
+        if (wayptMap[current.id] !== undefined) {
+          if (prevCoord === null) {
+            // FIXME: previous coordinate could not be displayed, should display a lines
+            //        from way point to prev location?
+          } else {
+            ctx.beginPath();
+            ctx.moveTo(prevCoord.x, prevCoord.y);
+            ctx.lineTo(wayptMap[current.id].x, wayptMap[current.id].y);
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#0f0';
+            ctx.stroke();
+          }
+
+          prevCoord = wayptMap[current.id];
+        } else {
+          // FIXME: current coordinate does not exist, can we figure out the bearing and
+          //        draw a line at that bearing?
+          prevCoord = null;
+        }
+
+        prevLocation = current;
+      }
+    }
   },
 
   _drawAirport: function (x, y, label) {
@@ -1207,7 +1262,7 @@ var MapDisplay = {
     MapDisplay._drawText("FL" + altitude, (target.x * 2) - 31, 0, 10, '#fff');
 
     // Draw above ground level altitude
-    var agl = (gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight).toString();
+    var agl = parseInt(gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight).toString();
     if (agl.length > 5) {
       agl = "99999";
     } else {

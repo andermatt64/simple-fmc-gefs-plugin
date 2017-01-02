@@ -298,6 +298,26 @@ var MapDisplay = {
 
         prevLocation = current;
       }
+
+      var bottomY = MapDisplay.mapView.height();
+
+      // Draw next waypoint
+      MapDisplay._drawText("WPT: ", 2, bottomY - 45, 10, '#fff');
+      MapDisplay._drawText(RouteManager._currentWaypoint.id, 27, bottomY - 45, 10, '#0f0');
+
+      // Draw distance til waypoint
+      var totalDist = (parseInt(RouteManager._totalDist * 100) / 100).toFixed(2);
+      MapDisplay._drawText("DIST: ", 2, bottomY - 31, 10, '#fff');
+      MapDisplay._drawText(totalDist + "KM", 33, bottomY - 31, 10, '#0f0');
+
+      // Draw time til waypoint
+      MapDisplay._drawText("ETA: ", 2, bottomY - 17, 10, '#fff');
+      MapDisplay._drawText(Utils.getTimeStamp(RouteManager._eta * 1000), 27, bottomY - 17, 10, '#0f0');
+
+      // Draw total distance for planned route
+      totalDist = (parseInt(RouteManager._routeTotalDist * 100) / 100).toFixed(2);
+      MapDisplay._drawText("TTL: ", 2, bottomY - 12, 10, '#fff');
+      MapDisplay._drawText(totalDist, 27, bottomY - 12, 10, '#0f0');
     }
   },
 

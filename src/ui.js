@@ -129,8 +129,9 @@ var UI = {
     });
 
     mapButton.click(function () {
-      switchContent(UI.mapContainer);
       MapDisplay._syncDims();
+      
+      switchContent(UI.mapContainer);
     });
 
     routeButton.click(function () {

@@ -24,6 +24,8 @@ var RouteManager = {
     _eta: 0,
     _totalDist: 0,
 
+    _routeTotalDist: 0,
+
     init: function(content) {
         RouteManager._list = $('<div></div>');
         RouteManager._list
@@ -226,7 +228,8 @@ var RouteManager = {
             totalDist += Utils.getGreatCircleDistance(prevLocation, verifiedList[i]);
             prevLocation = verifiedList[i];
         }
-
+        RouteManager._routeTotalDist = totalDist;
+        
         // FIXME TODO: Add more information here?
         var gcmap = $('<div></div>');
         gcmap
@@ -303,6 +306,7 @@ var RouteManager = {
         RouteManager._distanceTilWaypoint = 0;
         RouteManager._eta = 0;
         RouteManager._totalDist = 0;
+        RouteManager._routeTotalDist = 0;
 
         RouteManager._list.empty();
         Route._info.empty();

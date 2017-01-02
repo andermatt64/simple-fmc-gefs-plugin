@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Jan 02 2017 00:49:57 GMT-0500 (EST)
+// Mon Jan 02 2017 00:55:43 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -1116,6 +1116,8 @@ var MapDisplay = {
     var nearby = MapDisplay.getNearbyAirports(location);
     for (var key in nearby) {
       var airport = LOCATION_DB.airports[nearby[key]];
+      console.log(nearby[key]);
+      console.log(airport);
       var distance = Utils.getGreatCircleDistance(location, airport);
       if (distance <= MapDisplay.getRadius()) {
         airports.push({

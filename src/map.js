@@ -265,6 +265,8 @@ var MapDisplay = {
     var nearby = MapDisplay.getNearbyAirports(location);
     for (var key in nearby) {
       var airport = LOCATION_DB.airports[nearby[key]];
+      console.log(nearby[key]);
+      console.log(airport);
       var distance = Utils.getGreatCircleDistance(location, airport);
       if (distance <= MapDisplay.getRadius()) {
         airports.push({

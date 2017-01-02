@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Jan 02 2017 00:02:13 GMT-0500 (EST)
+// Mon Jan 02 2017 00:03:50 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -927,7 +927,7 @@ var MapDisplay = {
   _drawText: function (label, x, y, size, color) {
       MapDisplay._ctx.font = size + 'px "Lucida Console", Monaco, monospace';
       MapDisplay._ctx.fillStyle = color;
-      MapDisplay._ctx.fillText(value, x, y + size);
+      MapDisplay._ctx.fillText(label, x, y + size);
   },
 
   _syncDims: function () {

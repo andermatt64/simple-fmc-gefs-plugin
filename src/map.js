@@ -76,7 +76,7 @@ var MapDisplay = {
   _drawText: function (label, x, y, size, color) {
       MapDisplay._ctx.font = size + 'px "Lucida Console", Monaco, monospace';
       MapDisplay._ctx.fillStyle = color;
-      MapDisplay._ctx.fillText(value, x, y + size);
+      MapDisplay._ctx.fillText(label, x, y + size);
   },
 
   _syncDims: function () {

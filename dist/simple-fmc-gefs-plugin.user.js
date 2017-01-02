@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Jan 02 2017 00:14:21 GMT-0500 (EST)
+// Mon Jan 02 2017 00:18:58 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -870,7 +870,6 @@ var MapDisplay = {
     MapDisplay.mapView
       .css('height', '260px')
       .css('width', '100%');
-    MapDisplay._syncDims();
 
     // Setup a resize handler to make sure canvas is resized!
     $(window).resize(function () {
@@ -910,6 +909,8 @@ var MapDisplay = {
                window.setTimeout(callback, 1000 / 30);
              };
     })();
+
+    MapDisplay._syncDims();
 
     (function animationLoop() {
       requestAnimFrame(animationLoop);
@@ -1018,7 +1019,7 @@ var MapDisplay = {
     ctx.stroke();
 
     // Draw heading
-    var hdg = (gefs.aircraft.animationValue.heading360 % 360).toString();
+    var hdg = parseInt(gefs.aircraft.animationValue.heading360 % 360).toString();
     while (hdg.length < 3) {
       hdg = "0" + hdg;
     }
@@ -1053,7 +1054,7 @@ var MapDisplay = {
     MapDisplay._drawText("FL" + altitude, (target.x * 2) - 31, 0, 10, '#fff');
 
     // Draw above ground level altitude
-    var agl = (altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight).toString();
+    var agl = (gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight).toString();
     if (agl.length > 5) {
       agl = "99999";
     } else {
@@ -1080,7 +1081,7 @@ var MapDisplay = {
       }
       vs += "K";
     }
-    MapDisplay._drawText("VS " + vs, (target.x + 2) - 55, 24, 10, '#fff');
+    MapDisplay._drawText("VS " + vs, (target.x * 2) - 55, 24, 10, '#fff');
 
     // Draw throttle
     var rawThrottle = gefs.aircraft.animationValue.throttle;

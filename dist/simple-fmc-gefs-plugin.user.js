@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Sun Jan 01 2017 23:27:02 GMT-0500 (EST)
+// Mon Jan 02 2017 00:00:42 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -902,7 +902,19 @@ var MapDisplay = {
 
     MapDisplay._ctx = MapDisplay.mapView[0].getContext('2d');
 
-    // TODO: When should we repaint? Every X seconds or as fast as we can?
+    window.requestAnimFrame = (function () {
+      return window.requestAnimationFrame ||
+             window.webkitRequestAnimationFrame ||
+             window.mozRequestAnimationFrame ||
+             function (callback) {
+               window.setTimeout(callback, 1000 / 30);
+             };
+    })();
+
+    (function animationLoop() {
+      requestAnimFrame(animationLoop);
+      MapDisplay.paint();
+    })();
   },
 
   _mapCenterPoint: function () {
@@ -979,7 +991,107 @@ var MapDisplay = {
   },
 
   paintInfo: function () {
+    var ctx = MapDisplay._ctx;
 
+    var target = MapDisplay._mapCenterPoint();
+    var bottomY = parseInt(MapDisplay.mapView.height()) - 5;
+
+    // Draw aircraft
+    ctx.beginPath();
+    ctx.moveTo(target.x, bottomY - parseInt(MapDisplay.AIRCRAFT_SIZE * 1.33));
+    ctx.lineTo(target.x - parseInt(MapDisplay.AIRCRAFT_SIZE / 2), bottomY);
+    ctx.lineTo(target.x + parseInt(MapDisplay.AIRCRAFT_SIZE / 2), bottomY);
+    ctx.closePath();
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#ff0';
+    cts.stroke();
+
+    // Draw heading box
+    ctx.beginPath();
+    ctx.rect(target.x - 15, 0, 30, 16);
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#fff';
+    ctx.stroke();
+
+    // Draw heading
+    var hdg = (gefs.aircraft.animationValue.heading360 % 360).toString();
+    while (hdg.length < 3) {
+      hdg = "0" + hdg;
+    }
+    MapDisplay._drawText(hdg, target.x - 9, 2, 10, '#fff');
+
+    // Draw heading box tick
+    ctx.beginPath();
+    ctx.moveTo(target.x - 3, bottomY - MapDisplay.MAP_RADIUS - 15);
+    ctx.lineTo(target.x, bottomY - MapDisplay.MAP_RADIUS - 10);
+    ctx.lineTo(target.x + 3, bottomY - MapDisplay.MAP_RADIUS - 15);
+    ctx.closePath();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#fff';
+    ctx.stroke();
+
+    // Draw arc
+    ctx.beginPath();
+    ctx.arc(target.x, target.y, MapDisplay.MAP_RADIUS, 1.25 * Math.PI, 1.75 * Math.PI);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#fff';
+    ctx.stroke();
+
+    // Draw altitude above sea level
+    var altitude = parseInt(gefs.aircraft.animationValue.altitude / 100).toString();
+    if (altitude.length > 3) {
+      altitude = "999";
+    } else {
+      while (altitude.length < 3) {
+        altitude = "0" + altitude;
+      }
+    }
+    MapDisplay._drawText("FL" + altitude, (target.x * 2) - 31, 0, 10, '#fff');
+
+    // Draw above ground level altitude
+    var agl = (altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight).toString();
+    if (agl.length > 5) {
+      agl = "99999";
+    } else {
+      while (agl.length < 5) {
+        agl = "0" + agl;
+      }
+    }
+    MapDisplay._drawText("AGL" + agl, (target.x * 2) - 49, 12, 10, '#fff');
+
+    // Draw IAS
+    MapDisplay._drawText("IAS" + ias, 0, 0, 10, '#fff');
+
+    // Draw VS
+    var vs = (gefs.aircraft.animationValue.climbrate / 1000);
+    if (vs >= 10) {
+      vs = " 9.99K";
+    } else if (vs <= -10) {
+      vs = "-9.99K";
+    } else {
+      vs = vs.toFixed(2);
+      if (vs.length < 5) {
+        vs = " " + vs;
+      }
+      vs += "K";
+    }
+    MapDisplay._drawText("VS " + vs, (target.x + 2) - 55, 24, 10, '#fff');
+
+    // Draw throttle
+    var rawThrottle = gefs.aircraft.animationValue.throttle;
+    var throttle = parseInt(rawThrottle * 100).toString();
+    while (throttle.length < 3) {
+      throttle = "0" + throttle;
+    }
+    var thrColor = '#0f0';
+    if (rawThrottle < 0) {
+      thrColor = '#f60';
+    }
+    MapDisplay._drawText("THR" + throttle, 0, 12, 10, thrColor);
   },
 
   clear: function () {

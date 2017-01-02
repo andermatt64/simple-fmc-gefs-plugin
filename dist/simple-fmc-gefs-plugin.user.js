@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Mon Jan 02 2017 00:08:14 GMT-0500 (EST)
+// Mon Jan 02 2017 00:14:21 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -1064,7 +1064,7 @@ var MapDisplay = {
     MapDisplay._drawText("AGL" + agl, (target.x * 2) - 49, 12, 10, '#fff');
 
     // Draw IAS
-    var ias = gefs.aircraft.animationValue.kias.toString();
+    var ias = parseInt(gefs.aircraft.animationValue.kias).toString();
     MapDisplay._drawText("IAS" + ias, 0, 0, 10, '#fff');
 
     // Draw VS

@@ -546,7 +546,7 @@ var APS = {
           var distanceTilTarget = Utils.getGreatCircleDistance(currentLoc, targetWaypt);
           var targetHdg = parseInt(Utils.getGreatCircleBearing(currentLoc, targetWaypt));
           if (targetHdg !== GEFS.autopilot.getHeading()) {
-            GEFS.aircraft.setHeading(targetHdg);
+            GEFS.autopilot.setHeading(targetHdg);
           }
 
           if (Math.abs(distanceTilTarget) < APS.TARGET_HIT_RADIUS) {
@@ -559,8 +559,7 @@ var APS = {
           }
         } else {
           Log.error('Holding pattern is in a bad state! Reinitializing...');
-          console.log(APS._holdPatternCoord);
-
+      
           APS._initHoldPattern();
         }
       }

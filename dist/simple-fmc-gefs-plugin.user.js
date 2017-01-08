@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Sat Jan 07 2017 22:29:09 GMT-0500 (EST)
+// Sat Jan 07 2017 22:37:43 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -560,7 +560,7 @@ var APS = {
           var distanceTilTarget = Utils.getGreatCircleDistance(currentLoc, targetWaypt);
           var targetHdg = parseInt(Utils.getGreatCircleBearing(currentLoc, targetWaypt));
           if (targetHdg !== GEFS.autopilot.getHeading()) {
-            GEFS.aircraft.setHeading(targetHdg);
+            GEFS.autopilot.setHeading(targetHdg);
           }
 
           if (Math.abs(distanceTilTarget) < APS.TARGET_HIT_RADIUS) {
@@ -573,8 +573,7 @@ var APS = {
           }
         } else {
           Log.error('Holding pattern is in a bad state! Reinitializing...');
-          console.log(APS._holdPatternCoord);
-
+      
           APS._initHoldPattern();
         }
       }
@@ -1807,7 +1806,6 @@ var RouteManager = {
     },
 
     nextWaypoint: function() {
-        console.log(RouteManager);
         if (RouteManager._waypointIndex >= 0) {
             RouteManager._uiList[RouteManager._waypointIndex]
                 .css('background', '#111');

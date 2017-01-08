@@ -316,7 +316,6 @@ var RouteManager = {
     },
 
     nextWaypoint: function() {
-        console.log(RouteManager);
         if (RouteManager._waypointIndex >= 0) {
             RouteManager._uiList[RouteManager._waypointIndex]
                 .css('background', '#111');

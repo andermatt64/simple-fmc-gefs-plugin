@@ -61,10 +61,10 @@ var Info = {
 
   update: function () {
     Info._aircraft
-      .text(gefs.aircraft.name);
+      .text(GEFS.aircraft.getName());
     Info._uptime
       .text(Log.uptime());
     Info._mass
-      .text(gefs.aircraft.rigidBody.mass + 'KG');
+      .text(GEFS.aircraft.getMass() + 'KG');
   }
 };

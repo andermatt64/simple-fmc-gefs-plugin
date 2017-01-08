@@ -218,9 +218,10 @@ var RouteManager = {
         }
 
         var totalDist = 0;
+        var location = GEFS.aircraft.getLocation();
         var prevLocation = {
-            lat: gefs.aircraft.llaLocation[0],
-            lon: gefs.aircraft.llaLocation[1]
+            lat: location[0],
+            lon: location[1]
         };
         for (i = 0; i < verifiedList.length; i++) {
             RouteManager._add(verifiedList[i]);
@@ -229,7 +230,7 @@ var RouteManager = {
             prevLocation = verifiedList[i];
         }
         RouteManager._routeTotalDist = totalDist;
-        
+
         // FIXME TODO: Add more information here?
         var gcmap = $('<div></div>');
         gcmap

@@ -139,11 +139,11 @@ var MapDisplay = {
   },
 
   getCurrentLocation: function () {
-    var location = gefs.aircraft.llaLocation;
+    var location = GEFS.aircraft.getLocation();
     return {
       lat: location[0],
       lon: location[1],
-      hdg: parseInt(gefs.aircraft.animationValue.heading360 % 360)
+      hdg: parseInt(GEFS.aircraft.getHeading() % 360)
     };
   },
 
@@ -396,7 +396,7 @@ var MapDisplay = {
     ctx.stroke();
 
     // Draw heading
-    var hdg = parseInt(gefs.aircraft.animationValue.heading360 % 360).toString();
+    var hdg = parseInt(GEFS.aircraft.getHeading() % 360).toString();
     while (hdg.length < 3) {
       hdg = "0" + hdg;
     }
@@ -420,7 +420,7 @@ var MapDisplay = {
     ctx.stroke();
 
     // Draw altitude above sea level
-    var altitude = parseInt(gefs.aircraft.animationValue.altitude / 100).toString();
+    var altitude = parseInt(GEFS.aircraft.getAltitude() / 100).toString();
     if (altitude.length > 3) {
       altitude = "999";
     } else {
@@ -431,7 +431,7 @@ var MapDisplay = {
     MapDisplay._drawText("FL" + altitude, (target.x * 2) - 31, 0, 10, '#fff');
 
     // Draw above ground level altitude
-    var agl = parseInt(gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight).toString();
+    var agl = parseInt(GEFS.aircraft.getAGL()).toString();
     if (agl.length > 5) {
       agl = "99999";
     } else {
@@ -442,11 +442,11 @@ var MapDisplay = {
     MapDisplay._drawText("AGL" + agl, (target.x * 2) - 49, 12, 10, '#fff');
 
     // Draw IAS
-    var ias = parseInt(gefs.aircraft.animationValue.kias).toString();
+    var ias = parseInt(GEFS.aircraft.getKias()).toString();
     MapDisplay._drawText("IAS" + ias, 0, 0, 10, '#fff');
 
     // Draw VS
-    var vs = (gefs.aircraft.animationValue.climbrate / 1000);
+    var vs = (GEFS.aircraft.getClimbRate() / 1000);
     if (vs >= 10) {
       vs = " 9.99K";
     } else if (vs <= -10) {
@@ -461,7 +461,7 @@ var MapDisplay = {
     MapDisplay._drawText("VS " + vs, (target.x * 2) - 55, 24, 10, '#fff');
 
     // Draw throttle
-    var rawThrottle = gefs.aircraft.animationValue.throttle;
+    var rawThrottle = GEFS.aircraft.getThrottlePosition();
     var throttle = parseInt(rawThrottle * 100).toString();
     while (throttle.length < 3) {
       throttle = "0" + throttle;

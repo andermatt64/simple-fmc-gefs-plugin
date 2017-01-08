@@ -37,12 +37,12 @@ var APS = {
   _setAPHeading: function (hdg, onErrorSetCurrent) {
     var newHdg = parseInt(hdg);
     if (!isNaN(newHdg) && newHdg >= 0 && newHdg <= 360) {
-      controls.autopilot.setHeading(newHdg % 360);
+      GEFS.autopilot.setHeading(newHdg % 360);
     } else {
-      newHdg = parseInt(gefs.aircraft.animationValue.heading360);
+      newHdg = parseInt(GEFS.aircraft.getHeading());
 
       if (onErrorSetCurrent !== undefined && onErrorSetCurrent) {
-        var rollAngle = gefs.aircraft.animationValue.aroll;
+        var rollAngle = GEFS.aircraft.getRollAngle();
         if (Math.abs(rollAngle) >= 1) {
           // Smoother transition into autopilot
           if (rollAngle > 0) {
@@ -51,7 +51,7 @@ var APS = {
             newHdg += 8;
           }
         }
-        controls.autopilot.setHeading(newHdg);
+        GEFS.autopilot.setHeading(newHdg);
       }
 
       APS.hdgLabel
@@ -64,12 +64,12 @@ var APS = {
   _setAPAltitude: function (alt, onErrorSetCurrent) {
     var newAlt = parseInt(alt);
     if (!isNaN(newAlt)) {
-      controls.autopilot.setAltitude(newAlt);
+      GEFS.autopilot.setAltitude(newAlt);
     } else {
-      newAlt = parseInt(gefs.aircraft.animationValue.altitude);
+      newAlt = parseInt(GEFS.aircraft.getAltitude());
 
       if (onErrorSetCurrent !== undefined && onErrorSetCurrent) {
-        var climbRate = gefs.aircraft.animationValue.climbrate;
+        var climbRate = GEFS.aircraft.getClimbRate();
         if (Math.abs(climbRate) >= 100) {
           if (climbRate > 0) {
             newAlt += 500;
@@ -77,7 +77,7 @@ var APS = {
             newAlt -= 500;
           }
         }
-        controls.autopilot.setAltitude(newAlt);
+        GEFS.autopilot.setAltitude(newAlt);
       }
 
       APS.altLabel
@@ -89,11 +89,11 @@ var APS = {
   _setAPIas: function (ias, onErrorSetCurrent) {
     var newIas = parseInt(ias);
     if (!isNaN(newIas) && newIas > 0) {
-      controls.autopilot.setKias(newIas);
+      GEFS.autopilot.setKias(newIas);
     } else {
-      newIas = parseInt(gefs.aircraft.animationValue.kias);
+      newIas = parseInt(GEFS.aircraft.getKias());
       if (onErrorSetCurrent !== undefined && onErrorSetCurrent) {
-        controls.autopilot.setKias(newIas);
+        GEFS.autopilot.setKias(newIas);
       }
 
       APS.iasLabel
@@ -167,7 +167,7 @@ var APS = {
     APS.apBtn
       .text('AUTOPILOT\nDISENGAGED')
       .click(function () {
-        if (controls.autopilot.on) {
+        if (GEFS.autopilot.isOn()) {
           APS.turnOff();
         } else {
           APS.turnOn();
@@ -219,9 +219,10 @@ var APS = {
 
         if (RouteManager._currentWaypoint === null) {
           RouteManager.nextWaypoint();
+          var location = GEFS.aircraft.getLocation();
           var loc = {
-            lat: gefs.aircraft.llaLocation[0],
-            lon: gefs.aircraft.llaLocation[1]
+            lat: location[0],
+            lon: location[1]
           };
           var waypt = RouteManager._currentWaypoint;
           if (waypt !== null) {
@@ -229,11 +230,11 @@ var APS = {
             RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
 
             if (waypt.altitude !== null) {
-              controls.autopilot.setAltitude(waypt.altitude);
+              GEFS.autopilot.setAltitude(waypt.altitude);
             }
 
             if (waypt.ias !== null) {
-              controls.autopilot.setKias(waypt.ias);
+              GEFS.autopilot.setKias(waypt.ias);
             }
           }
         }
@@ -268,7 +269,7 @@ var APS = {
         }
       })
       .blur(function () {
-        if (controls.autopilot.on && APS.mode === 'HDG') {
+        if (GEFS.autopilot.isOn() && APS.mode === 'HDG') {
           APS._setAPHeading(APS.hdgLabel.val());
         }
       });
@@ -287,7 +288,7 @@ var APS = {
         }
       })
       .blur(function () {
-        if (controls.autopilot.on) {
+        if (GEFS.autopilot.isOn()) {
           APS._setAPAltitude(APS.altLabel.val());
         }
       });
@@ -306,7 +307,7 @@ var APS = {
         }
       })
       .blur(function () {
-        if (controls.autopilot.on) {
+        if (GEFS.autopilot.isOn()) {
           APS._setAPIas(APS.iasLabel.val());
         }
       });
@@ -358,10 +359,10 @@ var APS = {
   },
 
   _ensureAPLimit: function (limitName, limitValue) {
-    if (controls.autopilot[limitName] !== undefined) {
-      if (controls.autopilot[limitName] !== limitValue) {
+    if (GEFS.autopilot.getLimit(limitName) !== undefined) {
+      if (GEFS.autopilot.getLimit(limitName) !== limitValue) {
         Log.info('Setting autopilot ' + limitName + ' to ' + limitValue.toString());
-        controls.autopilot[limitName] = limitValue;
+        GEFS.autopilot.setLimit(limitName, limitValue);
       }
     } else {
       Log.warn(limitName + ' is not a defined autopilot limit');
@@ -382,26 +383,16 @@ var APS = {
   },
 
   _initHoldPattern: function () {
-    controls.autopilot.setHeading((controls.autopilot.heading + 180) % 360);
+    GEFS.autopilot.setHeading((GEFS.autopilot.getHeading() + 180) % 360);
+    var location = GEFS.aircraft.getLocation();
     APS._holdPatternCoord = [{
-      lat: gefs.aircraft.llaLocation[0],
-      lon: gefs.aircraft.llaLocation[1]
+      lat: location[0],
+      lon: location[1]
     }];
     APS._holdPatternTicks = 0;
   },
 
   turnOn: function () {
-    if (!gefs.aircraft.setup.autopilot) {
-      return;
-    }
-
-    var values = gefs.aircraft.animationValue;
-
-    controls.autopilot.climbPID.reset();
-  	controls.autopilot.pitchPID.reset();
-  	controls.autopilot.rollPID.reset();
-  	controls.autopilot.throttlePID.reset();
-
     if (APS.mode === 'HDG') {
       APS._setAPHeading(APS.hdgLabel.val(), true);
       APS._setAPIas(APS.iasLabel.val(), true);
@@ -413,22 +404,23 @@ var APS = {
       }
 
       var waypt = RouteManager._currentWaypoint;
+      var location = GEFS.aircraft.getLocation();
       var loc = {
-        lat: gefs.aircraft.llaLocation[0],
-        lon: gefs.aircraft.llaLocation[1]
+        lat: location[0],
+        lon: location[1]
       };
       if (waypt !== null) {
         Log.info('Got next waypoint: ' + waypt.id);
         RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
 
         if (waypt.altitude !== null) {
-          controls.autopilot.setAltitude(waypt.altitude);
+          GEFS.autopilot.setAltitude(waypt.altitude);
         } else {
           APS._setAPAltitude(APS.altLabel.val(), true);
         }
 
         if (waypt.ias !== null) {
-          controls.autopilot.setKias(waypt.ias);
+          GEFS.autopilot.setKias(waypt.ias);
         } else {
           APS._setAPIas(APS.iasLabel.val(), true);
         }
@@ -439,9 +431,6 @@ var APS = {
       APS._setAPAltitude(APS.altLabel.val(), true);
     }
 
-    controls.autopilot.on = true;
-  	ui.hud.autopilotIndicator(true);
-
     Log.info('AP engaged, MODE=' + APS.mode);
 
     APS.apBtn
@@ -451,9 +440,6 @@ var APS = {
   },
 
   turnOff: function () {
-    controls.autopilot.on = false;
-    ui.hud.autopilotIndicator(false);
-
     Log.info('AP disengaged');
 
     APS.apBtn
@@ -465,49 +451,31 @@ var APS = {
   },
 
   _hook: function () {
-    controls.autopilot.turnOn = function () {
+    GEFS.autopilot.hookTurnOn(function () {
       APS.turnOn();
-    };
+    });
 
-    controls.autopilot.turnOff = function () {
+    GEFS.autopilot.hookTurnOff(function () {
       APS.turnOff();
-    };
-
-    var oldSetAlt = controls.autopilot.setAltitude;
-    var oldSetHdg = controls.autopilot.setHeading;
-    var oldSetIas = controls.autopilot.setKias;
-
-    controls.autopilot.setAltitude = function (altitude) {
-      Log.info('AP: setting new altitude=' + altitude + 'ft');
-      return oldSetAlt(altitude);
-    };
-
-    controls.autopilot.setHeading = function (heading) {
-      Log.info('AP: setting new heading=' + heading + 'deg');
-      return oldSetHdg(heading);
-    };
-
-    controls.autopilot.setKias = function (kias) {
-      Log.info('AP: setting new kias=' + kias + 'kts');
-      return oldSetIas(kias);
-    };
+    });
   },
 
   update: function () {
-    if (controls.autopilot.on) {
+    if (GEFS.autopilot.isOn()) {
       if (APS.mode === 'RTE') {
         if (RouteManager._currentWaypoint === null) {
           // If the current waypoint is null, switch to holding pattern
           APS.hptBtn.click();
         } else {
+          var location = GEFS.aircraft.getLocation();
           var loc = {
-            lat: gefs.aircraft.llaLocation[0],
-            lon: gefs.aircraft.llaLocation[1]
+            lat: location[0],
+            lon: location[1]
           };
           RouteManager._distanceTilWaypoint = Utils.getGreatCircleDistance(loc, RouteManager._currentWaypoint);
           var bearing = parseInt(Utils.getGreatCircleBearing(loc, RouteManager._currentWaypoint));
-          if (bearing !== controls.autopilot.heading) {
-            controls.autopilot.setHeading(bearing);
+          if (bearing !== GEFS.autopilot.getHeading()) {
+            GEFS.autopilot.setHeading(bearing);
           }
 
           if (Math.abs(RouteManager._distanceTilWaypoint) < APS.TARGET_HIT_RADIUS) {
@@ -518,11 +486,11 @@ var APS = {
               RouteManager._totalDist = Utils.getGreatCircleDistance(loc, waypt);
 
               if (waypt.altitude !== null) {
-                controls.autopilot.setAltitude(waypt.altitude);
+                GEFS.autopilot.setAltitude(waypt.altitude);
               }
 
               if (waypt.ias !== null) {
-                controls.autopilot.setKias(waypt.ias);
+                GEFS.autopilot.setKias(waypt.ias);
               }
             }
           } else {
@@ -544,16 +512,17 @@ var APS = {
         }
       } else if (APS.mode === 'HPT') {
         if (APS._holdPatternCoord.length === 1) {
-          var hdg = parseInt(gefs.aircraft.animationValue.heading360);
-          if (hdg >= controls.autopilot.heading - 3 &&
-              hdg <= controls.autopilot.heading + 3) {
+          var hdg = parseInt(GEFS.aircraft.getHeading());
+          if (hdg >= GEFS.autopilot.getHeading() - 3 &&
+              hdg <= GEFS.autopilot.getHeading() + 3) {
             // We are near our target heading
             if (APS._holdPatternTicks > (35 * (1000 / FMC_UPDATE_INTERVAL))) {
               // We have traveled "straight" for a bit, set another
               // waypoint and turn back.
+              var currentLocation = GEFS.aircraft.getLocation();
               APS._holdPatternCoord.push({
-                lat: gefs.aircraft.llaLocation[0],
-                lon: gefs.aircraft.llaLocation[1]
+                lat: currentLocation[0],
+                lon: currentLocation[1]
               });
 
               // Set it to 0 to seek first waypoint again
@@ -568,15 +537,16 @@ var APS = {
           }
         } else if (APS._holdPatternCoord.length === 2) {
           // Our two waypoints are set, we use APS._holdPatternTicks as the index
+          var _location = GEFS.aircraft.getLocation();
           var currentLoc = {
-            lat: gefs.aircraft.llaLocation[0],
-            lon: gefs.aircraft.llaLocation[1]
+            lat: _location[0],
+            lon: _location[1]
           };
           var targetWaypt = APS._holdPatternCoord[APS._holdPatternTicks];
           var distanceTilTarget = Utils.getGreatCircleDistance(currentLoc, targetWaypt);
           var targetHdg = parseInt(Utils.getGreatCircleBearing(currentLoc, targetWaypt));
-          if (targetHdg !== controls.autopilot.heading) {
-            controls.autopilot.setHeading(targetHdg);
+          if (targetHdg !== GEFS.autopilot.getHeading()) {
+            GEFS.aircraft.setHeading(targetHdg);
           }
 
           if (Math.abs(distanceTilTarget) < APS.TARGET_HIT_RADIUS) {
@@ -596,8 +566,8 @@ var APS = {
       }
     }
 
-    if (controls.autopilot.on) {
-      if (gefs.aircraft.animationValue.kias >= 400) {
+    if (GEFS.autopilot.isOn()) {
+      if (GEFS.aircraft.getKias() >= 400) {
         // KIAS is >400kts, limit AP pitch angles
         APS._ensureAPLimit('maxPitchAngle', 5);
         APS._ensureAPLimit('minPitchAngle', -5);

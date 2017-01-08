@@ -11,21 +11,21 @@
   };
 
   var initTimer = setInterval(function () {
-    if (!window.gefs || !gefs.init) {
+    if (!GEFS.isLoadedIntoNamespace()) {
       return;
     }
 
     clearInterval(initTimer);
 
-    if (gefs.canvas) {
+    if (GEFS.getCanvas()) {
       fmcInit();
     } else {
-      var gefsInit = gefs.init;
+      var gefsInit = GEFS.getInitFunction();
 
-      gefs.init = function () {
+      GEFS.setInitFunction(function () {
         gefsInit();
         fmcInit();
-      };
+      });
     }
   }, 16);
 })();

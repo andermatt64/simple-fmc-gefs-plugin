@@ -170,7 +170,7 @@ var AGLStatus = {
         .css('background', '#000')
         .css('color', '#0f0')
         .click(function () {
-          AGLStatus._planeHeight = gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet);
+          GEFS.aircraft.height = GEFS.aircraft.getAltitude() - (GEFS.aircraft.getGroundElevation() * GEFS.metersToFeet);
           Log.info('Calibrated AGL! planeHeight=' + AGLStatus._planeHeight);
         });
       container
@@ -185,8 +185,8 @@ var AGLStatus = {
       content.append(AGLStatus._panel);
     },
 
-    update: function (altitude) {
-      var agl = altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight;
+    update: function () {
+      var agl = GEFS.aircraft.getAGL();
 
       // TODO: This should update agl in some global state
       AGLStatus._label
@@ -579,21 +579,21 @@ var Status = {
     APStatus.init(content);
 
     SimpleFMC.registerUpdate(function () {
-      Throttle.update(gefs.aircraft.animationValue.throttle,
-                      gefs.aircraft.engine.on);
-      HeadingAndSpeed.update(gefs.aircraft.animationValue.heading360,
-                             gefs.aircraft.animationValue.kias);
-      AltitudeAndClimbRate.update(gefs.aircraft.animationValue.altitude,
-                                  gefs.aircraft.animationValue.climbrate);
+      Throttle.update(GEFS.aircraft.getThrottlePosition(),
+                      GEFS.aircraft.isEngineOn());
+      HeadingAndSpeed.update(GEFS.aircraft.getHeading(),
+                             GEFS.aircraft.getKias());
+      AltitudeAndClimbRate.update(GEFS.aircraft.getAltitude(),
+                                  GEFS.aircraft.getClimbRate());
       NextWaypoint.update();
-      FlapsAndGear.update(gefs.aircraft.animationValue.flapsValue,
-                          gefs.aircraft.animationValue.gearPosition);
-      ElevatorTrim.update(gefs.aircraft.animationValue.trim,
-                          gefs.aircraft.animationValue.mach);
-      Brakes.update(gefs.aircraft.animationValue.airbrakesPosition,
-                    gefs.aircraft.animationValue.brakes);
-      AGLStatus.update(gefs.aircraft.animationValue.altitude);
-      APStatus.update(controls.autopilot.on,
+      FlapsAndGear.update(GEFS.aircraft.getFlapsPosition(),
+                          GEFS.aircraft.getGearPosition());
+      ElevatorTrim.update(GEFS.aircraft.getElevatorTrimPosition(),
+                          GEFS.aircraft.getMachSpeed());
+      Brakes.update(GEFS.aircraft.getAirBrakePosition(),
+                    GEFS.aircraft.getBrakePosition());
+      AGLStatus.update();
+      APStatus.update(GEFS.autopilot.isOn(),
                       APS.mode);
     });
   }

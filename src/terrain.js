@@ -10,16 +10,17 @@
    _ellipseProvider: null,
 
    init: function () {
-     TerrainFix._ellipseProvider = new Cesium.EllipsoidTerrainProvider();
-     TerrainFix._oldTerrainProvider = gefs.api.viewer.terrainProvider;
+     TerrainFix._ellipseProvider = GEFS.terrain.createEllipsoidProvider();
+     TerrainFix._oldTerrainProvider = GEFS.terrain.getProvider();
      SimpleFMC.registerUpdate(TerrainFix.update);
    },
 
    closestAirport: function () {
       var key = null;
+      var location = GEFS.aircraft.getLocation();
       var current = {
-        lat: gefs.aircraft.llaLocation[0],
-        lon: gefs.aircraft.llaLocation[1]
+        lat: location[0],
+        lon: location[1]
       };
       var closest = {
         name: "",
@@ -50,20 +51,20 @@
    },
 
    update: function () {
-     var altitude = gefs.aircraft.animationValue.altitude - (gefs.groundElevation * AGLStatus.metersToFeet) - AGLStatus._planeHeight;
+     var altitude = GEFS.aircraft.getAGL();
      if (altitude < TerrainFix.ALTITUDE_THRESHOLD) {
        var closest = TerrainFix.closestAirport();
        if (closest.distance < TerrainFix.DISTANCE_RADIUS) {
-         if (TerrainFix._ellipseProvider !== gefs.api.viewer.terrainProvider) {
-           gefs.api.viewer.terrainProvider = TerrainFix._ellipseProvider;
+         if (TerrainFix._ellipseProvider !== GEFS.terrain.getProvider()) {
+           GEFS.terrain.setProvider(TerrainFix._ellipseProvider);
          }
 
          return;
        }
      }
 
-     if (TerrainFix._oldTerrainProvider !== gefs.api.viewer.terrainProvider) {
-       gefs.api.viewer.terrainProvider = TerrainFix._oldTerrainProvider;
+     if (TerrainFix._oldTerrainProvider !== GEFS.terrain.getProvider()) {
+       GEFS.terrain.setProvider(TerrainFix._oldTerrainProvider);
      }
    }
  };

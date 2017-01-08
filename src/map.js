@@ -39,13 +39,13 @@ var MapDisplay = {
       .css('margin', '0')
       .css('background', '#000')
       .css('color', '#0f0')
-      .append($('<option value="5">5KM</option>'))
       .append($('<option value="10">10KM</option>'))
       .append($('<option value="25">25KM</option>'))
       .append($('<option value="50">50KM</option>'))
       .append($('<option value="100">100KM</option>'))
       .append($('<option value="1000">1000KM</option>'))
-      .append($('<option value="5000">5000KM</option>'));
+      .append($('<option value="5000">5000KM</option>'))
+      .append($('<option value="10000">10000KM</option>'));
 
     MapDisplay.content
       .append(MapDisplay.mapView)

@@ -10,7 +10,7 @@
 // @grant       none
 // ==/UserScript==
 
-// Sat Jan 07 2017 22:23:08 GMT-0500 (EST)
+// Sat Jan 07 2017 22:29:09 GMT-0500 (EST)
 
 /*
  * Implements autopilot system functionality
@@ -802,7 +802,7 @@ var GEFS = {
       },
 
       setKias: function (ias) {
-        Log.info('AP: setting new kias=' + kias + 'kts');
+        Log.info('AP: setting new kias=' + ias + 'kts');
         controls.autopilot.setKias(ias);
       },
 

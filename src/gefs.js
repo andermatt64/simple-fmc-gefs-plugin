@@ -147,7 +147,7 @@ var GEFS = {
       },
 
       setKias: function (ias) {
-        Log.info('AP: setting new kias=' + kias + 'kts');
+        Log.info('AP: setting new kias=' + ias + 'kts');
         controls.autopilot.setKias(ias);
       },
 
